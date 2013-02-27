@@ -1,0 +1,496 @@
+/* ==========================================================================
+   HTML5 Boilerplate styles - h5bp.com (generated via initializr.com)
+   ========================================================================== */
+
+html,
+button,
+input,
+select,
+textarea {
+    color: #222;
+}
+
+body {
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+img {
+    vertical-align: middle;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.chromeframe {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+
+/* ===== L20n Styles ========================================================
+   Author: Mozilla - l20n.org
+   ========================================================================== */
+
+body {
+    background: #333333;
+    color: #DDDDDD;
+    font: 19px/26px Open Sans, Helvetica Neue, Helvetica, Arial;
+    font-weight: 300;
+    text-shadow: 0 1px 3px #000000;
+}
+
+h3 {
+    font-size: 1.5em;
+}
+
+p {
+    line-height: 1.6em;
+    margin: 1em 0 0;
+}
+
+a {
+    color: #F92672;
+    text-decoration: none;
+
+    transition: all .25s;
+    -moz-transition: all .25s;
+    -webkit-transition: all .25s;
+}
+
+a:hover,
+a:active,
+a.active {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+a.external {
+    display: inline-block;
+    margin: 1em 0 2em;
+}
+
+.wrapper {
+    width: 90%;
+    margin: 0 5%;
+}
+
+.header-container {
+    border-top: 5px solid #F92672;
+}
+
+.footer-container {
+    background: #272822;
+}
+
+/* ==============
+    MOBILE: Menu
+   ============== */
+
+h1 {
+    color: #FFFFFF;
+    float: left;
+    font-size: 2.5em;
+    line-height: 1em;
+    margin: 0.6em 0 0;
+}
+
+button.toggle {
+    background: url('../img/menu.png') #272822 no-repeat center center;
+    border: none;
+    border-radius: 5px;
+    float: right;
+    height: 1.4em;
+    font-size: 2em;
+    margin: 0.67em 0 0;
+    width: 1.4em;
+}
+
+button.toggle.active {
+    border-radius: 5px 5px 0 0;
+}
+
+nav {
+    display: none;
+}
+
+nav ul {
+    margin: 0 0 1em;
+    padding: 0;
+}
+
+nav a {
+    background: #272822;
+    display: block;
+    margin-bottom: 2px;
+    padding: 15px 0;
+    text-align: center;
+    text-decoration: none;
+}
+
+nav li:first-child a {
+    border-radius: 5px 0 0 0;
+}
+
+nav li:last-child a {
+    border-radius: 0 0 5px 5px;    
+}
+
+footer a {
+    font-size: 0.8em;
+}
+
+/* ==============
+    MOBILE: Main
+   ============== */
+
+.main {
+    padding-bottom: 30px;
+}
+
+.main header h2 {
+    background: #52524D;
+    border-radius: 5px;
+    font-size: 1.5em;
+    font-weight: 300;
+    line-height: 1.3em;
+    margin: 0.9em 0 2em;
+    padding: 10px;
+}
+
+.main .window {
+    display: none;
+    font-size: 0.8em;
+    line-height: 1.5em;
+}
+
+.footer-container footer {
+    color: white;
+    padding: 40px 0;
+}
+
+/* ===============
+    ALL: IE Fixes
+   =============== */
+
+.ie7 .title {
+    padding-top: 20px;
+}
+
+
+
+@media only screen and (min-width: 480px) {
+
+/* ====================
+    INTERMEDIATE: Main
+   ==================== */
+
+    .main header h2 {
+        font-size: 2em;
+        margin: 0.67em 0 1.5em;
+    }
+
+    .main .window {
+        display: block;
+        background: #3D3D3D;
+        border-radius: 5px;
+        box-shadow: 0 0px 20px #000000;
+        color: white;
+        }
+
+    .main .window h3 {
+        border-bottom: 1px solid #111111;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        color: #444444;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        margin: 0;
+        padding: 0.2em 0;
+        text-align: center;
+        text-shadow: 0 1px 0 #DDDDDD;
+
+        background: #f7f7f7;
+        background: -moz-linear-gradient(top,  #f7f7f7 0%, #cfcfcf 7%, #aaaaaa 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(7%,#cfcfcf), color-stop(100%,#aaaaaa));
+        background: -webkit-linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
+        background: -o-linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
+        background: -ms-linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
+        background: linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#aaaaaa',GradientType=0 );
+    }
+
+    #editor {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        height: 400px;
+        width: 100%;
+    }
+
+/* ========================
+    INTERMEDIATE: IE Fixes
+   ======================== */
+
+    nav ul li {
+        display: inline;
+    }
+
+    .oldie nav a {
+        margin: 0 0.7%;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+
+/* ============
+    WIDE: Menu
+   ============ */
+
+    .mobile-container {
+        float: left;
+    }
+
+    button.toggle {
+        display: none;
+    }
+
+    nav {
+        display: block!important;
+        float: right;
+    }
+
+    nav a {
+        background: transparent;
+        float: left;
+        margin: 2.6em 1em 0;
+        padding: 0;
+    }
+
+    nav li:first-child a {
+        margin-left: 0;
+    }
+
+    nav li:last-child a {
+        margin-right: 0;
+    }
+
+/* ============
+    WIDE: Main
+   ============ */
+
+    .main header h2 {
+        border-radius: 10px;
+        font-size: 3em;
+        padding: 30px 20px;
+        margin: 0.5em 0;
+    }
+
+    .main > article > section {
+        width: 30%;
+        float: left;
+    }
+
+    .main > article > section:first-child {
+        margin-right: 5%;
+    }
+
+    .main > article > section:last-child {
+        float: right;
+        margin-left: 5%;
+    }
+
+}
+
+@media only screen and (min-width: 1140px) {
+
+/* ===============
+    Maximal Width
+   =============== */
+
+    .wrapper {
+        width: 1026px; /* 1140px - 10% for margins */
+        margin: 0 auto;
+    }
+
+    .main article {
+        float: left;
+        width: 50%;
+    }
+
+    .main > article > section {
+        width: 100%;
+        float: none;
+    }
+
+    .main .window {
+        float: right;
+        margin-top: 2em;
+        width: 48%;
+    }
+
+    #editor {
+        height: 600px;
+    }
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    *text-indent: -9999px;
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* ==========================================================================
+   Print styles
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
