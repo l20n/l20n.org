@@ -18,6 +18,7 @@
             <script src="js/vendor/html5-3.6-respond-1.1.0.min.js"></script>
         <![endif]-->
 
+        <script src="js/vendor/raphael-min.js"></script>
         <script src="js/vendor/l20n-min.js"></script>
     </head>
     <body>
@@ -26,57 +27,81 @@
         <![endif]-->
 
         <div class="header-container">
-            <header class="wrapper clearfix">
+            <header class="clearfix">
                 <div class="mobile-container clearfix">
-                    <h1 class="title" data-l10n-id="title">L20n</h1>
+                    <a class="title" data-l10n-id="title" href="/">L20n</a></h1>
                     <button class="toggle"></button>
                 </div>
                 <nav>                    
                     <ul>
-                        <li><a class="active" href="/">Overview</a></li>
-                        <li><a href="#learn">L20n by example</a></li>
-                        <li><a href="#try">Try it out</a></li>
+                        <li><a href="#try">Try</a></li>
+                        <li><a href="#learn">Learn</a></li>
+                        <li><a href="#mdn">Implement</a></li>
+                        <li><a href="https://github.com/l20n/">Improve</a></li>
                     </ul>
                 </nav>
             </header>
         </div>
 
         <div class="main-container">
-            <div class="main wrapper clearfix">
+            <div class="main clearfix">
                 <header>
-                    <h2>Programming language, designed for localization. Simple things are <strong>simple</strong>, complex things are <strong>possible</strong>.</h2>
+                    <hr class="top">
+                    <div class="wrapper">
+                        <h5>Welcome to L20n</h5>
+                    </div>
+
+                    <h2>Unleashing your native language's power through simple programming.</h2>
+
+                    <hr class="bottom">
+                    <div class="wrapper">
+                        <div class="inner-wrapper">
+                            <a id="cta" href="#try">Give it a try</a>
+                        </div>
+                    </div>
                 </header>
 
                 <article class="clearfix">
-                    <section>
-                        <h3>Learn</h3>
-                        <p>L20n supports all language specifics, no matter what language do you use. Impossible is nothing.</p>
-                        <a href="#learn" class="external">L20n by example &rarr;</a>
-                    </section>
-                    <section>
-                        <h3>Implement</h3>
-                        <p>Using different translations on different screens is a killer feature for mobile and responsive design.</p>
-                        <a href="#mdn" class="external">Developer docs &rarr;</a>
-                    </section>
-                    <section>
-                        <h3>Improve</h3>
-                        <p>Developed by Mozilla, it's not only free to use, but also open source and proposed as an open standard.</p>
-                        <a href="https://github.com/l20n/" class="external">Fork it on GitHub &rarr;</a>
-                    </section>
+                    <div class="blocks clearfix">
+                        <section>
+                            <div id="learn"></div>
+                            <h3>Learn</h3>
+                            <p>L20n supports all language specifics, no matter what language do you use. Impossible is nothing.</p>
+                            <a href="#learn">L20n by example &rarr;</a>
+                        </section>
+                        <section>
+                            <div id="implement"></div>
+                            <h3>Implement</h3>
+                            <p>Using different translations on different screens is a killer feature for mobile and responsive design.</p>
+                            <a href="#mdn">Developer docs &rarr;</a>
+                        </section>
+                        <section>
+                            <div id="improve"></div>
+                            <h3>Improve</h3>
+                            <p>Developed by Mozilla, it's not only free, but also open source and proposed as an open standard.</p>
+                            <a href="https://github.com/l20n/">Fork it on GitHub &rarr;</a>
+                        </section>
+                    </div>
+                    <aside class="window">
+                        <h3>Try it on this page</h3>
+                        <div id="editor"></div>
+                    </aside>
                 </article>
-
-                <aside class="window">
-                    <h3>Try it on this page</h3>
-                    <div id="editor"></div>
-                </aside>
             </div> <!-- #main -->
         </div> <!-- #main-container -->
 
         <div class="footer-container">
-            <footer class="wrapper">
-                <a href="https://blog.mozilla.org/l10n/">Blog</a> &middot;
-                <a href="#mdn">MDN</a> &middot;
-                <a href="https://github.com/l20n/">GitHub</a>
+            <footer class="clearfix">
+                <nav>                    
+                    <ul>
+                        <li><a class="active" href="/">L20n</a></li>
+                        <li><a href="#try">Try</a></li>
+                        <li><a href="#learn">Learn</a></li>
+                        <li><a href="#mdn">Implement</a></li>
+                        <li><a href="https://github.com/l20n/">Improve</a></li>
+                    </ul>
+                    <p>Crafted by Mozilla Foundation.</p>
+                </nav>
             </footer>
         </div>
 

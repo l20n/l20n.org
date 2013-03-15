@@ -61,20 +61,52 @@ textarea {
    ========================================================================== */
 
 body {
-    background: #333333;
-    color: #DDDDDD;
+    background: url('../img/grain.png') #F8F8F0;
+    color: #333333;
     font: 19px/26px Open Sans, Helvetica Neue, Helvetica, Arial;
     font-weight: 300;
-    text-shadow: 0 1px 3px #000000;
+    text-align: center;
 }
 
 h3 {
-    font-size: 1.5em;
+    font-size: 1.2em;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 0px #CFCFCF;
+    text-transform: uppercase;
+}
+
+h5 {
+    background: #05B1CC;
+    display: inline-block;
+    font-size: 1.2em;
+    letter-spacing: -1px;
+    margin: 0;
+    padding: 0.5em 2em;
+    text-transform: uppercase;
+}
+
+a#cta {
+    background: #E6DB74;
+    display: inline-block;
+    font-weight: 700;
+    letter-spacing: -1px;
+    padding: 0.5em 2em;
+    text-transform: uppercase;
+}
+
+hr {
+    font-size: 0.8em;
+    margin: 0 1em;
+    border-color: #068599;
+}
+
+hr.top {
+    margin-top: 2em;
 }
 
 p {
     line-height: 1.6em;
-    margin: 1em 0 0;
+    margin: 0;
 }
 
 a {
@@ -89,84 +121,127 @@ a {
 a:hover,
 a:active,
 a.active {
-    color: #FFFFFF;
+    color: #F92672;
     text-decoration: none;
 }
 
-a.external {
-    display: inline-block;
-    margin: 1em 0 2em;
+a#cta {
+    color: inherit;
 }
 
-.wrapper {
+a#cta:hover,
+a#cta:active {
+    background: #FD971F;
+}
+
+.main article a {
+    display: inline-block;
+    margin: 1em 0;
+}
+
+.main article a:hover,
+.main article a:active {
+    text-decoration: underline;
+}
+
+a.title {
+    float: left;
+    line-height: 4.6em;
+    margin: 0 2em;
+}
+
+.main header h2,
+.main > article {
     width: 90%;
-    margin: 0 5%;
+    margin: 0.5em 5%;
+}
+
+.main > article > .blocks > section {
+    margin-bottom: 4em;
 }
 
 .header-container {
-    border-top: 5px solid #F92672;
+    background: #272822;
+    line-height: 0;
 }
 
 .footer-container {
-    background: #272822;
+    background: #DBDBD6;
 }
 
 /* ==============
     MOBILE: Menu
    ============== */
 
-h1 {
-    color: #FFFFFF;
-    float: left;
-    font-size: 2.5em;
-    line-height: 1em;
-    margin: 0.6em 0 0;
-}
-
 button.toggle {
-    background: url('../img/menu.png') #272822 no-repeat center center;
+    background: url('../img/menu.png') #F92672 no-repeat center center;
     border: none;
-    border-radius: 5px;
     float: right;
-    height: 1.4em;
-    font-size: 2em;
-    margin: 0.67em 0 0;
-    width: 1.4em;
-}
-
-button.toggle.active {
-    border-radius: 5px 5px 0 0;
+    font-size: 0.8em;
+    height: 4.6em;
+    line-height: 4.6em;
+    padding: 0;
+    width: 4.6em;
 }
 
 nav {
+    background: #F92672;
     display: none;
 }
 
+footer nav {
+    background: inherit;
+    display: block;
+    line-height: 0;
+    padding-top: 1em;
+}
+
 nav ul {
-    margin: 0 0 1em;
+    margin: 0;
     padding: 0;
 }
 
 nav a {
-    background: #272822;
+    border-bottom: 1px solid #272822;
+    color: #F8F8F0;
     display: block;
-    margin-bottom: 2px;
-    padding: 15px 0;
+    margin: 0 1em;
+    padding: 1.6em 0;
     text-align: center;
     text-decoration: none;
 }
 
-nav li:first-child a {
-    border-radius: 5px 0 0 0;
+header nav a:hover,
+header nav a.active {
+    color: #272822;
 }
 
-nav li:last-child a {
-    border-radius: 0 0 5px 5px;    
+header nav li:last-child a {
+    border-bottom: none;
 }
 
-footer a {
+footer nav a {
+    background: #DBDBD6;
+    border-bottom: 1px solid #B5B5B0;
+    color: #333333;
+}
+
+footer nav p {
+    color: #70716A;
+    font-size: 0.7em;
+    margin-bottom: 1em;
+    padding: 2em 0;
+    text-shadow: 1px 1px 0 #F8F8F0;
+}
+
+nav a,
+a.title {
+    font-weight: 700;
     font-size: 0.8em;
+    text-transform: uppercase;
 }
+
+
 
 /* ==============
     MOBILE: Main
@@ -176,25 +251,35 @@ footer a {
     padding-bottom: 30px;
 }
 
+.main header {
+    background: #05B1CC;
+    margin: 0em 0em 3em;
+    padding: 2em 0;
+}
+
 .main header h2 {
-    background: #52524D;
-    border-radius: 5px;
-    font-size: 1.5em;
+    color: #F8F8F0;
+    font-size: 2em;
     font-weight: 300;
-    line-height: 1.3em;
-    margin: 0.9em 0 2em;
-    padding: 10px;
+    line-height: 1.2em;
+    margin-bottom: 1.6em;
+}
+
+.main header .wrapper {
+    margin-top: -1.4em;
+}
+
+.main header .inner-wrapper {
+    background: #05B1CC;
+    display: inline-block;
+    padding: 0 2em;
 }
 
 .main .window {
     display: none;
     font-size: 0.8em;
     line-height: 1.5em;
-}
-
-.footer-container footer {
-    color: white;
-    padding: 40px 0;
+    margin-bottom: 4em;
 }
 
 /* ===============
@@ -213,17 +298,13 @@ footer a {
     INTERMEDIATE: Main
    ==================== */
 
-    .main header h2 {
-        font-size: 2em;
-        margin: 0.67em 0 1.5em;
-    }
-
     .main .window {
         display: block;
         background: #3D3D3D;
         border-radius: 5px;
-        box-shadow: 0 0px 20px #000000;
+        box-shadow: 0 0 30px #52524D;
         color: white;
+        text-align: left;
         }
 
     .main .window h3 {
@@ -234,10 +315,12 @@ footer a {
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 16px;
         font-weight: 400;
+        letter-spacing: 0;
         margin: 0;
         padding: 0.2em 0;
         text-align: center;
         text-shadow: 0 1px 0 #DDDDDD;
+        text-transform: none;
 
         background: #f7f7f7;
         background: -moz-linear-gradient(top,  #f7f7f7 0%, #cfcfcf 7%, #aaaaaa 100%);
@@ -260,10 +343,6 @@ footer a {
     INTERMEDIATE: IE Fixes
    ======================== */
 
-    nav ul li {
-        display: inline;
-    }
-
     .oldie nav a {
         margin: 0 0.7%;
     }
@@ -276,7 +355,13 @@ footer a {
    ============ */
 
     .mobile-container {
+        float: none;
+        display: inline-block;
+    }
+
+    a.title {
         float: left;
+        display: inline-block;
     }
 
     button.toggle {
@@ -284,46 +369,54 @@ footer a {
     }
 
     nav {
-        display: block!important;
-        float: right;
+        background: #272822;
+        display: inline-block!important;
+    }
+
+    nav ul li {
+        display: inline-block;
     }
 
     nav a {
         background: transparent;
         float: left;
-        margin: 2.6em 1em 0;
+        line-height: 4.5em;
+        margin: 0em 2em;
         padding: 0;
     }
 
-    nav li:first-child a {
-        margin-left: 0;
+    header nav a:hover,
+    header nav a.active {
+        color: #F92672;
     }
 
-    nav li:last-child a {
-        margin-right: 0;
+    footer nav a {
+        border-bottom: none;
     }
 
 /* ============
     WIDE: Main
    ============ */
 
-    .main header h2 {
-        border-radius: 10px;
-        font-size: 3em;
-        padding: 30px 20px;
-        margin: 0.5em 0;
+    .main header {
+        margin: 0em 0em 4em;
     }
 
-    .main > article > section {
+    .main header h2 {
+        font-size: 3em;
+        margin-bottom: 1.3em;
+    }
+
+    .main > article > .blocks > section {
         width: 30%;
         float: left;
     }
 
-    .main > article > section:first-child {
+    .main > article > .blocks > section:first-child {
         margin-right: 5%;
     }
 
-    .main > article > section:last-child {
+    .main > article > .blocks > section:last-child {
         float: right;
         margin-left: 5%;
     }
@@ -336,30 +429,40 @@ footer a {
     Maximal Width
    =============== */
 
-    .wrapper {
-        width: 1026px; /* 1140px - 10% for margins */
+    hr,
+    .main header h2,
+    .main > article {
         margin: 0 auto;
+        width: 1026px;
     }
 
-    .main article {
+    .main header h2 {
+        margin-top: 0.8em;
+        margin-bottom: 1.3em;
+    }
+
+    /*
+    .main > article > .blocks {
         float: left;
+        margin: 0;
         width: 50%;
     }
 
-    .main > article > section {
+    .main > article > .blocks > section {
         width: 100%;
         float: none;
     }
 
     .main .window {
         float: right;
-        margin-top: 2em;
+        margin: 0 2% 0 0;
         width: 48%;
     }
 
     #editor {
         height: 600px;
     }
+    */
 }
 
 /* ==========================================================================
