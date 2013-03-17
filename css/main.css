@@ -71,6 +71,8 @@ body {
 h3 {
     font-size: 1.2em;
     letter-spacing: -1px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
     text-shadow: 0 2px 0px #CFCFCF;
     text-transform: uppercase;
 }
@@ -136,7 +138,7 @@ a#cta:active {
 
 .main article a {
     display: inline-block;
-    margin: 1em 0;
+    margin-top: 0.5em;
 }
 
 .main article a:hover,
@@ -156,8 +158,12 @@ a.title {
     margin: 0.5em 5%;
 }
 
+.main > article {
+    margin: 0 5%;
+}
+
 .main > article > .blocks > section {
-    margin-bottom: 4em;
+    margin-bottom: 3em;
 }
 
 .header-container {
@@ -247,10 +253,6 @@ a.title {
     MOBILE: Main
    ============== */
 
-.main {
-    padding-bottom: 30px;
-}
-
 .main header {
     background: #05B1CC;
     margin: 0em 0em 3em;
@@ -279,7 +281,7 @@ a.title {
     display: none;
     font-size: 0.8em;
     line-height: 1.5em;
-    margin-bottom: 4em;
+    margin-bottom: 3em;
 }
 
 /* ===============
@@ -399,12 +401,12 @@ a.title {
    ============ */
 
     .main header {
-        margin: 0em 0em 4em;
+        margin: 0em 0em 2em;
     }
 
     .main header h2 {
         font-size: 3em;
-        margin-bottom: 1.3em;
+        margin-bottom: 1.0em;
     }
 
     .main > article > .blocks > section {
@@ -437,8 +439,8 @@ a.title {
     }
 
     .main header h2 {
-        margin-top: 0.8em;
-        margin-bottom: 1.3em;
+        margin-top: 0.5em;
+        margin-bottom: 1.0em;
     }
 
     /*
