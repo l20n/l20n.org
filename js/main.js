@@ -62,8 +62,8 @@ $(function() {
 
 	/* ACE */
 	var state = (
-		"<title \"L20n\">\n" +
-		"<welcome \"Welcome to {{ title }}\">\n" +
+		"<name \"L20n\">\n" +
+		"<welcome \"Welcome to {{ name }}\">\n" +
 		"\n" +
 		"<lead \"\"\"\n" +
 		"  Unleashing your native language's\n" +
@@ -73,7 +73,7 @@ $(function() {
 		"<position() { @screen.width < 1140 ?\n" +
 		"                 \"below\" : \"default\" }>\n" +
 		"\n" +
-		"<try[position()] {\n" +
+		"<try-link[position()] {\n" +
 		"  below: \"Give it a try below\",\n" +
 		"  default: \"Give it a try in the editor\"\n" +
 		"}>\n"
