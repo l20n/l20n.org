@@ -5,8 +5,28 @@ $(function() {
 
 	compiler.setGlobals({
 		get hour() {
-	 		return new Date().getHours();
+			return new Date().getHours();
 		},
+		get os() {
+			if (/^MacIntel/.test(navigator.platform)) {
+				return 'mac';
+			}
+			if (/^Linux/.test(navigator.platform)) {
+				return 'linux';
+			}
+			if (/^Win/.test(navigatgor.platform)) {
+				return 'win';
+			}
+			return 'unknown';
+		},
+		screen: {
+			get width() {
+				return document.body.clientWidth;
+			},
+			get height() {
+				return document.body.clientHeight;
+			},
+		}
 	});
 
 	parser.addEventListener('error', function(e) {
