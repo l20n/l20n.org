@@ -309,31 +309,6 @@ a.title {
         text-align: left;
         }
 
-    .main .window h3 {
-        border-bottom: 1px solid #111111;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        color: #444444;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 16px;
-        font-weight: 400;
-        letter-spacing: 0;
-        margin: 0;
-        padding: 0.2em 0;
-        text-align: center;
-        text-shadow: 0 1px 0 #DDDDDD;
-        text-transform: none;
-
-        background: #f7f7f7;
-        background: -moz-linear-gradient(top,  #f7f7f7 0%, #cfcfcf 7%, #aaaaaa 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(7%,#cfcfcf), color-stop(100%,#aaaaaa));
-        background: -webkit-linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
-        background: -o-linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
-        background: -ms-linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
-        background: linear-gradient(top,  #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#aaaaaa',GradientType=0 );
-    }
-
     #editor {
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
