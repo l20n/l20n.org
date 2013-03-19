@@ -303,15 +303,12 @@ a.title {
     .main .window {
         display: block;
         background: #3D3D3D;
-        border-radius: 5px;
         box-shadow: 0 0 30px #52524D;
         color: white;
         text-align: left;
         }
 
     #editor {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
         height: 400px;
         width: 100%;
     }
@@ -431,7 +428,6 @@ a.title {
 
     .main .window {
         float: right;
-        margin: 0 2% 0 0;
         width: 48%;
     }
 
