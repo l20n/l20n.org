@@ -70,12 +70,12 @@ $(function() {
 		"  power through simple programming.\n" +
 		"\"\"\">\n" +
 		"\n" +
-		"<position() { @screen.width < 768 ?\n" +
-		"                 \"below\" : \"right\" }>\n" +
+		"<position() { @screen.width < 1140 ?\n" +
+		"                 \"below\" : \"default\" }>\n" +
 		"\n" +
 		"<try[position()] {\n" +
-		"  below: \"Give it a try in the editor below\",\n" +
-		"  right: \"Give it a try in the editor on the right\"\n" +
+		"  below: \"Give it a try below\",\n" +
+		"  default: \"Give it a try in the editor\"\n" +
 		"}>\n"
     );
 
