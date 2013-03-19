@@ -43,15 +43,20 @@ $(function() {
 	/* ACE */
 	var state = (
 		"<title \"L20n\">\n" +
+		"<welcome \"Welcome to {{ title }}\">\n" +
 		"\n" +
-		"<hello[timeOfDay(@hour)] {\n" +
-		"  morning: \"Good morning!\",\n" +
-		"  afternoon: \"Good afternoon!\",\n" +
-		"  evening: \"Good evening!\",\n" +
-		" *other: \"Hello!\"\n" +
-		"}>\n" +
+		"<lead \"\"\"\n" +
+		"  Unleashing your native language's\n" +
+		"  power through simple programming.\n" +
+		"\"\"\">\n" +
 		"\n" +
-		"<welcome \"Welcome to {{ title }}\">\n"
+		"<position() { @screen.width < 768 ?\n" +
+		"                 \"below\" : \"right\" }>\n" +
+		"\n" +
+		"<try[position()] {\n" +
+		"  below: \"Give it a try in the editor below\",\n" +
+		"  right: \"Give it a try in the editor on the right\"\n" +
+		"}>\n"
     );
 
 	var source = ace.edit("editor");
