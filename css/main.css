@@ -134,7 +134,7 @@ a#cta:active {
 }
 
 .main article a {
-    display: inline-block;
+    display: block;
     margin-top: 0.5em;
 }
 
