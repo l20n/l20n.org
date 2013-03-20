@@ -120,7 +120,7 @@ $(function() {
 	/* data-l10n-id attributes */
 
 	$('[data-l10n-id]').hover(function() {
-		if (true) {
+		if ($('#inspect').prop('checked')) {
 			$(this).css('box-shadow', '0 0 5px #75715E');
 			var tooltip = $('#tooltip'),
 				id = $(this).data('l10n-id'),
@@ -134,10 +134,8 @@ $(function() {
 			tooltip.html(id).offset({top: top, left: left}).show();
 		}
 	}, function() {
-		if (true) {
-			$(this).css('box-shadow', 'none');
-			$('#tooltip').offset({top: 0, left: 0}).hide();
-		}
+		$(this).css('box-shadow', 'none');
+		$('#tooltip').offset({top: 0, left: 0}).hide();
 	});
 
 });
