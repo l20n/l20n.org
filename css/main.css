@@ -349,8 +349,9 @@ a.title {
 
     nav a {
         background: transparent;
+        border-bottom: none;
         float: left;
-        line-height: 4.5em;
+        line-height: 4.6em;
         margin: 0em 2em;
         padding: 0;
     }
