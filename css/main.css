@@ -176,9 +176,9 @@ a.title {
 #tooltip {
     display: none;
     background: #272822;
-    color: #FFFFFF;
+    color: #F8F8F0;
     font-size: 0.7em;
-    padding: 0.5em;
+    padding: 0 0.2em;
     position: absolute;
     top: 0;
     left: 0;
