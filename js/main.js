@@ -75,7 +75,7 @@ $(function() {
 		"\n" +
 		"<try_link[position()] {\n" +
 		"  below: \"Give it a try below\",\n" +
-		"  default: \"Give it a try in the editor\"\n" +
+		"  default: \"Give it a try\"\n" +
 		"}>\n"
     );
 
