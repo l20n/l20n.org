@@ -115,4 +115,29 @@ $(function() {
 	implement.path(implementPath).attr({fill: "#F92672", stroke: "none", transform: "t50,50s4.5"});
 	improve.path(improvePath).attr({fill: "#F92672", stroke: "none", transform: "t59,50s5"});
 
+
+
+	/* data-l10n-id attributes */
+
+	$('[data-l10n-id]').hover(function() {
+		if (true) {
+			$(this).css('border-color', '#75715E');
+			var tooltip = $('#tooltip'),
+				id = $(this).data('l10n-id'),
+				top = $(this).offset().top + $(window).scrollTop() - tooltip.outerHeight(),
+				left = $(this).offset().left + $(window).scrollLeft();
+
+			// Display tooltip at the bottom if otherwise too high
+			if (top < 0) {
+				top += $(this).outerHeight() + tooltip.outerHeight();
+			};
+			tooltip.html(id).offset({top: top, left: left}).show();
+		}
+	}, function() {
+		if (true) {
+			$(this).css('border-color', 'transparent');
+			$('#tooltip').offset({top: 0, left: 0}).hide();
+		}
+	});
+
 });
