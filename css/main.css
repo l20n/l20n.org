@@ -309,7 +309,7 @@ a.title {
         }
 
     #editor {
-        height: 400px;
+        height: 25em;
         width: 100%;
     }
 
@@ -432,7 +432,7 @@ a.title {
     }
 
     #editor {
-        height: 600px;
+        height: 30em;
     }
 }
 
