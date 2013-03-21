@@ -206,8 +206,9 @@ a.title {
     Learn
    ======= */
 
-.learn .main {
+.learn .main-container {
     text-align: left;
+    padding-top: 2em;
 }
 
 .learn p {
