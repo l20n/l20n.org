@@ -176,9 +176,10 @@ a.title {
 #tooltip {
     display: none;
     background: #272822;
-    color: #F8F8F0;
+    color: #A6E22E;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     font-size: 0.7em;
-    padding: 0 0.2em;
+    padding: 0 0.3em;
     position: absolute;
     top: 0;
     left: 0;

@@ -131,7 +131,7 @@ $(function() {
 			if (top < 0) {
 				top += $(this).outerHeight() + tooltip.outerHeight();
 			};
-			tooltip.html(id).offset({top: top, left: left}).show();
+			tooltip.html("&lt;" + id + "&gt;").offset({top: top, left: left}).show();
 		}
 	}, function() {
 		$(this).css('box-shadow', 'none');
