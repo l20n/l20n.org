@@ -139,6 +139,10 @@ a#cta:active {
     margin-top: 0.5em;
 }
 
+.main article p a {
+    display: inline;
+}
+
 .main article a:hover,
 .main article a:active {
     text-decoration: underline;
@@ -188,6 +192,26 @@ a.title {
 
 #inspect {
     margin-left: 0.5em;
+}
+
+.navigation .back {
+    float: left;
+}
+
+.navigation .next {
+    float: right;
+}
+
+/* =======
+    Learn
+   ======= */
+
+.learn .main {
+    text-align: left;
+}
+
+.learn p {
+    margin: 2em 0
 }
 
 /* ==============
@@ -260,8 +284,6 @@ a.title {
     font-size: 0.8em;
     text-transform: uppercase;
 }
-
-
 
 /* ==============
     MOBILE: Main
