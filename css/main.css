@@ -145,9 +145,14 @@ a#cta:active {
 }
 
 a.title {
+    color: #F8F8F0;
     float: left;
     line-height: 4.6em;
     margin: 0 2em;
+}
+
+a.title.active {
+    color: #F92672;
 }
 
 .main header h2,
