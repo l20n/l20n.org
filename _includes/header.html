@@ -11,28 +11,28 @@
         <meta name="viewport" content="width=device-width">
 
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
-        <link rel="stylesheet" href="{{ site.url }}/css/normalize.min.css">
-        <link rel="stylesheet" href="{{ site.url }}/css/main.css">
+        <link rel="stylesheet" href="{{ site.url }}css/normalize.min.css">
+        <link rel="stylesheet" href="{{ site.url }}css/main.css">
 
         <!--[if lt IE 9]>
-            <script src="{{ site.url }}/js/html5-3.6-respond-1.1.0.min.js"></script>
+            <script src="{{ site.url }}js/html5-3.6-respond-1.1.0.min.js"></script>
         <![endif]-->
 
-        <script src="{{ site.url }}/js/raphael-min.js"></script>
-        <script src="{{ site.url }}/js/l20n-min.js"></script>
+        <script src="{{ site.url }}js/raphael-min.js"></script>
+        <script src="{{ site.url }}js/l20n-min.js"></script>
     </head>
     <body>
         <div class="header-container">
             <header class="clearfix">
                 <div class="mobile-container clearfix">
-                    <a class="title" data-l10n-id="name" href="/">L20n</a></h1>
+                    <a class="title" data-l10n-id="name" href="{{ site.url }}">L20n</a></h1>
                     <button class="toggle"></button>
                 </div>
                 <nav>                    
                     <ul>
                         <li><a href="#try" data-l10n-id="try">Try</a></li>
-                        <li><a href="#learn" data-l10n-id="learn">Learn</a></li>
-                        <li><a href="#mdn" data-l10n-id="implement">Implement</a></li>
+                        <li><a href="{{ site.url }}learn" data-l10n-id="learn">Learn</a></li>
+                        <li><a href="https://developer.mozilla.org/" data-l10n-id="implement">Implement</a></li>
                         <li><a href="https://github.com/l20n/" data-l10n-id="improve">Improve</a></li>
                     </ul>
                 </nav>
