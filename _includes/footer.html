@@ -2,7 +2,7 @@
             <footer class="clearfix">
                 <nav>                    
                     <ul>
-                        <li><a {% if page.name == "home" %}class="active" {% endif %}data-l10n-id="name" href="{{ site.url }}">L20n</a></li>
+                        <li><a {% if page.category == "home" %}class="active" {% endif %}href="{{ site.url }}" data-l10n-id="name">L20n</a></li>
                         {% include menu.html %}
                     </ul>
                     <p data-l10n-id="signature">Crafted by Mozilla.</p>
