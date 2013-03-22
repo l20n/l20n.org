@@ -211,6 +211,18 @@ a.title {
     padding-top: 2em;
 }
 
+.learn button.toggle {
+    background-color: #05B1CC;
+}
+
+.learn header nav {
+    background: #05B1CC;
+}
+
+.learn header nav a {
+    border-color: #068599;
+}
+
 .learn p {
     margin: 2em 0
 }
@@ -249,7 +261,6 @@ nav ul {
 
 nav a {
     border-bottom: 1px solid #B30545;
-    color: #F8F8F0;
     display: block;
     margin: 0 1em;
     padding: 1.6em 0;
@@ -281,6 +292,7 @@ footer nav p {
 
 nav a,
 a.title {
+    color: #F8F8F0;
     font-weight: 700;
     font-size: 0.8em;
     text-transform: uppercase;
@@ -391,6 +403,7 @@ a.title {
     }
 
     a.title {
+        color: #F92672;
         float: left;
         display: inline-block;
     }
