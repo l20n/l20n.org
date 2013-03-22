@@ -111,6 +111,15 @@ p {
     margin: 0;
 }
 
+code {
+    background: #F8F8F0;
+    border: 1px solid #05B1CC;
+    border-radius: 5px;
+    color: #05B1CC;
+    line-height: 1em;
+    padding: 0.1em 0.2em 0;
+}
+
 a {
     color: #F92672;
     text-decoration: none;
@@ -225,6 +234,10 @@ a.title {
 
 .learn p {
     margin: 2em 0
+}
+
+.learn .navigation {
+    margin-bottom: 4em;
 }
 
 /* ==============
