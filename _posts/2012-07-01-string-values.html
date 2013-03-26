@@ -6,9 +6,13 @@ prev_section: hello-world
 next_section: dictionary-values
 ---
 
-<section>
-    <p>This is an entity called `hello`. Entities are containers for information. You use entities to identify, store, and recall information to be used in the software's UI.</p>
-    <p>How does the information stored in an entity end up on the user's screen and in the UI?</p>
-    <p>&lt;hello "Hello, World!"&gt;</p>
-    <p>In its simplest form, an entity stores a value; here it's a string, `Hello, World!`.  Most of the entities you will work with in L20n will look similar to  this.  Some will be more complex, have more than one value variant, or use expressions to select the right variant depenidng on the circumstances.</p>
-</section>
+<p>L20n entities mostly store string values. A string is a sequence of characters that you can assign to an entity, store, and retrieve.</p>
+<p>You can reference other entities in a string by using the double brace syntax, <code>{{ name }}</code>.  The value of <code>name</code> will be retrieved and inserted into the string.</p>
+<p>You can also define easy-to-read, multiline strings with triple quotes, as can be seen in the <code>description</code> entity.</p>
+<p>&lt;name "Loki"&gt;</p>
+<p>&lt;about "About {{ name }}"&gt;</p>
+<p>&lt;description """</p>
+<p>{{ name }} is a simple micro-blogging</p>
+<p>app written entirely in HTML5.  It uses</p>
+<p>L20n to implement localization.</p>
+<p>"""&gt;</p>
