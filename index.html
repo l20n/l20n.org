@@ -44,7 +44,24 @@ title: Localization 2.0
                 </section>
             </div>
             <aside class="window">
-                <div id="editor"></div>
+                {% raw %}
+                <div id="editor">&lt;name "L20n"&gt;
+&lt;welcome "Welcome to {{ name }}"&gt;
+
+&lt;lead """
+  Unleashing your native language's
+  power through simple programming.
+"""&gt;
+
+&lt;position() { @screen.width &lt; 1140 ?
+                 "below" : "default" }&gt;
+
+&lt;try_link[position()] {
+  below: "Give it a try below",
+  default: "Give it a try"
+}&gt;
+                </div>
+                {% endraw %}
                 <h3 data-l10n-id="show">
                     <input id="inspect" name="inspect" type="checkbox">
                     <label for="inspect">Show data-l10n-id values on hover</label>

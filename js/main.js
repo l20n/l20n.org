@@ -54,24 +54,6 @@ $(function() {
 
 	/* Ace */
 
-	var state = (
-		"<name \"L20n\">\n" +
-		"<welcome \"Welcome to {{ name }}\">\n" +
-		"\n" +
-		"<lead \"\"\"\n" +
-		"  Unleashing your native language's\n" +
-		"  power through simple programming.\n" +
-		"\"\"\">\n" +
-		"\n" +
-		"<position() { @screen.width < 1140 ?\n" +
-		"                 \"below\" : \"default\" }>\n" +
-		"\n" +
-		"<try_link[position()] {\n" +
-		"  below: \"Give it a try below\",\n" +
-		"  default: \"Give it a try\"\n" +
-		"}>\n"
-    );
-
 	try {
 		var source = ace.edit("editor");
 		source.setShowPrintMargin(false);
@@ -79,7 +61,6 @@ $(function() {
 		source.getSession().setUseWrapMode(true);
 		source.setTheme("ace/theme/monokai");
 		source.getSession().setMode("ace/mode/php");
-		source.setValue(state);
 		source.clearSelection();
 		source.getSession().on('change', update);
 	} catch (e) {}
