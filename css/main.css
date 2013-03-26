@@ -340,10 +340,38 @@ a.title {
 }
 
 .main .window {
-    display: none;
-    font-size: 0.8em;
-    line-height: 1.5em;
+    background: #3D3D3D;
+    border: 1px solid #777777;
+    border-radius: 0 0 7px 7px;
+    box-shadow: 0 0 30px #52524D;
+    color: #FFFFFF;
     margin-bottom: 3em;
+    text-align: left;
+}
+
+.main .window h3 {
+    border-top: 1px solid #777777;
+    border-radius: 0 0 5px 5px;
+    color: #444444;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.7em;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.5em;
+    margin: 0;
+    padding: 0.2em 0;
+    text-shadow: 0 1px 0 #DDDDDD;
+    text-transform: none;
+    background: -moz-linear-gradient(top, #cfcfcf, #aaaaaa);
+    background: -webkit-linear-gradient(top, #cfcfcf, #aaaaaa);
+    background: linear-gradient(top, #cfcfcf, #aaaaaa);
+}
+
+#editor {
+    font-size: 0.7em;
+    height: 25em;
+    line-height: 1.5em;
+    width: 100%;
 }
 
 /* ===============
@@ -362,37 +390,8 @@ a.title {
     INTERMEDIATE: Main
    ==================== */
 
-    .main .window {
-        display: block;
-        background: #3D3D3D;
-        border: 1px solid #777777;
-        border-radius: 0 0 7px 7px;
-        box-shadow: 0 0 30px #52524D;
-        color: white;
-        text-align: left;
-        }
-
-    .main .window h3 {
-        border-top: 1px solid #777777;
-        border-radius: 0 0 5px 5px;
-        color: #444444;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 0.8em;
-        font-weight: 400;
-        letter-spacing: 0;
-        line-height: 1.5em;
-        margin: 0;
-        padding: 0.2em 0;
-        text-shadow: 0 1px 0 #DDDDDD;
-        text-transform: none;
-        background: -moz-linear-gradient(top, #cfcfcf, #aaaaaa);
-        background: -webkit-linear-gradient(top, #cfcfcf, #aaaaaa);
-        background: linear-gradient(top, #cfcfcf, #aaaaaa);
-    }
-
     #editor {
-        height: 25em;
-        width: 100%;
+        font-size: 0.8em;
     }
 
 /* ========================
