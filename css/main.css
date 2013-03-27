@@ -212,6 +212,22 @@ a.title {
     float: right;
 }
 
+.height5 {
+    height: 5em;
+}
+
+.height15 {
+    height: 15em;
+}
+
+.height25 {
+    height: 25em;
+}
+
+.height35 {
+    height: 35em;
+}
+
 /* =======
     Learn
    ======= */
@@ -370,7 +386,6 @@ a.title {
 
 #editor {
     font-size: 0.7em;
-    height: 25em;
     line-height: 1.5em;
     width: 100%;
 }
