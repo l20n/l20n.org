@@ -32,20 +32,31 @@ $(function() {
 	});
 
 	function update() {
+		$("#output").empty();
 		var code = source.getValue();
 		var ast = parser.parse(code);
+		try {
+			data = JSON.parse(context.getValue());
+		} catch (e) {}
 		var entries = compiler.compile(ast);
+
 		for (var id in entries) {
+			if (entries[id].expression) {
+				continue;
+				$("#output").append("<div><dt><code class=\"disabled\">" + id + "()</code></dt><dd></dd></div>");
+			}
 			var val;
 			try {
-				val = entries[id].toString();
+				val = entries[id].toString(data);
 			} catch (e) {
 				if (e instanceof compiler.ValueError) {
 					val = e.source;
 				} else {
+					$("#output").append("<div><dt><code class=\"disabled\">" + e.entry + "</code></dt><dd></dd></div>");
 					continue;
 				}
 			}
+			$("#output").append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
 			$('[data-l10n-id="' +  id + '"]').html(val);
 		}
 	}
@@ -63,6 +74,7 @@ $(function() {
 		source.getSession().setMode("ace/mode/php");
 		source.clearSelection();
 		source.getSession().on('change', update);
+		update();
 	} catch (e) {}
 
 

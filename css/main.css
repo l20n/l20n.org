@@ -255,6 +255,15 @@ a.title {
     margin: 2em 0
 }
 
+.learn #editor {
+    border: 1px solid #777777;
+}
+
+.learn #output {
+    border: 1px solid #777777;
+    padding: 0.4em;
+}
+
 .learn .navigation {
     margin-bottom: 4em;
 }
