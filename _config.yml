@@ -1,4 +1,4 @@
 auto: false
 server: true
-permalink: /:categories/:title
+permalink: /l20n.org/:categories/:title
 url: http://l20n.github.com/l20n.org/
