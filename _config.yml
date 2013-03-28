@@ -1,4 +1,4 @@
 auto: false
 server: true
 permalink: /:categories/:title
-url: http://localhost:4000/
+url: http://l20n.github.com/l20n.org/
