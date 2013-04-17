@@ -166,13 +166,13 @@ a.title {
     margin: 0 2em;
 }
 
-.main header h2,
-.main > article {
+.main header h2 {
     width: 90%;
     margin: 0.5em 5%;
 }
 
 .main > article {
+    width: 90%;
     margin: 0 5%;
 }
 
@@ -345,7 +345,6 @@ a.title {
 
 .main header {
     background: #05B1CC;
-    margin: 0em 0em 3em;
     padding: 2em 0;
 }
 
@@ -365,6 +364,11 @@ a.title {
     background: #05B1CC;
     display: inline-block;
     padding: 0 2em;
+}
+
+.main > article {
+    margin: 0 auto 0;
+    padding-top: 3em;
 }
 
 .main .window {
@@ -481,13 +485,14 @@ a.title {
     WIDE: Main
    ============ */
 
-    .main header {
-        margin: 0em 0em 2em;
-    }
-
     .main header h2 {
         font-size: 3em;
         margin-bottom: 1.0em;
+    }
+
+    .main > article {
+        margin: 0 auto 0;
+        padding-top: 2em;
     }
 
     .main > article > .blocks > section {
@@ -513,9 +518,12 @@ a.title {
    =============== */
 
     hr,
-    .main header h2,
-    .main > article {
+    .main header h2 {
         margin: 0 auto;
+        width: 1026px;
+    }
+
+    .main > article {
         width: 1026px;
     }
 
