@@ -60,12 +60,24 @@ textarea {
    Author: Mozilla - l20n.org
    ========================================================================== */
 
+html.error {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
 body {
     background: url('../img/grain.png') #F8F8F0;
     color: #333333;
     font: 19px/26px Open Sans, Helvetica Neue, Helvetica, Arial;
     font-weight: 300;
     text-align: center;
+}
+
+.error body {
+    background: #05B1CC;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 h3 {
