@@ -1,13 +1,15 @@
-        <div class="footer-container">
-            <footer class="clearfix">
-                <nav>                    
-                    <ul>
-                        <li><a {% if page.category == "home" %}class="active" {% endif %}href="{{ site.url }}" data-l10n-id="name">L20n</a></li>
-                        {% include menu.html %}
-                    </ul>
-                    <p data-l10n-id="signature">Crafted by Mozilla.</p>
-                </nav>
-            </footer>
+            <div class="footer-container">
+                <footer class="clearfix">
+                    <nav>
+                        <ul>
+                            <li><a {% if page.category == "home" %}class="active" {% endif %}href="{{ site.url }}" data-l10n-id="name">L20n</a></li>
+                            {% include menu.html %}
+                        </ul>
+                        <p data-l10n-id="signature">Crafted by Mozilla.</p>
+                    </nav>
+                </footer>
+            </div>
+
         </div>
 
         <div id="tooltip">&nbsp;</div>
