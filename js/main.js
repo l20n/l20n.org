@@ -11,11 +11,11 @@ $(function() {
   var docCallback = null;
 
   function translateDocument(l10n) {
-    var nodes = document.querySelectorAll('[data-l10n-id]');
-    for (var i = 0; i < nodes.length; i++) {
-      var id = nodes[i].getAttribute('data-l10n-id');
-      if (l10n.entities[id].value) {
-        nodes[i].innerHTML = l10n.entities[id].value;
+    for (var id in l10n.entities) {
+      var entity = l10n.entities[id];
+      if (entity.value) {
+        var node = document.querySelector('[data-l10n-id=' + id + ']');
+        node.innerHTML = entity.value;
       }
     }
   }
