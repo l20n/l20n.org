@@ -2,66 +2,43 @@ $(function() {
 
 	/* L20n */
 
-	var parser = new L20n.Parser(L20n.EventEmitter);
-	var compiler = new L20n.Compiler(L20n.EventEmitter, L20n.Parser);
+  var ctx = new Context();
 
-	compiler.setGlobals({
-		get hour() {
-			return new Date().getHours();
-		},
-		get os() {
-			if (/^MacIntel/.test(navigator.platform)) {
-				return 'mac';
-			}
-			if (/^Linux/.test(navigator.platform)) {
-				return 'linux';
-			}
-			if (/^Win/.test(navigatgor.platform)) {
-				return 'win';
-			}
-			return 'unknown';
-		},
-		screen: {
-			get width() {
-				return document.body.clientWidth;
-			},
-			get height() {
-				return document.body.clientHeight;
-			},
-		}
-	});
+  function update() {
+    $("#output").empty();
+    var code = source.getValue();
+    ctx.bindResource(code);
 
-
-
-	function update() {
-		//$("#output").empty();
-		var code = source.getValue();
-		var ast = parser.parse(code);
-		/*
-		try {
-			data = JSON.parse(context.getValue());
-		} catch (e) {}*/
-		var entries = compiler.compile(ast);
-
+    $('[data-l10n-id]').each(function(idx, elem) {
+      var id = elem.getAttribute('data-l10n-id');
+      var entity;
+      try {
+        var entity = ctx.getEntity(id);
+      } catch (e) {
+        console.log(e);
+      }
+      if (entity) {
+        $(elem).html(entity.value);
+      }
+    });
+    return;
 		for (var id in entries) {
-			/*
 			if (entries[id].expression) {
 				continue;
 				$("#output").append("<div><dt><code class=\"disabled\">" + id + "()</code></dt><dd></dd></div>");
-			}*/
-
+			}
 			var val;
 			try {
-				val = entries[id].toString(/*data*/);
+				val = entries[id].toString(data);
 			} catch (e) {
 				if (e instanceof compiler.ValueError) {
 					val = e.source;
 				} else {
-					//$("#output").append("<div><dt><code class=\"disabled\">" + e.entry + "</code></dt><dd></dd></div>");
+					$("#output").append("<div><dt><code class=\"disabled\">" + e.entry + "</code></dt><dd></dd></div>");
 					continue;
 				}
 			}
-			//$("#output").append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
+			$("#output").append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
 			$('[data-l10n-id="' +  id + '"]').html(val);
 		}
 	}
@@ -113,7 +90,6 @@ $(function() {
 			}
 		});
 	});
-
 
 
 	/* data-l10n-id attributes */
