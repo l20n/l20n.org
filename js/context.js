@@ -32,14 +32,14 @@ function Context(id) {
   function get(id, data) {
     var entry = _entries[id];
     if (entry === undefined) {
-      _emitter.emit('error', new EntityError("Not found", id, null));
+      _emitter.emit('error', new L20n.Context.EntityError("Not found", id, null));
       return id;
     } 
     try {
       return entry.getString(getArgs.bind(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
-        _emitter.emit('error', new EntityError(e.message, id, null));
+        _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
         return e.source;
       } else {
         throw e;
@@ -51,10 +51,19 @@ function Context(id) {
   function getEntity(id, data) {
     var entry = _entries[id];
     if (entry === undefined) {
-      _emitter.emit('error', new EntityError("Not found", id, null));
+      _emitter.emit('error', new L20n.Context.EntityError("Not found", id, null));
       return id;
     }
-    return entry.get(getArgs.bind(this, data));
+    try {
+      return entry.get(getArgs.bind(this, data));
+    } catch(e) {
+      if (e instanceof L20n.Compiler.RuntimeError) {
+        _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
+        return id;
+      } else {
+        throw e;
+      }
+    }
   }
 
   function localize(idsOrTuples, callback) {
@@ -109,23 +118,3 @@ function Context(id) {
     return args;
   }
 }
-
-Context.Error = ContextError;
-Context.EntityError = EntityError;
-
-function ContextError(message) {
-  this.name = 'ContextError';
-  this.message = message;
-}
-ContextError.prototype = Object.create(Error.prototype);
-ContextError.prototype.constructor = ContextError;
-
-function EntityError(message, id, lang) {
-  ContextError.call(this, message);
-  this.name = 'EntityError';
-  this.id = id;
-  this.lang = lang;
-  this.message = '[' + lang + '] ' + id + ': ' + message;
-}
-EntityError.prototype = Object.create(ContextError.prototype);
-EntityError.prototype.constructor = EntityError;
