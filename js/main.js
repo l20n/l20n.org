@@ -3,6 +3,11 @@ $(function() {
 	/* L20n */
 
   var ctx = new Context();
+  var l20nSource = "";
+  var headerScript = document.head.querySelector('script[type="application/l20n"]');
+  if (headerScript) { 
+    l20nSource = headerScript.textContent;
+  }
   var docCallback = null;
 
   function translateDocument(l10n) {
@@ -10,7 +15,7 @@ $(function() {
     for (var i = 0; i < nodes.length; i++) {
       var id = nodes[i].getAttribute('data-l10n-id');
       if (l10n.entities[id].value) {
-        nodes[i].textContent = l10n.entities[id].value;
+        nodes[i].innerHTML = l10n.entities[id].value;
       }
     }
   }
@@ -37,7 +42,10 @@ $(function() {
   function update() {
     $("#output").empty();
     var code = source.getValue();
+    ctx.restart();
+    ctx.bindResource(l20nSource);
     ctx.bindResource(code);
+    ctx.build();
     localizeDocument();
     return;
     
