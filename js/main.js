@@ -3,25 +3,44 @@ $(function() {
 	/* L20n */
 
   var ctx = new Context();
+  var docCallback = null;
+
+  function translateDocument(l10n) {
+    var nodes = document.querySelectorAll('[data-l10n-id]');
+    for (var i = 0; i < nodes.length; i++) {
+      var id = nodes[i].getAttribute('data-l10n-id');
+      if (l10n.entities[id].value) {
+        nodes[i].textContent = l10n.entities[id].value;
+      }
+    }
+  }
+
+
+  function localizeDocument() {
+    if (!docCallback) {
+      var nodes = document.querySelectorAll('[data-l10n-id]');
+      var ids = [];
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].hasAttribute('data-l10n-args')) {
+          ids.push([nodes[i].getAttribute('data-l10n-id'),
+              JSON.parse(nodes[i].getAttribute('data-l10n-args'))]);
+        } else {
+          ids.push(nodes[i].getAttribute('data-l10n-id'));
+        }
+      }
+      docCallback = ctx.localize(ids, translateDocument);
+    } else {
+      docCallback.retranslate();
+    }
+  }
 
   function update() {
     $("#output").empty();
     var code = source.getValue();
     ctx.bindResource(code);
-
-    $('[data-l10n-id]').each(function(idx, elem) {
-      var id = elem.getAttribute('data-l10n-id');
-      var entity;
-      try {
-        var entity = ctx.getEntity(id);
-      } catch (e) {
-        console.log(e);
-      }
-      if (entity) {
-        $(elem).html(entity.value);
-      }
-    });
+    localizeDocument();
     return;
+    
 		for (var id in entries) {
 			if (entries[id].expression) {
 				continue;
