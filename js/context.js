@@ -3,6 +3,8 @@ function Context(id) {
   this.data = {};
 
   this.bindResource = bindResource;
+  this.restart = restart;
+  this.build = build;
 
   this.get = get;
   this.getEntity = getEntity;
@@ -19,9 +21,14 @@ function Context(id) {
 
   _compiler.setGlobals(_globalsManager.globals);
 
+  function restart() {
+    _source = null;
+    _ast = null;
+    _entries = null;
+  }
+
   function bindResource(source) {
-    _source = source;
-    build();
+    _source += source;
   }
 
   function build() {
