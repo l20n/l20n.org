@@ -2,66 +2,70 @@ $(function() {
 
 	/* L20n */
 
-	var parser = new L20n.Parser(L20n.EventEmitter);
-	var compiler = new L20n.Compiler(L20n.EventEmitter, L20n.Parser);
+  var ctx = new Context();
+  var l20nSource = "";
+  var headerScript = document.head.querySelector('script[type="application/l20n"]');
+  if (headerScript) { 
+    l20nSource = headerScript.textContent;
+  }
+  var docCallback = null;
 
-	compiler.setGlobals({
-		get hour() {
-			return new Date().getHours();
-		},
-		get os() {
-			if (/^MacIntel/.test(navigator.platform)) {
-				return 'mac';
-			}
-			if (/^Linux/.test(navigator.platform)) {
-				return 'linux';
-			}
-			if (/^Win/.test(navigatgor.platform)) {
-				return 'win';
-			}
-			return 'unknown';
-		},
-		screen: {
-			get width() {
-				return document.body.clientWidth;
-			},
-			get height() {
-				return document.body.clientHeight;
-			},
-		}
-	});
+  function translateDocument(l10n) {
+    var nodes = document.querySelectorAll('[data-l10n-id]');
+    for (var i = 0; i < nodes.length; i++) {
+      var id = nodes[i].getAttribute('data-l10n-id');
+      if (l10n.entities[id].value) {
+        nodes[i].innerHTML = l10n.entities[id].value;
+      }
+    }
+  }
 
 
+  function localizeDocument() {
+    if (!docCallback) {
+      var nodes = document.querySelectorAll('[data-l10n-id]');
+      var ids = [];
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].hasAttribute('data-l10n-args')) {
+          ids.push([nodes[i].getAttribute('data-l10n-id'),
+              JSON.parse(nodes[i].getAttribute('data-l10n-args'))]);
+        } else {
+          ids.push(nodes[i].getAttribute('data-l10n-id'));
+        }
+      }
+      docCallback = ctx.localize(ids, translateDocument);
+    } else {
+      docCallback.retranslate();
+    }
+  }
 
-	function update() {
-		//$("#output").empty();
-		var code = source.getValue();
-		var ast = parser.parse(code);
-		/*
-		try {
-			data = JSON.parse(context.getValue());
-		} catch (e) {}*/
-		var entries = compiler.compile(ast);
-
+  function update() {
+    $("#output").empty();
+    var code = source.getValue();
+    ctx.restart();
+    ctx.bindResource(l20nSource);
+    ctx.bindResource(code);
+    ctx.build();
+    localizeDocument();
+    return;
+    
 		for (var id in entries) {
-			/*
 			if (entries[id].expression) {
 				continue;
 				$("#output").append("<div><dt><code class=\"disabled\">" + id + "()</code></dt><dd></dd></div>");
-			}*/
-
+			}
 			var val;
 			try {
-				val = entries[id].toString(/*data*/);
+				val = entries[id].toString(data);
 			} catch (e) {
 				if (e instanceof compiler.ValueError) {
 					val = e.source;
 				} else {
-					//$("#output").append("<div><dt><code class=\"disabled\">" + e.entry + "</code></dt><dd></dd></div>");
+					$("#output").append("<div><dt><code class=\"disabled\">" + e.entry + "</code></dt><dd></dd></div>");
 					continue;
 				}
 			}
-			//$("#output").append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
+			$("#output").append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
 			$('[data-l10n-id="' +  id + '"]').html(val);
 		}
 	}
@@ -113,7 +117,6 @@ $(function() {
 			}
 		});
 	});
-
 
 
 	/* data-l10n-id attributes */

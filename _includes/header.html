@@ -17,9 +17,30 @@
         <!--[if lt IE 9]>
             <script src="{{ site.url }}js/html5-3.6-respond-1.1.0.min.js"></script>
         <![endif]-->
+        <script type="application/l20n">
+
+<name "L20n">
+<welcome "Welcome to {{ name }}">
+
+<lead """
+  Unleashing your native language's
+  power through simple programming.
+""">
+
+<position() { @screen.width < 1140 ?
+                 "below" : "default" }>
+
+<try_link[position()] {
+  below: "Give it a try below",
+  default: "Give it a try"
+}>
+<learn "Learn Me">
+<learn_text "Explore how L20n empowers uninhibited natural language expression within web and software localization.">
+<learn_link "L20n by example &rarr;">
+        </script>
 
         <script src="{{ site.url }}js/raphael-min.js"></script>
-        <script src="{{ site.url }}js/l20n-min.js"></script>
+        <script src="{{ site.url }}js/l20n.js"></script>
     </head>
     <body class="{{ page.category }}">
         <div class="header-container">
