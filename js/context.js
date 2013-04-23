@@ -59,7 +59,11 @@ function Context(id) {
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
         _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
-        return id;
+        return {
+          value: e.source || id,
+          attributes: {},
+          globals: {}
+        };
       } else {
         throw e;
       }
