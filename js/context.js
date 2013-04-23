@@ -59,29 +59,32 @@ function Context(id) {
 
   function localize(idsOrTuples, callback) {
     var vals = {};
+    var globalsUsed = {};
+    var id;
     for (var i = 0, iot; iot = idsOrTuples[i]; i++) {
       if (Array.isArray(iot)) {
-        vals[iot[0]] = getEntity(iot[0], iot[1]);
+        id = iot[0];
+        vals[id] = getEntity(iot[0], iot[1]);
       } else {
-        vals[iot] = getEntity(iot);
+        id = iot;
+        vals[id] = getEntity(iot);
+      }
+      for (var global in vals[id].globals) {
+        if (vals[id].globals.hasOwnProperty(global)) {
+          globalsUsed[global] = true;
+        }
       }
     }
-    var globalsUsed = {};
-    Object.keys(vals).forEach(function (key) {
-      Object.keys(vals[key].globals).forEach(function (key2) {
-        globalsUsed[key2] = true;
-      });
-    });
     var retobj = {
       'entities': vals,
-      'globals': Object.keys(globalsUsed),
+      'retranslate': localize.bind(this, idsOrTuples, callback)
     };
     if (callback) {
       callback(retobj);
-      _globalsManager.registerGet({
+      _globalsManager.bindGet({
         'id': callback,
         'callback': localize.bind(this, idsOrTuples, callback),
-        'globals': retobj.globals});
+        'globals': Object.keys(globalsUsed)});
     }
     return retobj;
   }
