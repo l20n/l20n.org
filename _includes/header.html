@@ -19,8 +19,8 @@
         <![endif]-->
         <script type="application/l20n">
             <name "L20n">
-            <title "{% raw  %}{{ name }}{% endraw  %}{% if page.category == "learn" %} by example{% endif %} • {{ page.title }}">
-            <welcome "Welcome to {% raw  %}{{ name }}{% endraw  %}">
+            <title "{% raw %}{{ name }}{% endraw %}{% if page.category == "learn" %} by example{% endif %} • {{ page.title }}">
+            <welcome "Welcome to {% raw %}{{ name }}{% endraw %}">
 
             <lead """
               Unleashing your native language's
@@ -36,18 +36,22 @@
             }>
 
             <learn "Learn">
+            <learn_title "{% raw %}{{ learn }}{% endraw %}">
             <learn_text "Explore how L20n empowers uninhibited natural language expression within web and software localization.">
             <learn_link "L20n by example &rarr;">
 
             <implement "Implement">
+            <implement_title "{% raw %}{{ implement }}{% endraw %}">
             <implement_text "Using different translations on different screens is a killer feature for mobile and responsive design.">
             <implement_link "Developer docs &rarr;">
 
             <improve "Improve">
+            <improve_title "{% raw %}{{ improve }}{% endraw %}">
             <improve_text "Developed by Mozilla, it's not only free, but also open source and a proposed open standard.">
             <improve_link "Fork it on GitHub &rarr;">
 
             <show "Show data-l10n-id values on hover">
+            <name_footer "{% raw %}{{ name }}{% endraw %}">
             <signature "Crafted by Mozilla.">
         </script>
 
