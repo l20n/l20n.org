@@ -387,7 +387,7 @@ a.title {
 .main .window {
     background: #3D3D3D;
     border: 1px solid #777777;
-    border-radius: 0 0 7px 7px;
+    border-radius: 7px 7px 7px 7px;
     box-shadow: 0 0 30px #52524D;
     color: #FFFFFF;
     margin-bottom: 3em;
@@ -395,21 +395,32 @@ a.title {
 }
 
 .main .window h3 {
-    border-top: 1px solid #777777;
-    border-radius: 0 0 5px 5px;
+    background: -moz-linear-gradient(top, #f7f7f7 0%, #cfcfcf 7%, #aaaaaa 100%);
+    background: -webkit-linear-gradient(top, #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
+    background: linear-gradient(top, #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
+    border-bottom: 1px solid #111111;
+    border-radius: 5px 5px 0 0;
     color: #444444;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.6em;
+    font-size: 0.7em;
     font-weight: 400;
     letter-spacing: 0;
     line-height: 1.5em;
     margin: 0;
     padding: 0.2em 0;
+    text-align: center;
     text-shadow: 0 1px 0 #DDDDDD;
     text-transform: none;
+}
+
+.main .window h3.status {
     background: -moz-linear-gradient(top, #cfcfcf, #aaaaaa);
     background: -webkit-linear-gradient(top, #cfcfcf, #aaaaaa);
     background: linear-gradient(top, #cfcfcf, #aaaaaa);
+    border-bottom: none;
+    border-top: 1px solid #777777;
+    border-radius: 0 0 5px 5px;
+    font-size: 0.6em;
 }
 
 #editor {
