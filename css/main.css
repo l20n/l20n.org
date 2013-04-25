@@ -227,19 +227,19 @@ a.title {
     float: right;
 }
 
-.height5 {
+.editor.height5 {
     height: 5em;
 }
 
-.height15 {
+.editor.height15 {
     height: 15em;
 }
 
-.height25 {
+.editor.height25 {
     height: 25em;
 }
 
-.height35 {
+.editor.height35 {
     height: 35em;
 }
 
@@ -268,7 +268,7 @@ a.title {
     margin: 2em 0
 }
 
-.learn #editor {
+.learn .editor {
     border: 1px solid #777777;
 }
 
@@ -423,7 +423,7 @@ a.title {
     font-size: 0.6em;
 }
 
-#editor {
+.editor {
     font-size: 0.7em;
     line-height: 1.5em;
 }
@@ -444,7 +444,7 @@ a.title {
     INTERMEDIATE: Main
    ==================== */
 
-    #editor {
+    .editor {
         font-size: 0.8em;
     }
 
@@ -586,7 +586,7 @@ a.title {
         width: 48%;
     }
 
-    #editor {
+    .editor {
         height: 30em;
     }
 }

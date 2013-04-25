@@ -72,19 +72,21 @@ $(function() {
 
 
 
-	/* Ace */
+  /* Ace */
+  source = null;
+  $('div[id^="editor"]').each(function() {
+    var id = $(this).attr('id');
+    source = ace.edit(id);
 
-	try {
-		var source = ace.edit("editor");
-		source.setShowPrintMargin(false);
-		source.setDisplayIndentGuides(false);
-		source.getSession().setUseWrapMode(true);
-		source.setTheme("ace/theme/monokai");
-		source.getSession().setMode("ace/mode/php");
-		source.clearSelection();
-		source.getSession().on('change', update);
-		update();
-	} catch (e) {}
+    source.setShowPrintMargin(false);
+    source.setDisplayIndentGuides(false);
+    source.getSession().setUseWrapMode(true);
+    source.setTheme("ace/theme/monokai");
+    source.getSession().setMode("ace/mode/php");
+    source.clearSelection();
+    source.getSession().on('change', update);
+    update();
+  });
 
 
 
