@@ -56,7 +56,6 @@ $(function() {
   sourceEditor.getSession().setMode("ace/mode/php");
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
-  update();
 
 
 	/* data-l10n-id attributes */

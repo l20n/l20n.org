@@ -2991,7 +2991,6 @@ this.L20n.RetranslationManager = RetranslationManager;
   };
 }).call(this);
 (function(){
-    console.log(1)
   'use strict';
   var ctx = this.L20n.getContext(document.location.host);
   var headNode;
@@ -3099,7 +3098,7 @@ this.L20n.RetranslationManager = RetranslationManager;
       var entity = l10n.entities[id];
       var node = nodes[i];
       if (entity.value) {
-        node.textContent = entity.value;
+        node.innerHTML = entity.value;
       }
       for (var key in entity.attributes) {
         node.setAttribute(key, entity.attributes[key]);
