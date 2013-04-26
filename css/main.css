@@ -272,7 +272,7 @@ a.title {
     border: 1px solid #777777;
 }
 
-.learn #output {
+.learn dl[id^="output"] {
     border: 1px solid #777777;
     padding: 0.4em;
 }
