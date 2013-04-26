@@ -12,7 +12,7 @@ You can reference other entities in a string by using the double brace syntax, `
 
 You can also define easy-to-read, multiline strings with triple quotes, as can be seen in the `description` entity.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor1"
   data-source="sourceEditor1"
   data-output="output1"

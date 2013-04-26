@@ -14,7 +14,7 @@ The asterisk `*` on a key does just that:  it denotes the default member to retu
 
 You can still reference any member of the dictionary explicitly, like it's done in the `license` entity below.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor1"
   data-source="sourceEditor1"
   data-output="output1"
@@ -32,7 +32,7 @@ Keep in mind that dictionaries without default values are still valid L20n code 
 
 Naturally, dictionaries nested inside other dictionaries also can have default values.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor2"
   data-source="sourceEditor2"
   data-output="output2"

@@ -13,7 +13,7 @@ Enter dictionary values.  Dictionaries are the second value type an entity can h
 You can access the values in a dictionary by using a single dot syntax (`name.short`) or by using the square bracket syntax (`name['long']`) should you need to compute the member's key on runtime.
 (You'll learn how to prevent the `IndexError` in `name` in the <a href="{% post_url 2012-07-04-default-values-for-dictionaries %}">next chapter</a>.)
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor1"
   data-source="sourceEditor1"
   data-output="output1"
@@ -29,7 +29,7 @@ You can access the values in a dictionary by using a single dot syntax (`name.sh
 
 Dictionaries can be nested and mixed with regular strings.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor2"
   data-source="sourceEditor2"
   data-output="output2"

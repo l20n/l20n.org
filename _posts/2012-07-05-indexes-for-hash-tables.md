@@ -10,7 +10,7 @@ The asterisk `*` syntax is short-hand for a specific use in another of L20n's fe
 
 When the entity's value is a dictionary, an index (`["short"]` below) can be added to it to indicate which key of the dictionary should be returned.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor1"
   data-source="sourceEditor1"
   data-output="output1"
@@ -28,7 +28,7 @@ You can get much more creative in indexes and put expressions in them, too (see 
 
 If you nest dictionaries, you can define multivalued indexes.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor2"
   data-source="sourceEditor2"
   data-output="output2"

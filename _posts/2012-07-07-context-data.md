@@ -35,7 +35,7 @@ To reference a context data variable, use the dollar syntax in your L20n code: `
 
 Context data is a JSON object.  The developer chooses the exact structure:  it can be flat or nested, and you can access the nodes of the JSON object the same way you access members of L20n dictionaries, i.e. with the dot syntax.
 
-<div class="editor dataEditor height5"
+<div class="editor dataEditor height15"
   id="dataEditor2"
   data-source="sourceEditor2"
   data-ctxdata="dataEditor2"

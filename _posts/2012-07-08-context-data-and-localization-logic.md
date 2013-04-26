@@ -12,7 +12,7 @@ The user's gender is unknown at the time of writing the L20n code.  The develope
 
 Dictionary indexes (see <a href="{% post_url 2012-07-05-indexes-for-hash-tables %}">Chapter 5</a>) are the perfect tool for achieving this.  You can define multiple variants of the translation, one for each gender, and then use an index defined on the entity to select the proper message.
 
-<div class="editor dataEditor height5"
+<div class="editor dataEditor height15"
   id="dataEditor1"
   data-source="sourceEditor1"
   data-ctxdata="dataEditor1"
@@ -25,7 +25,7 @@ Dictionary indexes (see <a href="{% post_url 2012-07-05-indexes-for-hash-tables 
     }
 }
 </div>
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor1"
   data-source="sourceEditor1"
   data-ctxdata="dataEditor1"

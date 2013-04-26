@@ -14,7 +14,7 @@ While entity values discussed in previous chapters store the representation of t
 
 Attributes come after the entity value and are defined with a colon, followed by the name of the attribute.  You can reference attributes from other parts of the L20n code with the double-colon (`::`) syntax.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height15"
   id="sourceEditor1"
   data-source="sourceEditor1"
   data-output="output1"
@@ -32,7 +32,7 @@ Attributes come after the entity value and are defined with a colon, followed by
 
 Attribute values follow the exact same rules as entity values do:  they can be strings or dictionaries (also nested ones), and can define indexes and default values.
 
-<div class="editor sourceEditor height5"
+<div class="editor sourceEditor height25"
   id="sourceEditor2"
   data-source="sourceEditor2"
   data-output="output2"
