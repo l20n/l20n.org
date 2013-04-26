@@ -1,7 +1,7 @@
 function Context(id) {
   this.id = id;
   this.data = {};
-  this.entities = {};
+  this.entries = {};
 
   this.bindResource = bindResource;
   this.restart = restart;
@@ -104,10 +104,10 @@ function Context(id) {
     for (var i = 0, iot; iot = idsOrTuples[i]; i++) {
       if (Array.isArray(iot)) {
         id = iot[0];
-        vals[id] = getEntity(iot[0], iot[1]);
+        vals[id] = getEntity.call(this, iot[0], iot[1]);
       } else {
         id = iot;
-        vals[id] = getEntity(iot);
+        vals[id] = getEntity.call(this, iot);
       }
       for (var global in vals[id].globals) {
         if (vals[id].globals.hasOwnProperty(global)) {
