@@ -45,7 +45,7 @@ function Context(id) {
       return id;
     } 
     try {
-      return entry.getString(getArgs.bind(this, data));
+      return entry.getString(getArgs.call(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
         _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
@@ -65,7 +65,7 @@ function Context(id) {
       throw ex;
     } 
     try {
-      return entry.getString(getArgs.bind(this, data));
+      return entry.getString(getArgs.call(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
         _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
@@ -82,7 +82,7 @@ function Context(id) {
       return id;
     }
     try {
-      return entry.get(getArgs.bind(this, data));
+      return entry.get(getArgs.call(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
         _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));

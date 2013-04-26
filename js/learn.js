@@ -2,6 +2,7 @@ $(function() {
 
 	/* L20n */
 
+  // use one context for all editors on the page
   var ctx = new Context();
 
   function update(sourceEditorId, dataEditorId, outputId) {
@@ -13,7 +14,7 @@ $(function() {
     ctx.restart();
 
     ctx.bindResource(sourceEditor.getValue());
-    ctx.data = dataEditor && dataEditor.getValue();
+    ctx.data = dataEditor && JSON.parse(dataEditor.getValue());
     ctx.build();
     
 		for (var id in ctx.entries) {
@@ -27,9 +28,7 @@ $(function() {
 			var val;
 			try {
 				val = ctx.getOrError(id);
-        console.log(val)
 			} catch (e) {
-        throw e
         // XXX show the error somewhere?
 				if (e.source) {
 					val = e.source;

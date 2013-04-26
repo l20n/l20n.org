@@ -12,7 +12,11 @@ You can reference other entities in a string by using the double brace syntax, `
 
 You can also define easy-to-read, multiline strings with triple quotes, as can be seen in the `description` entity.
 
-<div id="editor" class="editor height15">&lt;name "Loki"&gt;
+<div class="editor sourceEditor height5"
+  id="sourceEditor1"
+  data-source="sourceEditor1"
+  data-output="output1"
+>&lt;name "Loki"&gt;
 &lt;about "About {% raw %}{{ name }}{% endraw %}"&gt;
 &lt;description """
   {% raw %}{{ name }}{% endraw %} is a simple micro-blogging
@@ -20,5 +24,5 @@ You can also define easy-to-read, multiline strings with triple quotes, as can b
   L20n to implement localization.
 """&gt;
 </div>
-<dl id="output">
+<dl id="output1">
 </dl>

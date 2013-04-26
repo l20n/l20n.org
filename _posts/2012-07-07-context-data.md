@@ -14,25 +14,45 @@ Developers define these as context data, which is then available to all entities
 
 To reference a context data variable, use the dollar syntax in your L20n code: `$user`.  `user` has to be defined in the context data.  In the examples below, we insert the value of a context data variable into an entity's value.
 
-<div id="editor1" class="editor height5">{
+<div class="editor dataEditor height5"
+  id="dataEditor1"
+  data-source="sourceEditor1"
+  data-ctxdata="dataEditor1"
+  data-output="output1"
+>{
     "user": "Jane"
 }
 </div>
-<div id="editor2" class="editor height5">&lt;liked "{% raw %}{{ $user }}{% endraw %} liked your post."&gt;
+<div class="editor sourceEditor height5"
+  id="sourceEditor1"
+  data-source="sourceEditor1"
+  data-ctxdata="dataEditor1"
+  data-output="output1"
+>&lt;liked "{% raw %}{{ $user }}{% endraw %} liked your post."&gt;
 </div>
-<dl id="output">
+<dl id="output1">
 </dl>
 
 Context data is a JSON object.  The developer chooses the exact structure:  it can be flat or nested, and you can access the nodes of the JSON object the same way you access members of L20n dictionaries, i.e. with the dot syntax.
 
-<div id="editor3" class="editor height15">{
+<div class="editor dataEditor height5"
+  id="dataEditor2"
+  data-source="sourceEditor2"
+  data-ctxdata="dataEditor2"
+  data-output="output2"
+>{
     "user": {
-        name: "Jane",
-        followers: "1337"
+        "name": "Jane",
+        "followers": 1337
     }
 }
 </div>
-<div id="editor4" class="editor height5">&lt;shared "{% raw %}{{ $user.name }}{% endraw %} shared your post to {% raw %}{{ $user.followers }}{% endraw %} follower(s)."&gt;
+<div class="editor sourceEditor height5"
+  id="sourceEditor2"
+  data-source="sourceEditor2"
+  data-ctxdata="dataEditor2"
+  data-output="output2"
+>&lt;shared "{% raw %}{{ $user.name }}{% endraw %} shared your post to {% raw %}{{ $user.followers }}{% endraw %} follower(s)."&gt;
 </div>
-<dl id="output">
+<dl id="output2">
 </dl>
