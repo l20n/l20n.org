@@ -193,56 +193,34 @@
     // a special Locale for resources not associated with any other
     var _none;
 
+    var _reslinks = [];
+
     var _isFrozen = false;
     var _isReady = false;
     var _emitter = new L20n.EventEmitter();
     var _parser = new L20n.Parser(L20n.EventEmitter);
     var _compiler = new L20n.Compiler(L20n.EventEmitter, L20n.Parser);
 
-    var _globalsManager = new L20n.GlobalsManager();
+    var _retr = new L20n.RetranslationManager();
 
     var _listeners = [];
 
     _parser.addEventListener('error', echo);
     _compiler.addEventListener('error', echo);
-    _compiler.setGlobals(_globalsManager.globals);
+    _compiler.setGlobals(_retr.globals);
 
-    function get(id, data, callback) {
+    function get(id, data) {
       if (!_isReady) {
-        if (!callback) {
-          throw new ContextError("Context not ready");
-        }
-        return this.addEventListener('ready', 
-                                     get.bind(this, id, data, callback));
+        throw new ContextError("Context not ready");
       }
-      var entity = getFromLocale(0, id, data);
-      if (callback) {
-        callback(entity.value);
-        _globalsManager.bindGet({
-          'id': callback,
-          'callback': get.bind(this, id, data, callback),
-          'globals': entity.globals});
-      }
-      return entity.value;
+      return getFromLocale(0, id, data).value;
     }
 
-    function getEntity(id, data, callback) {
+    function getEntity(id, data) {
       if (!_isReady) {
-        if (!callback) {
-          throw new ContextError("Context not ready");
-        }
-        return this.addEventListener('ready', 
-                                     getEntity.bind(this, id, data, callback));
+        throw new ContextError("Context not ready");
       }
-      var entity = getFromLocale(0, id, data);
-      if (callback) {
-        callback(entity);
-        _globalsManager.bindGet({
-          'id': callback,
-          'callback': getEntity.bind(this, id, data, callback),
-          'globals': entity.globals});
-      }
-      return entity;
+      return getFromLocale(0, id, data);
     }
 
     function localize(idsOrTuples, callback) {
@@ -250,8 +228,13 @@
         if (!callback) {
           throw new ContextError("Context not ready");
         }
-        return this.addEventListener('ready',
-                                     getMany.bind(this, idsOrTuples, data, callback));
+        _retr.bindGet({
+          id: callback,
+          callback: getMany.bind(this, idsOrTuples, callback),
+          globals: [],
+        });
+        // XXX: add stop and retranslate to the returned object
+        return {};
       }
       return getMany(idsOrTuples, callback);
     }
@@ -274,17 +257,20 @@
           }
         }
       }
-      var retobj = {
-        'entities': vals
+      var l10n = {
+        entities: vals,
+        //stop: fn
       };
       if (callback) {
-        callback(retobj);
-        _globalsManager.bindGet({
-          'id': callback,
-          'callback': getMany.bind(this, idsOrTuples, callback),
-          'globals': Object.keys(globalsUsed)});
+        callback(l10n);
+        _retr.bindGet({
+          id: callback,
+          callback: getMany.bind(this, idsOrTuples, callback),
+          globals: Object.keys(globalsUsed),
+        });
       }
-      return retobj;
+      // XXX: add stop and retranslate to the returned object
+      return {};
     }
 
     function getLocale(i) {
@@ -355,12 +341,8 @@
     }
 
     function addResource(text) {
-      if (_available.length === 0) {
+      if (_none === undefined) {
         _none = new Locale(null, _parser, _compiler);
-      } else {
-        // XXX should addResource add the text to all locales in the multilocale 
-        // mode?  or throw?
-        throw new ContextError("Can't use addResource with registered languages");
       }
       var res = new Resource(null, _parser);
       res.source = text;
@@ -368,6 +350,10 @@
     }
 
     function linkResource(uri) {
+      _reslinks.push(uri);
+    }
+
+    function link(uri) {
       if (typeof uri === 'function') {
         return linkTemplate(uri);
       } else {
@@ -376,9 +362,6 @@
     }
 
     function linkTemplate(uriTemplate) {
-      if (_available.length === 0) {
-        throw new ContextError("No registered languages");
-      }
       for (var lang in _locales) {
         var res = new Resource(uriTemplate(lang), _parser);
         // XXX detect if the resource has been already added?
@@ -393,7 +376,6 @@
         for (var lang in _locales) {
           _locales[lang].resources.push(res);
         }
-        return true;
       }
       if (_none === undefined) {
         _none = new Locale(null, _parser, _compiler);
@@ -403,15 +385,25 @@
     }
 
     function registerLocales() {
+      if (_isFrozen && !_isReady) {
+        throw new ContextError("Context not ready");
+      }
+      _available = [];
       for (var i in arguments) {
         var lang = arguments[i];
         _available.push(lang);
         _locales[lang] = new Locale(lang, _parser, _compiler);
       }
+      if (_isFrozen) {
+        freeze();
+      }
     }
 
     function freeze() {
       _isFrozen = true;
+      for (var i = 0; i < _reslinks.length; i++) {
+        link(_reslinks[i]);
+      }
       var locale = _available.length > 0 ? _locales[_available[0]] : _none;
       return locale.build(true).then(setReady);
     }
@@ -419,6 +411,7 @@
     function setReady() {
       _isReady = true;
       _emitter.emit('ready');
+      _retr.retranslate();
     }
 
     function addEventListener(type, listener) {
@@ -1588,26 +1581,26 @@ this.L20n.Promise = Promise;
 (function(){
   'use strict';
 
-function GlobalsManager() {
-  var _entries = {};
+function RetranslationManager() {
   var _usage = [];
   var _counter = {};
+  var _callbacks = [];
 
-  this.registerGlobal = registerGlobal;
   this.bindGet = bindGet;
-  this.globals = _entries;
+  this.retranslate = retranslate;
+  this.globals = {};
 
-  for (var i in GlobalsManager._constructors) {
-    registerGlobal(GlobalsManager._constructors[i]);
+  for (var i in RetranslationManager._constructors) {
+    initGlobal.call(this, RetranslationManager._constructors[i]);
   }
 
-  function registerGlobal(globalCtor) {
+  function initGlobal(globalCtor) {
     var global = new globalCtor();
-    _entries[global.id] = global;
+    this.globals[global.id] = global;
     _counter[global.id] = 0; 
     global.addEventListener('change', function(id) {
       for (var i = 0; i < _usage.length; i++) {
-        if (_usage[i].globals.indexOf(id) !== -1) {
+        if (_usage[i] && _usage[i].globals.indexOf(id) !== -1) {
           _usage[i].callback();
         }  
       }
@@ -1615,6 +1608,19 @@ function GlobalsManager() {
   };
 
   function bindGet(get) {
+    // store the callback in case we want to retranslate the whole context
+    var inCallbacks;
+    for (var i = 0; i < _callbacks.length; i++) {
+      if (_callbacks[i].id === get.id) {
+        inCallbacks = true;
+        break;
+      }
+    }
+    if (!inCallbacks) {
+      _callbacks.push(get);
+    }
+
+    // handle the global usage
     var inUsage = null;
     for (var usageInc = 0; usageInc < _usage.length; usageInc++) {
       if (_usage[usageInc] && _usage[usageInc].id === get.id) {
@@ -1627,8 +1633,8 @@ function GlobalsManager() {
         _usage.push(get);
         get.globals.forEach(function(id) {
           _counter[id]++;
-          _entries[id].activate();
-        });
+          this.globals[id].activate();
+        }, this);
       }
     } else {
       if (get.globals.length == 0) {
@@ -1639,27 +1645,33 @@ function GlobalsManager() {
         });
         added.forEach(function(id) {
           _counter[id]++;
-          _entries[id].activate();
-        });
+          this.globals[id].activate();
+        }, this);
         var removed = inUsage.globals.filter(function(id) {
           return get.globals.indexOf(id) === -1;
         });
         removed.forEach(function(id) {
           _counter[id]--;
           if (_counter[id] == 0) {
-            _entries[id].deactivate();
+            this.globals[id].deactivate();
           }
         });
         inUsage.globals = get.globals;
       }
     }
   }
+
+  function retranslate() {
+    for (var i = 0; i < _callbacks.length; i++) {
+      _callbacks[i].callback();
+    }
+  }
 }
 
-GlobalsManager._constructors = [];
+RetranslationManager._constructors = [];
 
-GlobalsManager.registerGlobal = function(ctor) {
-  GlobalsManager._constructors.push(ctor);
+RetranslationManager.registerGlobal = function(ctor) {
+  RetranslationManager._constructors.push(ctor);
 }
 
 function Global() {
@@ -1677,10 +1689,7 @@ Global.prototype.addEventListener = function(type, listener) {
 Global.prototype.activate = function() {}
 Global.prototype.deactivate = function() {}
 
-GlobalsManager.Global = Global;
-
-L20n.GlobalsManager = GlobalsManager;
-
+RetranslationManager.Global = Global;
 
 
 // XXX: Warning, we're cheating here for now. We want to have @screen.width,
@@ -1799,9 +1808,11 @@ function HourGlobal() {
 HourGlobal.prototype = Object.create(Global.prototype);
 HourGlobal.prototype.constructor = HourGlobal;
 
-GlobalsManager.registerGlobal(ScreenGlobal);
-GlobalsManager.registerGlobal(OSGlobal);
-GlobalsManager.registerGlobal(HourGlobal);
+RetranslationManager.registerGlobal(ScreenGlobal);
+RetranslationManager.registerGlobal(OSGlobal);
+RetranslationManager.registerGlobal(HourGlobal);
+
+this.L20n.RetranslationManager = RetranslationManager;
 
 }).call(this);
 (function() {
@@ -2978,4 +2989,138 @@ GlobalsManager.registerGlobal(HourGlobal);
   this.L20n.Intl = {
     prioritizeLocales: prioritizeLocales
   };
+}).call(this);
+(function(){
+  'use strict';
+  var ctx = this.L20n.getContext(document.location.host);
+  var headNode;
+  if (document.body) {
+    document.body.style.visibility = 'hidden';
+  }
+
+  function bootstrap() {
+    headNode = document.head;
+    var data = headNode.querySelector('script[type="application/l10n-data+json"]');
+
+    if (data) {
+      ctx.data = JSON.parse(data.textContent);
+    }
+
+    var script = headNode.querySelector('script[type="application/l20n"]');
+    if (script) {
+      if (script.hasAttribute('src')) {
+        ctx.linkResource(script.getAttribute('src'));
+      } else {
+        ctx.addResource(script.textContent);
+      }
+      initializeDocumentContext();
+    } else {
+      var link = headNode.querySelector('link[rel="localization"]');
+      if (link) {
+        loadManifest(link.getAttribute('href')).then(
+          initializeDocumentContext
+        );
+      }
+    }
+    return true;
+  }
+
+  bootstrap();
+
+  function initializeDocumentContext() {
+    localizeDocument();
+
+    ctx.addEventListener('ready', function() {
+      var event = document.createEvent('Event');
+      event.initEvent('LocalizationReady', false, false);
+      document.dispatchEvent(event);
+    });
+
+    ctx.addEventListener('error', function(e) {
+      if (e.code & L20n.NOVALIDLOCALE_ERROR) {
+        var event = document.createEvent('Event');
+        event.initEvent('LocalizationFailed', false, false);
+        document.dispatchEvent(event);
+      }
+    });
+
+    ctx.freeze();
+  }
+
+  function loadManifest(url) {
+    var deferred = new L20n.Promise();
+    L20n.IO.load(url, true).then(
+      function(text) {
+        var manifest = JSON.parse(text);
+        var langList = L20n.Intl.prioritizeLocales(manifest.languages);
+        ctx.registerLocales.apply(this, langList);
+        ctx.linkResource(function(lang) {
+          return manifest.resources[0].replace("{{lang}}", lang);
+        });
+        deferred.fulfill();
+      }
+    );
+    return deferred;
+  }
+
+  function fireLocalizedEvent() {
+    document.body.style.visibility = 'visible';
+    var event = document.createEvent('Event');
+    event.initEvent('DocumentLocalized', false, false);
+    document.dispatchEvent(event);
+  }
+
+  function onDocumentBodyReady() {
+    if (document.readyState === 'interactive') {
+      localizeNode(document);
+      fireLocalizedEvent();
+      document.removeEventListener('readystatechange', onDocumentBodyReady);
+    }
+  }
+
+  function localizeDocument() {
+    if (document.body) {
+      localizeNode(document);
+      fireLocalizedEvent();
+    } else {
+      document.addEventListener('readystatechange', onDocumentBodyReady);
+    }
+    HTMLDocument.prototype.__defineGetter__('l10n', function() {
+      return ctx;
+    });
+  }
+
+  function retranslate(node, l10n) {
+    var nodes = node.querySelectorAll('[data-l10n-id]');
+    var entity;
+    for (var i = 0; i < nodes.length; i++) {
+      var id = nodes[i].getAttribute('data-l10n-id');
+      var entity = l10n.entities[id];
+      var node = nodes[i];
+      if (entity.value) {
+        node.innerHTML = entity.value;
+      }
+      for (var key in entity.attributes) {
+        node.setAttribute(key, entity.attributes[key]);
+      }
+    }
+    // readd data-l10n-attrs
+    // readd data-l10n-overlay
+    // secure attribute access
+  }
+
+  function localizeNode(node) {
+    var nodes = node.querySelectorAll('[data-l10n-id]');
+    var ids = [];
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].hasAttribute('data-l10n-args')) {
+        ids.push([nodes[i].getAttribute('data-l10n-id'),
+                  JSON.parse(nodes[i].getAttribute('data-l10n-args'))]);
+      } else {
+        ids.push(nodes[i].getAttribute('data-l10n-id'));
+      }
+    }
+    ctx.localize(ids, retranslate.bind(this, node));
+  }
+
 }).call(this);
