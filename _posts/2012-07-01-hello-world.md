@@ -8,8 +8,12 @@ next_section: string-values
 
 This is an entity called `hello`. Entities are containers for information. You use entities to identify, store, and recall information to be used in the software's UI.
 
-<div id="editor" class="editor height5">&lt;hello "Hello, World!"&gt;</div>
-<dl id="output">
+<div class="editor sourceEditor height5"
+  id="sourceEditor1"
+  data-source="sourceEditor1"
+  data-output="output1"
+>&lt;hello "Hello, World!"&gt;</div>
+<dl id="output1">
 </dl>
 
 In its simplest form, an entity stores a value; here it's a string, `Hello, World!`.  Most of the entities you will work with in L20n will look similar to  this.  Some will be more complex, have more than one value variant, or use expressions to select the right variant depenidng on the circumstances.
