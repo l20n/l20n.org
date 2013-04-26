@@ -13,27 +13,35 @@ Enter dictionary values.  Dictionaries are the second value type an entity can h
 You can access the values in a dictionary by using a single dot syntax (`name.short`) or by using the square bracket syntax (`name['long']`) should you need to compute the member's key on runtime.
 (You'll learn how to prevent the `IndexError` in `name` in the <a href="{% post_url 2012-07-04-default-values-for-dictionaries %}">next chapter</a>.)
 
-<div id="editor1" class="editor height15">&lt;name {
+<div class="editor sourceEditor height5"
+  id="sourceEditor1"
+  data-source="sourceEditor1"
+  data-output="output1"
+>&lt;name {
   short: "Loki",
   long: "Loki Mobile Client"
 }&gt;
 &lt;about "About {% raw %}{{ name.short }}{% endraw %}"&gt;
 &lt;license "{% raw %}{{ name['long'] }}{% endraw %} is open-source."&gt;
 </div>
-<dl id="output">
+<dl id="output1">
 </dl>
 
 Dictionaries can be nested and mixed with regular strings.
 
-<div id="editor2" class="editor height15">&lt;name {
+<div class="editor sourceEditor height5"
+  id="sourceEditor2"
+  data-source="sourceEditor2"
+  data-output="output2"
+>&lt;name {
   short: {
     nominative: "Loki",
     genitive: "Loki's"
   },
   long: "Loki Mobile Client"
-&gt;
+}&gt;
 &lt;about "About {% raw %}{{ name.short.nominative }}{% endraw %}"&gt;
 &lt;license "{% raw %}{{ name.long }}{% endraw %} is open-source."&gt;
 </div>
-<dl id="output">
+<dl id="output2">
 </dl>

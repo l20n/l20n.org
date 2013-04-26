@@ -14,29 +14,37 @@ The asterisk `*` on a key does just that:  it denotes the default member to retu
 
 You can still reference any member of the dictionary explicitly, like it's done in the `license` entity below.
 
-<div id="editor1" class="editor height15">&lt;name {
+<div class="editor sourceEditor height5"
+  id="sourceEditor1"
+  data-source="sourceEditor1"
+  data-output="output1"
+>&lt;name {
  *short: "Loki",
   long: "Loki Mobile Client"
 }&gt;
 &lt;about "About {% raw %}{{ name }}{% endraw %}"&gt;
 &lt;license "{% raw %}{{ name.short }}{% endraw %} is open-source."&gt;
 </div>
-<dl id="output">
+<dl id="output1">
 </dl>
 
 Keep in mind that dictionaries without default values are still valid L20n code and can be useful, especially as local data stores.  They cannot, however, be evaluated to a single string and used in the UI without some extra work.
 
 Naturally, dictionaries nested inside other dictionaries also can have default values.
 
-<div id="editor2" class="editor height15">&lt;name {
+<div class="editor sourceEditor height5"
+  id="sourceEditor2"
+  data-source="sourceEditor2"
+  data-output="output2"
+>&lt;name {
   *short: {
     *nominative: "Loki",
     genitive: "Loki's"
   },
   long: "Loki Mobile Client"
-&gt;
+}&gt;
 &lt;about "About {% raw %}{{ name.short.nominative }}{% endraw %}"&gt;
 &lt;license "{% raw %}{{ name.long }}{% endraw %} is open-source."&gt;
 </div>
-<dl id="output">
+<dl id="output2">
 </dl>
