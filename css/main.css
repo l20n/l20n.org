@@ -398,7 +398,7 @@ a.title {
     background: -moz-linear-gradient(top, #f7f7f7 0%, #cfcfcf 7%, #aaaaaa 100%);
     background: -webkit-linear-gradient(top, #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
     background: linear-gradient(top, #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
-    border-bottom: 1px solid #111111;
+    border-bottom: 1px solid #777777;
     border-radius: 5px 5px 0 0;
     color: #444444;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
