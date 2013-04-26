@@ -464,8 +464,7 @@ a.title {
    ============ */
 
     .learn .header-container {
-        float: left;
-        width: 25%;
+        display: none;
     }
 
     .mobile-container {
@@ -514,11 +513,6 @@ a.title {
     WIDE: Main
    ============ */
 
-    .learn .main-container {
-        float: right;
-        width: 75%;
-    }
-
     .main header h2 {
         font-size: 3em;
         margin-bottom: 1.0em;
@@ -559,10 +553,6 @@ a.title {
 
     .main > article {
         width: 1026px;
-    }
-
-    .learn .main > article {
-        width: 90%;
     }
 
     .main header h2 {
