@@ -15,12 +15,12 @@ function Context(id) {
   var _emitter = new L20n.EventEmitter();
   var _parser = new L20n.Parser(L20n.EventEmitter);
   var _compiler = new L20n.Compiler(L20n.EventEmitter, L20n.Parser);
-  var _globalsManager = new L20n.GlobalsManager();
+  var _retr = new L20n.RetranslationManager();
 
   var _ast = null;
   var _source = null;
 
-  _compiler.setGlobals(_globalsManager.globals);
+  _compiler.setGlobals(_retr.globals);
 
   function restart() {
     _source = null;
@@ -121,7 +121,7 @@ function Context(id) {
     };
     if (callback) {
       callback(retobj);
-      _globalsManager.bindGet({
+      _retr.bindGet({
         'id': callback,
         'callback': localize.bind(this, idsOrTuples, callback),
         'globals': Object.keys(globalsUsed)});
