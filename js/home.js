@@ -49,10 +49,10 @@ $(function() {
 
   /* Ace */
   sourceEditor = ace.edit('editor');
+  sourceEditor.setTheme("ace/theme/monokai");
   sourceEditor.setShowPrintMargin(false);
   sourceEditor.setDisplayIndentGuides(false);
   sourceEditor.getSession().setUseWrapMode(true);
-  sourceEditor.setTheme("ace/theme/monokai");
   sourceEditor.getSession().setMode("ace/mode/php");
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);

@@ -53,10 +53,10 @@ $(function() {
     var id = $(this).attr('id');
     var editor = ace.edit(id);
 
+    editor.setTheme("ace/theme/monokai");
     editor.setShowPrintMargin(false);
     editor.setDisplayIndentGuides(false);
     editor.getSession().setUseWrapMode(true);
-    editor.setTheme("ace/theme/monokai");
     if ($(this).hasClass('sourceEditor')) {
       editor.getSession().setMode("ace/mode/php");
     } else {
