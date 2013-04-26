@@ -14,7 +14,7 @@ Developers define these as context data, which is then available to all entities
 
 To reference a context data variable, use the dollar syntax in your L20n code: `$user`.  `user` has to be defined in the context data.  In the examples below, we insert the value of a context data variable into an entity's value.
 
-<div id="editor1" class="editor height15">{
+<div id="editor1" class="editor height5">{
     "user": "Jane"
 }
 </div>
@@ -32,7 +32,7 @@ Context data is a JSON object.  The developer chooses the exact structure:  it c
     }
 }
 </div>
-<div id="editor4" class="editor height15">&lt;shared "{% raw %}{{ $user.name }}{% endraw %} shared your post to {% raw %}{{ $user.followers }}{% endraw %} follower(s)."&gt;
+<div id="editor4" class="editor height5">&lt;shared "{% raw %}{{ $user.name }}{% endraw %} shared your post to {% raw %}{{ $user.followers }}{% endraw %} follower(s)."&gt;
 </div>
 <dl id="output">
 </dl>
