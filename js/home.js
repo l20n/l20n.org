@@ -81,12 +81,4 @@ $(function() {
 		$('#tooltip').offset({top: 0, left: 0}).hide();
 	});
 
-
-
-  /* Menu */
-
-  $('.toggle').click(function() {
-    $(this).parent().next().toggle();
-  });
-
 });
