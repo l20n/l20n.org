@@ -499,6 +499,10 @@ a.title {
         display: inline-block;
     }
 
+    .learn header nav ul li {
+        width: 100%;
+    }
+
     nav a {
         background: transparent;
         border-bottom: none;
@@ -518,7 +522,7 @@ a.title {
     }
 
     .learn {
-        overflow: hidden;
+        overflow-x: hidden;
         position: relative;
     }
 
