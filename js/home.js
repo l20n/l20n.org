@@ -47,6 +47,7 @@ $(function() {
 	}
 
 
+
   /* Ace */
   sourceEditor = ace.edit('editor');
   sourceEditor.setTheme("ace/theme/monokai");
@@ -56,6 +57,7 @@ $(function() {
   sourceEditor.getSession().setMode("ace/mode/php");
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
+
 
 
 	/* data-l10n-id attributes */
@@ -78,5 +80,13 @@ $(function() {
 		$(this).css('box-shadow', 'none');
 		$('#tooltip').offset({top: 0, left: 0}).hide();
 	});
+
+
+
+  /* Menu */
+
+  $('.toggle').click(function() {
+    $(this).parent().next().toggle();
+  });
 
 });
