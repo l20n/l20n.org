@@ -388,6 +388,10 @@ a.title {
     padding-top: 3em;
 }
 
+.learn .main > article {
+    padding-top: 2em;
+}
+
 .main .window {
     background: #3D3D3D;
     border: 1px solid #777777;
@@ -467,10 +471,6 @@ a.title {
     WIDE: Menu
    ============ */
 
-    .learn .header-container {
-        display: none;
-    }
-
     .mobile-container {
         float: none;
         display: inline-block;
@@ -515,6 +515,45 @@ a.title {
 
     footer nav a {
         border-bottom: none;
+    }
+
+    .learn {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .learn .mobile-container {
+        float: left;
+    }
+
+    .learn .mobile-container a.title {
+        color: #F8F8F0;
+    }
+
+    .learn .mobile-container .toggle {
+        position: absolute;
+        right: 0;
+        display: block;
+        transition-duration: .25s;
+        transition-property: all;
+    }
+
+    .learn .header-container nav {
+        display: inline-block;
+        position: absolute;
+        right: -300px;
+        width: 300px;
+        transition-duration: .25s;
+        transition-property: all;
+        z-index: 100;
+    }
+
+    .learn .header-container.extended nav {
+        right: 0;
+    }
+
+    .learn .header-container.extended .toggle {
+        right: 300px;
     }
 
 /* ============
