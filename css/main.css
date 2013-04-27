@@ -301,6 +301,10 @@ nav {
     display: none;
 }
 
+.extended nav {
+    display: block;
+}
+
 footer nav {
     background: inherit;
     display: block;
@@ -484,7 +488,11 @@ a.title {
 
     nav {
         background: #272822;
-        display: inline-block!important;
+        display: inline-block;
+    }
+
+    .extended nav {
+        display: inline-block;
     }
 
     nav ul li {
