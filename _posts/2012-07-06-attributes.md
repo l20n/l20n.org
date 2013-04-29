@@ -6,14 +6,14 @@ prev_section: indexes-for-hash-tables
 next_section: context-data
 ---
 
-Attributes can be used to store additional information about entities.
-
-While entity values discussed in previous chapters store the representation of the entity to be displayed in the UI, it is sometimes useful to describe the entity with some meta-data:
- - grammar meta-data, such as gender, animate vs. inanimate etc.
- - UI meta-data, such as tooltips, accesskeys, keyboard shortcuts etc.
-
 <section class="clearfix">
 	<div class="left">
+		<p>Attributes can be used to store additional information about entities.</p>
+		<p>While entity values discussed in previous chapters store the representation of the entity to be displayed in the UI, it is sometimes useful to describe the entity with some meta-data:</p>
+		<ul>
+			<li>grammar meta-data, such as gender, animate vs. inanimate etc.</li>
+			<li>UI meta-data, such as tooltips, accesskeys, keyboard shortcuts etc.</li>
+		</ul>
 		<p>Attributes come after the entity value and are defined with a colon, followed by the name of the attribute.  You can reference attributes from other parts of the L20n code with the double-colon (<code>::</code>) syntax.</p>
 	</div>
 	<div class="right">
@@ -38,6 +38,7 @@ While entity values discussed in previous chapters store the representation of t
 <section class="clearfix">
 	<div class="left">
 		<p>Attribute values follow the exact same rules as entity values do:  they can be strings or dictionaries (also nested ones), and can define indexes and default values.</p>
+		<p>See <a href="{% post_url 2012-07-12-globals-os %}">Chapter 12. "Globals: @os"</a> for a better way of implementing this.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height25"
@@ -60,5 +61,3 @@ While entity values discussed in previous chapters store the representation of t
 		</dl>
 	</div>
 </section>
-
-See <a href="{% post_url 2012-07-12-globals-os %}">Chapter 12. "Globals: @os"</a> for a better way of implementing this.

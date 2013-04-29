@@ -28,10 +28,9 @@ next_section: attributes
 	</div>
 </section>
 
-You can get much more creative in indexes and put expressions in them, too (see <a href="{% post_url 2012-07-10-expressions %}">Chapter 10</a>).
-
 <section class="clearfix">
 	<div class="left">
+		<p>You can get much more creative in indexes and put expressions in them, too (see <a href="{% post_url 2012-07-10-expressions %}">Chapter 10</a>).</p>
 		<p>If you nest dictionaries, you can define multivalued indexes.</p>
 	</div>
 	<div class="right">
