@@ -67,7 +67,7 @@ html.error {
 }
 
 body {
-    background: url('../img/grain.png') #F8F8F0;
+    background: #DBDBD6;
     color: #333333;
     font: 19px/26px Open Sans, Helvetica Neue, Helvetica, Arial;
     font-weight: 300;
@@ -156,6 +156,10 @@ a#cta {
 a#cta:hover,
 a#cta:active {
     background: #FD971F;
+}
+
+.main-container {
+    background: url('../img/grain.png') #F8F8F0;
 }
 
 .main article a {
