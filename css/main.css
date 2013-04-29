@@ -538,14 +538,13 @@ a.title {
         position: absolute;
         right: 0;
         display: block;
-        transition-duration: .25s;
-        transition-property: all;
     }
 
     .learn .header-container nav {
         display: inline-block;
         position: absolute;
         right: -300px;
+        top: 3.7em;
         width: 300px;
         transition-duration: .25s;
         transition-property: all;
@@ -556,8 +555,17 @@ a.title {
         right: 0;
     }
 
-    .learn .header-container.extended .toggle {
-        right: 300px;
+    .learn .header-container nav li a {
+        border-bottom: 1px solid #068599;
+        display: block;
+        line-height: 0;
+        margin: 0 1em;
+        padding: 1.6em 0;
+        float: none;
+    }
+
+    .learn .header-container nav li:last-child a {
+        border-bottom: none;
     }
 
 /* ============
