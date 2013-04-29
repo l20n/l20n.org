@@ -268,17 +268,25 @@ a.title {
     border-color: #068599;
 }
 
+.learn h3 {
+    margin-bottom: 2em;
+}
+
+.learn .main ul {
+    margin: -1em 0 2em 0;
+}
+
 .learn p {
-    margin: 2em 0
+    margin: 0 0 2em 0;
 }
 
 .learn .editor {
     border: 1px solid #777777;
-    margin: 1em 0px;
+    margin-bottom: 1.25em;
 }
 
 .learn dl[id^="output"] {
-    border: 1px solid #777777;
+    background: #DBDBD6;
     padding: 0.4em;
 }
 
@@ -598,6 +606,20 @@ a.title {
     .main > article > .blocks > section:last-child {
         float: right;
         margin-left: 5%;
+    }
+
+    .learn section {
+        margin-bottom: 2em;
+    }
+
+    .learn section .left {
+        float: left;
+        width: 50%;
+    }
+
+    .learn section .right {
+        float: right;
+        width: 48%;
     }
 
 }

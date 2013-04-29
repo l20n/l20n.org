@@ -12,13 +12,16 @@ While entity values discussed in previous chapters store the representation of t
  - grammar meta-data, such as gender, animate vs. inanimate etc.
  - UI meta-data, such as tooltips, accesskeys, keyboard shortcuts etc.
 
-Attributes come after the entity value and are defined with a colon, followed by the name of the attribute.  You can reference attributes from other parts of the L20n code with the double-colon (`::`) syntax.
-
-<div class="editor sourceEditor height15"
-  id="sourceEditor1"
-  data-source="sourceEditor1"
-  data-output="output1"
->&lt;follow "Follow"
+<section class="clearfix">
+	<div class="left">
+		<p>Attributes come after the entity value and are defined with a colon, followed by the name of the attribute.  You can reference attributes from other parts of the L20n code with the double-colon (<code>::</code>) syntax.</p>
+	</div>
+	<div class="right">
+		<div class="editor sourceEditor height15"
+		  id="sourceEditor1"
+		  data-source="sourceEditor1"
+		  data-output="output1"
+		>&lt;follow "Follow"
  accesskey: "F"
 &gt;
 &lt;unfollow "Unfollow"
@@ -26,17 +29,22 @@ Attributes come after the entity value and are defined with a colon, followed by
 &gt;
 &lt;followHelp "To follow someone, press Ctrl+{% raw %}{{ follow::accesskey }}{% endraw %}"&gt;
 &lt;unfollowHelp "To unfollow someone, press Ctrl+{% raw %}{{ unfollow::['accesskey'] }}{% endraw %}"&gt;
-</div>
-<dl id="output1">
-</dl>
+		</div>
+		<dl id="output1">
+		</dl>
+	</div>
+</section>
 
-Attribute values follow the exact same rules as entity values do:  they can be strings or dictionaries (also nested ones), and can define indexes and default values.
-
-<div class="editor sourceEditor height25"
-  id="sourceEditor2"
-  data-source="sourceEditor2"
-  data-output="output2"
->&lt;settings {
+<section class="clearfix">
+	<div class="left">
+		<p>Attribute values follow the exact same rules as entity values do:  they can be strings or dictionaries (also nested ones), and can define indexes and default values.</p>
+	</div>
+	<div class="right">
+		<div class="editor sourceEditor height25"
+		  id="sourceEditor2"
+		  data-source="sourceEditor2"
+		  data-output="output2"
+		>&lt;settings {
  *win: "Settings",
   mac: "Preferences"
  }
@@ -47,8 +55,10 @@ Attribute values follow the exact same rules as entity values do:  they can be s
 &gt;
 &lt;helpWin "To open Settings, press Ctrl+{% raw %}{{ settings::accesskey }}{% endraw %}"&gt;
 &lt;helpMac "To open Preferencds, press Cmd+{% raw %}{{ settings::accesskey.mac }}{% endraw %}"&gt;
-</div>
-<dl id="output2">
-</dl>
+		</div>
+		<dl id="output2">
+		</dl>
+	</div>
+</section>
 
-(See <a href="{% post_url 2012-07-12-globals-os %}">Chapter 12. "Globals: @os"</a> for a better way of implementing this.)
+See <a href="{% post_url 2012-07-12-globals-os %}">Chapter 12. "Globals: @os"</a> for a better way of implementing this.
