@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: Default values for dictionaries
 prev_section: dictionary-values
+prev_title: Dictionary values
 next_section: indexes-for-hash-tables
+next_title: Indexes for hash tables
 ---
 
 <section class="clearfix">

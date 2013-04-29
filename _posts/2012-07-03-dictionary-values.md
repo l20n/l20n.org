@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: Dictionary values
 prev_section: string-values
+prev_title: String values
 next_section: default-values-for-dictionaries
+next_title: Default values for dictionaries
 ---
 
 <section class="clearfix">

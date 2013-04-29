@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: String values
 prev_section: hello-world
+prev_title: Hello World
 next_section: dictionary-values
+next_title: Dictionary values
 ---
 
 <section class="clearfix">

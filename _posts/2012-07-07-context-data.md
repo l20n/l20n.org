@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: Context data
 prev_section: attributes
+prev_title: Attributes
 next_section: context-data-and-localization-logic
+next_title: Context data and localization logic
 ---
 
 <section class="clearfix">

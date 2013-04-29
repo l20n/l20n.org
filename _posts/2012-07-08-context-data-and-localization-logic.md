@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: Context data and localization logic
 prev_section: context-data
+prev_title: Context data
 next_section: macros
+next_title: Macros
 ---
 
 <section class="clearfix">

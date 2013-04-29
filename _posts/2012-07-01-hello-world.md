@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: Hello world
 prev_section: " "
+prev_title: "Introduction"
 next_section: string-values
+next_title: String values
 ---
 
 <section class="clearfix">

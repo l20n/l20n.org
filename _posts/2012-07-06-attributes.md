@@ -3,7 +3,9 @@ category: learn
 layout: learn
 title: Attributes
 prev_section: indexes-for-hash-tables
+prev_title: Indexes for hash tables
 next_section: context-data
+next_title: Context data
 ---
 
 <section class="clearfix">
