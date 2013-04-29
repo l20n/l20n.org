@@ -2,7 +2,7 @@
 category: learn
 layout: learn
 title: Hello world
-prev_section: ""
+prev_section: " "
 next_section: string-values
 ---
 
