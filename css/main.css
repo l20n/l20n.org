@@ -274,6 +274,7 @@ a.title {
 
 .learn .editor {
     border: 1px solid #777777;
+    margin: 1em 0px;
 }
 
 .learn dl[id^="output"] {
