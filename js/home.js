@@ -15,7 +15,7 @@ $(function() {
       var entity = l10n.entities[id];
       if (entity.value) {
         var node = document.querySelector('[data-l10n-id=' + id + ']');
-        node.innerHTML = entity.value;
+        node.textContent = entity.value;
       }
     }
   }
