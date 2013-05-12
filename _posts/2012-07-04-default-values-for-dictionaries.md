@@ -34,7 +34,7 @@ next_title: Indexes for hash tables
 
 <section class="clearfix">
 	<div class="left">
-		<p>Keep in mind that dictionaries without default values are still valid L20n code and can be useful, especially as local data stores.  They cannot, however, be evaluated to a single string and used in the UI without some extra work.</p>
+		<p>Keep in mind that dictionaries without default values are still valid L20n code and can be useful, especially as local data storages.  They cannot, however, be evaluated to a single string and used in the UI without some extra work.</p>
 		<p>Naturally, dictionaries nested inside other dictionaries also can have default values.</p>
 	</div>
 	<div class="right">
@@ -44,12 +44,12 @@ next_title: Indexes for hash tables
 		  data-output="output2"
 		>&lt;name {
   *short: {
-    *nominative: "Loki",
+    *objective: "Loki",
     genitive: "Loki's"
   },
   long: "Loki Mobile Client"
 }&gt;
-&lt;about "About {% raw %}{{ name.short.nominative }}{% endraw %}"&gt;
+&lt;about "About {% raw %}{{ name.short.objective }}{% endraw %}"&gt;
 &lt;license "{% raw %}{{ name.long }}{% endraw %} is open-source."&gt;
 		</div>
 		<dl id="output2">

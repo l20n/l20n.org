@@ -10,7 +10,7 @@ next_title: Attributes
 
 <section class="clearfix">
 	<div class="left">
-		<p>The asterisk <code>*</code> syntax is short-hand for a specific use in another of L20n's features: indexes (discussing the asterisk here doesn't make a lot of sense because it's not revisited in the example).</p>
+		<p>The asterisk <code>*</code> syntax is short-hand for a specific use in another of L20n's features: indexes.</p>
 		<p>When the entity's value is a dictionary, an index (<code>["short"]</code> below) can be added to it to indicate which key of the dictionary should be returned.</p>
 	</div>
 	<div class="right">
@@ -32,7 +32,7 @@ next_title: Attributes
 
 <section class="clearfix">
 	<div class="left">
-		<p>You can get much more creative in indexes and put expressions in them, too (see <a href="{% post_url 2012-07-10-expressions %}">Chapter 10</a>).</p>
+		<p>You can get much more creative in indexes and put expressions in them, too (see <a href="{% post_url 2012-07-10-expressions %}">Chapter 10. "Expressions"</a>).</p>
 		<p>If you nest dictionaries, you can define multivalued indexes.</p>
 	</div>
 	<div class="right">
@@ -40,14 +40,14 @@ next_title: Attributes
 		  id="sourceEditor2"
 		  data-source="sourceEditor2"
 		  data-output="output2"
-		>&lt;name["short", "nominative"] {
+		>&lt;name["short", "objective"] {
   short: {
-    nominative: "Loki",
+    objective: "Loki",
     genitive: "Loki's"
   },
   long: "Loki Mobile Client"
 }&gt;
-&lt;about "About {% raw %}{{ name.short.nominative }}{% endraw %}"&gt;
+&lt;about "About {% raw %}{{ name.short.objective }}{% endraw %}"&gt;
 &lt;license "{% raw %}{{ name.long }}{% endraw %} is open-source."&gt;
 		</div>
 		<dl id="output2">
