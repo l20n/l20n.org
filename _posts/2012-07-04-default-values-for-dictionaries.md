@@ -44,8 +44,9 @@ next_title: Indexes for hash tables
 		  data-output="output2"
 		>&lt;name {
   *short: {
+  	subjective: "Loki",
     *objective: "Loki",
-    genitive: "Loki's"
+    possessive: "Loki's"
   },
   long: "Loki Mobile Client"
 }&gt;
