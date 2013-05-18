@@ -14,7 +14,7 @@ next_title: Context data
 		<p>While entity values discussed in previous chapters store the representation of the entity to be displayed in the UI, it is sometimes useful to describe the entity with some meta-data:</p>
 		<ul>
 			<li>grammar meta-data, such as gender, animate vs. inanimate etc.</li>
-			<li>UI meta-data, such as tooltips, accesskeys, keyboard shortcuts etc.</li>
+			<li>UI meta-data, such as tooltips, accesskeys, keyboard shortcuts, etc.</li>
 		</ul>
 		<p>Attributes come after the entity value and are defined with a colon, followed by the name of the attribute.  You can reference attributes from other parts of the L20n code with the double-colon (<code>::</code>) syntax.</p>
 	</div>
@@ -57,7 +57,7 @@ next_title: Context data
  }
 &gt;
 &lt;helpWin "To open Settings, press Ctrl+{% raw %}{{ settings::accesskey }}{% endraw %}"&gt;
-&lt;helpMac "To open Preferencds, press Cmd+{% raw %}{{ settings::accesskey.mac }}{% endraw %}"&gt;
+&lt;helpMac "To open Preferences, press Cmd+{% raw %}{{ settings::accesskey.mac }}{% endraw %}"&gt;
 		</div>
 		<dl id="output2">
 		</dl>
