@@ -10,8 +10,8 @@ next_title: Context data and localization logic
 
 <section class="clearfix">
 	<div class="left">
-		<p>Context data is how entities defined in L20n resources can interact with non-localizable variables provided by the software developer.  Context data is generally unknown at the time of writing the L20n code. By assigning values to it, the developer makes it known at runtime.</p>
-		<p>There are all kinds of external data that might be useful in providing a good localization: user names, number of unread messages, battery level, current time, time left before an alarm goes off etc.</p>
+		<p>Context data is how entities defined in L20n resources can interact with non-localizable variables provided by the developer.  Context data is generally unknown at the time of writing the L20n code. By assigning values to it, the developer makes it known at runtime.</p>
+		<p>There are all kinds of external data that might be useful in providing a good localization: user names, number of unread messages, battery level, current time, time left before an alarm goes off, etc.</p>
 		<p>Developers define these as context data, which is then available to all entities in the context.</p>
 		<p>To reference a context data variable, use the dollar syntax in your L20n code: <code>$user</code>. <code>user</code> has to be defined in the context data.  In the examples below, we insert the value of a context data variable into an entity's value.</p>
 	</div>

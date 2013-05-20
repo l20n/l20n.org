@@ -11,7 +11,7 @@ next_title: Dictionary values
 <section class="clearfix">
 	<div class="left">
 		<p>L20n entities mostly store string values. A string is a sequence of characters that you can assign to an entity, store, and retrieve.</p>
-		<p>You can reference other entities in a string by using the double brace syntax, <code>{% raw %}{{ name }}{% endraw %}</code>.  The value of an entity called <code>name</code> will be retrieved and inserted into the <code>about</code> entity's value before it's returned by the context.</p>
+		<p>You can reference other entities in a string by using the double brace syntax <code>{% raw %}{{ name }}{% endraw %}</code>.  The value of an entity called <code>name</code> will be retrieved and inserted into the <code>about</code> entity's value before it's returned by the context.</p>
 		<p>You can also define easy-to-read, multiline strings with triple quotes, as can be seen in the <code>description</code> entity.</p>
 	</div>
 	<div class="right">
