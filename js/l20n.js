@@ -1,12 +1,93 @@
-(function() {
+(function(window, undefined) {
+
+function define(name, payload) {
+  define.modules[name] = payload;
+};
+
+// un-instantiated modules
+define.modules = {};
+// instantiated modules
+define.exports = {};
+
+function normalize(path) {
+  var parts = path.split('/');
+  var normalized = [];
+  for (var i = 0; i < parts.length; i++) {
+    if (parts[i] == '.') {
+      // don't add it to `normalized`
+    } else if (parts[i] == '..') {
+      normalized.pop();
+    } else {
+      normalized.push(parts[i]);
+    }
+  }
+  return normalized.join('/');
+}
+
+function join(a, b) {
+  return a ? a.trim().replace(/\/*$/, '/') + b.trim() : b.trim();
+}
+
+function dirname(path) {
+  return path ? path.split('/').slice(0, -1).join('/') : null;
+}
+
+function req(leaf, name) {
+  name = normalize(join(dirname(leaf), name));
+  if (name in define.exports) {
+    return define.exports[name];
+  }
+  if (!(name in define.modules)) {
+    throw new Error("Module not defined: " + name);
+  }
+
+  var module = define.modules[name];
+  if (typeof module == "function") {
+    var exports = {};
+    var reply = module(req.bind(null, name), exports, { id: name, uri: "" });
+    module = (reply !== undefined) ? reply : exports;
+  }
+  return define.exports[name] = module;
+};
+
+// for the top-level required modules, leaf is null
+var require = req.bind(null, null);
+define('l20n/shell', function(require, exports, module) {
   'use strict';
 
-  var L20n = {
-    Context: Context,
-    getContext: function L20n_getContext(id) {
+  var L20n = require('../l20n');
+  L20n.RetranslationManager = require('./retranslation').RetranslationManager;
+
+  return L20n;
+
+});
+define('l20n', function(require, exports, module) {
+  'use strict';
+
+  var Context = require('./l20n/context').Context;
+  var Parser = require('./l20n/parser').Parser;
+  var Compiler = require('./l20n/compiler').Compiler;
+
+  exports.Context = Context;
+  exports.Parser = Parser;
+  exports.Compiler = Compiler;
+  exports.getContext = function L20n_getContext(id) {
       return new Context(id);
-    },
   };
+
+});
+define('l20n/context', function(require, exports, module) {
+  'use strict';
+
+  var EventEmitter = require('./events').EventEmitter;
+  var Parser = require('./parser').Parser;
+  var Compiler = require('./compiler').Compiler;
+  var Promise = require('./promise').Promise;
+  var RetranslationManager = require('./retranslation').RetranslationManager;
+
+  // register globals with RetranslationManager
+  require('./platform/globals');
+  var io = require('./platform/io');
 
   function Resource(id, parser) {
     var self = this;
@@ -17,7 +98,7 @@
     this.isReady = false;
     this.ast = {
       type: 'LOL',
-      body: [],
+      body: []
     };
 
     this.build = build;
@@ -26,7 +107,7 @@
 
     function build(nesting, async) {
       if (nesting >= 7) {
-        throw new ContextError("Too many nested imports.");
+        throw new ContextError('Too many nested imports.');
       }
       if (!async) {
         fetch(async);
@@ -43,17 +124,25 @@
 
     function fetch(async) {
       if (!async) {
-        if (!self.source) {
-          self.source = L20n.IO.loadSync(self.id);
+        if (self.source) {
+          return self.source;
         }
-        return;
+        try {
+          return self.source = io.loadSync(self.id);
+        } catch (e) {
+          if (e instanceof io.Error) {
+            return self.source = '';
+          } else {
+            throw e;
+          }
+        }
       }
       if (self.source) {
-        var source = new L20n.Promise();
+        var source = new Promise();
         source.fulfill();
         return source;
       }
-      return L20n.IO.loadAsync(self.id).then(function load_success(text) {
+      return io.loadAsync(self.id).then(function load_success(text) {
         self.source = text;
       });
     }
@@ -83,12 +172,12 @@
       });
 
       if (async) {
-        return L20n.Promise.all(imports_built);
+        return Promise.all(imports_built);
       }
     }
 
     function flatten() {
-      for (var i = self.resources.length-1; i >= 0; i--) {
+      for (var i = self.resources.length - 1; i >= 0; i--) {
         var pos = _imports_positions[i] || 0;
         Array.prototype.splice.apply(self.ast.body,
           [pos, 1].concat(self.resources[i].ast.body));
@@ -120,12 +209,13 @@
     this.entries = null;
     this.ast = {
       type: 'LOL',
-      body: [],
+      body: []
     };
     this.isReady = false;
 
     this.build = build;
     this.getEntry = getEntry;
+    this.hasResource = hasResource;
 
     var self = this;
 
@@ -147,7 +237,7 @@
         resources_built.push(res.build(0, async));
       });
       if (async) {
-        return L20n.Promise.all(resources_built);
+        return Promise.all(resources_built);
       }
     }
 
@@ -168,6 +258,12 @@
       }
       return undefined;
     }
+
+    function hasResource(uri) { 
+      return this.resources.some(function(res) {
+        return res.id === uri;
+      });
+    }
   }
 
   function Context(id) {
@@ -183,115 +279,154 @@
     this.get = get;
     this.getEntity = getEntity;
     this.localize = localize;
+    this.ready = ready;
 
     this.addEventListener = addEventListener;
     this.removeEventListener = removeEventListener;
 
-    // all languages registered as available (list of codes)
+    // all languages explicitly registered as available (list of codes)
+    var _registered = [];
+    // internal list of all available locales, including __none__ if needed
     var _available = [];
-    var _locales = {};
-    // a special Locale for resources not associated with any other
-    var _none;
+    // Locale objects corresponding to the registered languages
+    var _locales = {
+      // a special Locale for resources not associated with any other
+      __none__: undefined
+    };
 
+    // URLs or text of resources (with information about the type) added via 
+    // linkResource and addResource
     var _reslinks = [];
 
-    var _isFrozen = false;
     var _isReady = false;
-    var _emitter = new L20n.EventEmitter();
-    var _parser = new L20n.Parser(L20n.EventEmitter);
-    var _compiler = new L20n.Compiler(L20n.EventEmitter, L20n.Parser);
+    var _isFrozen = false;
+    var _emitter = new EventEmitter();
+    var _parser = new Parser();
+    var _compiler = new Compiler();
 
-    var _retr = new L20n.RetranslationManager();
+    var _retr = new RetranslationManager();
 
     var _listeners = [];
+    var self = this;
 
-    _parser.addEventListener('error', echo);
-    _compiler.addEventListener('error', echo);
+    _parser.addEventListener('error', echo.bind(null, 'error'));
+    _compiler.addEventListener('error', echo.bind(null, 'error'));
     _compiler.setGlobals(_retr.globals);
 
     function get(id, data) {
       if (!_isReady) {
-        throw new ContextError("Context not ready");
+        throw new ContextError('Context not ready');
       }
-      return getFromLocale(0, id, data).value;
+      return getFromLocale.call(self, 0, id, data).value;
     }
 
     function getEntity(id, data) {
       if (!_isReady) {
-        throw new ContextError("Context not ready");
+        throw new ContextError('Context not ready');
       }
-      return getFromLocale(0, id, data);
+      return getFromLocale.call(self, 0, id, data);
     }
 
-    function localize(idsOrTuples, callback) {
-      if (!_isReady) {
-        if (!callback) {
-          throw new ContextError("Context not ready");
-        }
-        _retr.bindGet({
-          id: callback,
-          callback: getMany.bind(this, idsOrTuples, callback),
-          globals: [],
-        });
-        // XXX: add stop and retranslate to the returned object
-        return {};
+    function localize(ids, callback) {
+      if (!callback) {
+        throw new ContextError('No callback passed');
       }
-      return getMany(idsOrTuples, callback);
+      return bindLocalize.call(self, ids, callback);
     }
 
-    function getMany(idsOrTuples, callback) {
-      var vals = {};
-      var globalsUsed = {};
-      var id;
-      for (var i = 0, iot; iot = idsOrTuples[i]; i++) {
-        if (Array.isArray(iot)) {
-          id = iot[0];
-          vals[id] = getEntity(iot[0], iot[1]);
-        } else {
-          id = iot;
-          vals[id] = getEntity(iot);
-        }
-        for (var global in vals[id].globals) {
-          if (vals[id].globals.hasOwnProperty(global)) {
-            globalsUsed[global] = true;
+    function ready(callback) {
+      if (_isReady) {
+        setTimeout(callback);
+      }
+      addEventListener('ready', callback);
+    }
+
+    function bindLocalize(ids, callback, reason) {
+
+      var bound = {
+        // stop: fn
+        extend: function extend(newIds) { 
+          for (var i = 0; i < newIds.length; i++) {
+            if (ids.indexOf(newIds[i]) === -1) {
+              ids.push(newIds[i]);
+            }
           }
-        }
-      }
-      var l10n = {
-        entities: vals,
-        //stop: fn
+          if (!_isReady) {
+            return;
+          }
+          var newMany = getMany.call(this, newIds);
+          // rebind the callback in `_retr`: append new globals seen used in 
+          // `newIds` and overwrite the callback with a new one which has the 
+          // updated `ids`
+          _retr.bindGet({
+            id: callback,
+            callback: bindLocalize.bind(this, ids, callback),
+            globals: Object.keys(newMany.globalsUsed)
+          }, true);
+          return newMany;
+        }.bind(this)
       };
-      if (callback) {
-        callback(l10n);
+
+
+      // if the ctx isn't ready, bind the callback and return
+      if (!_isReady) {
         _retr.bindGet({
           id: callback,
-          callback: getMany.bind(this, idsOrTuples, callback),
-          globals: Object.keys(globalsUsed),
+          callback: bindLocalize.bind(this, ids, callback),
+          globals: []
         });
+        return bound;
       }
-      // XXX: add stop and retranslate to the returned object
-      return {};
+
+      // if the ctx is ready, retrieve the entities
+      var many = getMany.call(this, ids);
+      var l10n = {
+        entities: many.entities,
+        // `reason` might be undefined if context was ready before `localize` 
+        // was called;  in that case, we pass `locales` so that this scenario 
+        // is transparent for the callback
+        reason: reason || { locales: _registered.slice() }
+        // stop: fn
+      };
+      _retr.bindGet({
+        id: callback,
+        callback: bindLocalize.bind(this, ids, callback),
+        globals: Object.keys(many.globalsUsed)
+      });
+      // callback may call bound.extend which will rebind it if needed;  for 
+      // this to work it needs to be called after _retr.bindGet above;  
+      // otherwise bindGet would listen to globals passed initially in 
+      // many.globalsUsed
+      callback(l10n);
+      return bound;
     }
 
-    function getLocale(i) {
-      // if we're out of locales from `_available`, resort to `_none`
-      if (_available.length - i == 0) {
-        return _none;
+    function getMany(ids) {
+      var many = {
+        entities: {},
+        globalsUsed: {}
+      };
+      for (var i = 0, id; id = ids[i]; i++) {
+        many.entities[id] = getEntity.call(this, id);
+        for (var global in many.entities[id].globals) {
+          many.globalsUsed[global] = true;
+        }
       }
-      return  _locales[_available[i]];
+      return many;
     }
 
     function getFromLocale(cur, id, data, sourceString) {
-      var locale = getLocale(cur);
+      var locale = _locales[_available[cur]];
 
       if (!locale) {
-        var ex = new GetError("Entity couldn't be retrieved", id, _available);
+        var ex = new GetError("Entity couldn't be retrieved", id, _registered);
         _emitter.emit('error', ex);
         // imitate the return value of Compiler.Entity.get
         return {
           value: sourceString ? sourceString : id,
           attributes: {},
-          globals: {}
+          globals: {},
+          locale: null
         };
       }
 
@@ -303,21 +438,24 @@
 
       // if the entry is missing, just go to the next locale immediately
       if (entry === undefined) {
-        _emitter.emit('error', new EntityError("Not found", id, locale.id));
-        return getFromLocale(cur + 1, id, data, sourceString);
+        _emitter.emit('error', new EntityError('Not found', id, locale.id));
+        return getFromLocale.call(this, cur + 1, id, data, sourceString);
       }
 
       // otherwise, try to get the value of the entry
       try {
-        return entry.get(getArgs.bind(this, data));
-      } catch(e) {
-        if (e instanceof L20n.Compiler.RuntimeError) {
+        var value = entry.get(getArgs.call(this, data));
+      } catch (e) {
+        if (e instanceof Compiler.RuntimeError) {
           _emitter.emit('error', new EntityError(e.message, id, locale.id));
-          return getFromLocale(cur + 1, id, data, sourceString || e.source);
+          return getFromLocale.call(this, cur + 1, id, data, 
+                                    sourceString || e.source);
         } else {
           throw e;
         }
       }
+      value.locale = locale.id;
+      return value;
     }
 
     function getArgs(data) {
@@ -326,73 +464,62 @@
       }
       var args = {};
       for (var i in this.data) {
-        if (this.data.hasOwnProperty(i)) {
-          args[i] = this.data[i];
-        }
+        args[i] = this.data[i];
       }
       if (data) {
         for (i in data) {
-          if (data.hasOwnProperty(i)) {
-            args[i] = data[i];
-          }
+          args[i] = data[i];
         }
       }
       return args;
     }
 
     function addResource(text) {
-      if (_none === undefined) {
-        _none = new Locale(null, _parser, _compiler);
+      if (_isFrozen) {
+        throw new ContextError('Context is frozen');
       }
+      _reslinks.push(['text', text]);
+    }
+
+    function add(text, locale) {
       var res = new Resource(null, _parser);
       res.source = text;
-      _none.resources.push(res);
+      locale.resources.push(res);
     }
 
     function linkResource(uri) {
-      _reslinks.push(uri);
+      if (_isFrozen) {
+        throw new ContextError('Context is frozen');
+      }
+      _reslinks.push([typeof uri === 'function' ? 'template' : 'uri', uri]);
     }
 
-    function link(uri) {
-      if (typeof uri === 'function') {
-        return linkTemplate(uri);
-      } else {
-        return linkURI(uri);
+    function link(uri, locale) {
+      if (!locale.hasResource(uri)) {
+        var res = new Resource(uri, _parser);
+        locale.resources.push(res);
       }
-    }
-
-    function linkTemplate(uriTemplate) {
-      for (var lang in _locales) {
-        var res = new Resource(uriTemplate(lang), _parser);
-        // XXX detect if the resource has been already added?
-        _locales[lang].resources.push(res);
-      }
-      return true;
-    }
-
-    function linkURI(uri) {
-      var res = new Resource(uri, _parser);
-      if (_available.length !== 0) {
-        for (var lang in _locales) {
-          _locales[lang].resources.push(res);
-        }
-      }
-      if (_none === undefined) {
-        _none = new Locale(null, _parser, _compiler);
-      }
-      _none.resources.push(res);
-      return true;
     }
 
     function registerLocales() {
       if (_isFrozen && !_isReady) {
-        throw new ContextError("Context not ready");
+        throw new ContextError('Context not ready');
       }
-      _available = [];
-      for (var i in arguments) {
-        var lang = arguments[i];
-        _available.push(lang);
-        _locales[lang] = new Locale(lang, _parser, _compiler);
+      _registered = [];
+      // _registered should remain empty if:
+      //   1. there are no arguments passed, or
+      //   2. the only argument is null
+      if (!(arguments[0] === null && arguments.length === 1)) {
+        for (var i in arguments) {
+          var loc = arguments[i];
+          if (typeof loc !== 'string') {
+            throw new ContextError('Language codes must be strings');
+          }
+          _registered.push(loc);
+          if (!(loc in _locales)) {
+            _locales[loc] = new Locale(loc, _parser, _compiler);
+          }
+        }
       }
       if (_isFrozen) {
         freeze();
@@ -400,18 +527,67 @@
     }
 
     function freeze() {
-      _isFrozen = true;
-      for (var i = 0; i < _reslinks.length; i++) {
-        link(_reslinks[i]);
+      if (_isFrozen && !_isReady) {
+        throw new ContextError('Context not ready');
       }
-      var locale = _available.length > 0 ? _locales[_available[0]] : _none;
-      return locale.build(true).then(setReady);
+
+      _isFrozen = true;
+
+      // is the contex empty?
+      if (_reslinks.length == 0) {
+        throw new ContextError('Context has no resources');
+      }
+
+      _available = [];
+      // if no locales have been registered, create a __none__ locale for the 
+      // single-locale mode
+      if (_registered.length === 0) {
+        _locales.__none__ = new Locale(null, _parser, _compiler);
+        _available.push('__none__');
+      } else {
+        _available = _registered.slice();
+      }
+      
+      // add & link all resources to the available locales
+      for (var i = 0; i < _available.length; i++) {
+        var locale = _locales[_available[i]];
+        for (var j = 0; j < _reslinks.length; j++) {
+          var res = _reslinks[j];
+          if (res[0] === 'text') {
+            // a resource added via addResource(String)
+            add(res[1], locale);
+          } else if (res[0] === 'uri') {
+            // a resource added via linkResource(String)
+            link(res[1], locale);
+          } else {
+            // a resource added via linkResource(Function);  the function 
+            // passed is a URL template and it takes the current locale's code 
+            // as an argument;  if the current locale doesn't have a code (it's 
+            // __none__), we can't call the template function correctly.
+            if (locale.id) {
+              link(res[1](locale.id), locale);
+            } else {
+              throw new ContextError('No registered locales');
+            }
+          }
+        }
+      }
+
+      var locale = _locales[_available[0]];
+      if (locale.isReady) {
+        return setReady();
+      } else {
+        return locale.build(true)
+          .then(setReady)
+          // if setReady throws, don't silence the error but emit it instead
+          .then(null, echo.bind(null, 'debug'));
+      }
     }
 
     function setReady() {
       _isReady = true;
+      _retr.all(_registered.slice());
       _emitter.emit('ready');
-      _retr.retranslate();
     }
 
     function addEventListener(type, listener) {
@@ -422,8 +598,8 @@
       _emitter.removeEventListener(type, listener);
     }
 
-    function echo(e) {
-      _emitter.emit('error', e);
+    function echo(type, e) {
+      _emitter.emit(type, e);
     }
 }
 
@@ -437,23 +613,23 @@
   ContextError.prototype = Object.create(Error.prototype);
   ContextError.prototype.constructor = ContextError;
 
-  function EntityError(message, id, lang) {
+  function EntityError(message, id, loc) {
     ContextError.call(this, message);
     this.name = 'EntityError';
     this.id = id;
-    this.lang = lang;
-    this.message = '[' + lang + '] ' + id + ': ' + message;
+    this.locale = loc;
+    this.message = (loc ? '[' + loc + '] ' : '') + id + ': ' + message;
   }
   EntityError.prototype = Object.create(ContextError.prototype);
   EntityError.prototype.constructor = EntityError;
 
-  function GetError(message, id, langs) {
+  function GetError(message, id, locs) {
     ContextError.call(this, message);
     this.name = 'GetError';
     this.id = id;
-    this.tried = langs;
-    if (langs.length) {
-      this.message = id + ': ' + message + '; tried ' + langs.join(', ');
+    this.tried = locs;
+    if (locs.length) {
+      this.message = id + ': ' + message + '; tried ' + locs.join(', ');
     } else {
       this.message = id + ': ' + message;
     }
@@ -461,195 +637,56 @@
   GetError.prototype = Object.create(ContextError.prototype);
   GetError.prototype.constructor = GetError;
 
-  this.L20n = L20n;
+  exports.Context = Context;
 
-}).call(this);
-/**
- * @class A promise - value to be resolved in the future.
- * Implements the "Promises/A+" specification.
- */
-(function() {
+});
+define('l20n/events', function(require, exports, module) {
   'use strict';
-var Promise = function() {
-	this._state = 0; /* 0 = pending, 1 = fulfilled, 2 = rejected */
-	this._value = null; /* fulfillment / rejection value */
 
-	this._cb = {
-		fulfilled: [],
-		rejected: []
-	}
-
-	this._thenPromises = []; /* promises returned by then() */
-}
-
-Promise.all = function(list) {
-  var pr = new Promise();
-  var toResolve = list.length;
-  if (toResolve == 0) {
-    pr.fulfill();
-    return pr;
+  function EventEmitter() {
+    this._listeners = {};
   }
-  function onResolve() {
-    toResolve--;
-    if (toResolve == 0) {
-      pr.fulfill();
+
+  EventEmitter.prototype.emit = function ee_emit() {
+    var args = Array.prototype.slice.call(arguments);
+    var type = args.shift();
+    if (!this._listeners[type]) {
+      return false;
     }
-  }
-  for (var idx in list) {
-    // XXX should there be a different callback for promises errorring out?
-    // with two onResolve callbacks, all() is more like some().
-    list[idx].then(onResolve, onResolve);
-  }
-  return pr;
-}
+    var typeListeners = this._listeners[type].slice();
+    for (var i = 0; i < typeListeners.length; i++) {
+      typeListeners[i].apply(this, args);
+    }
+    return true;
+  };
 
-/**
- * @param {function} onFulfilled To be called once this promise gets fulfilled
- * @param {function} onRejected To be called once this promise gets rejected
- * @returns {Promise}
- */
-Promise.prototype.then = function(onFulfilled, onRejected) {
-	this._cb.fulfilled.push(onFulfilled);
-	this._cb.rejected.push(onRejected);
+  EventEmitter.prototype.addEventListener = function ee_add(type, listener) {
+    if (!this._listeners[type]) {
+      this._listeners[type] = [];
+    }
+    this._listeners[type].push(listener);
+    return this;
+  };
 
-	var thenPromise = new Promise();
+  EventEmitter.prototype.removeEventListener = function ee_rm(type, listener) {
+    var typeListeners = this._listeners[type];
+    var pos = typeListeners.indexOf(listener);
+    if (pos === -1) {
+      return this;
+    }
+    typeListeners.splice(pos, 1);
+    return this;
+  };
 
-	this._thenPromises.push(thenPromise);
+  exports.EventEmitter = EventEmitter;
 
-	if (this._state > 0) {
-		setTimeout(this._processQueue.bind(this), 0);
-	}
-
-	/* 3.2.6. then must return a promise. */
-	return thenPromise; 
-}
-
-/**
- * Fulfill this promise with a given value
- * @param {any} value
- */
-Promise.prototype.fulfill = function(value) {
-	if (this._state != 0) { return this; }
-
-	this._state = 1;
-	this._value = value;
-
-	this._processQueue();
-
-	return this;
-}
-
-/**
- * Reject this promise with a given value
- * @param {any} value
- */
-Promise.prototype.reject = function(value) {
-	if (this._state != 0) { return this; }
-
-	this._state = 2;
-	this._value = value;
-
-	this._processQueue();
-
-	return this;
-}
-
-Promise.prototype._processQueue = function() {
-	while (this._thenPromises.length) {
-		var onFulfilled = this._cb.fulfilled.shift();
-		var onRejected = this._cb.rejected.shift();
-		this._executeCallback(this._state == 1 ? onFulfilled : onRejected);
-	}
-}
-
-Promise.prototype._executeCallback = function(cb) {
-	var thenPromise = this._thenPromises.shift();
-
-	if (typeof(cb) != "function") {
-		if (this._state == 1) {
-			/* 3.2.6.4. If onFulfilled is not a function and promise1 is fulfilled, promise2 must be fulfilled with the same value. */
-			thenPromise.fulfill(this._value);
-		} else {
-			/* 3.2.6.5. If onRejected is not a function and promise1 is rejected, promise2 must be rejected with the same reason. */
-			thenPromise.reject(this._value);
-		}
-		return;
-	}
-
-	try {
-		var returned = cb(this._value);
-
-		if (returned && typeof(returned.then) == "function") {
-			/* 3.2.6.3. If either onFulfilled or onRejected returns a promise (call it returnedPromise), promise2 must assume the state of returnedPromise */
-			var fulfillThenPromise = function(value) { thenPromise.fulfill(value); }
-			var rejectThenPromise = function(value) { thenPromise.reject(value); }
-			returned.then(fulfillThenPromise, rejectThenPromise);
-		} else {
-			/* 3.2.6.1. If either onFulfilled or onRejected returns a value that is not a promise, promise2 must be fulfilled with that value. */ 
-			thenPromise.fulfill(returned);
-		}
-
-	} catch (e) {
-
-		/* 3.2.6.2. If either onFulfilled or onRejected throws an exception, promise2 must be rejected with the thrown exception as the reason. */
-		thenPromise.reject(e); 
-
-	}
-}
-
-this.L20n.Promise = Promise;
-}).call(this);
-(function() {
+});
+define('l20n/parser', function(require, exports, module) {
   'use strict';
 
-  var IO = {
-    load: function load(url, async) {
-      if (async) {
-        return this.loadAsync(url);
-      }
-      return this.loadSync(url);
-    },
-    loadAsync: function(url) {
-      var deferred = new L20n.Promise();
-      var xhr = new XMLHttpRequest();
-      xhr.overrideMimeType('text/plain');
-      xhr.addEventListener('load', function() {
-        if (xhr.status == 200) {
-          deferred.fulfill(xhr.responseText);
-        } else {
-          deferred.reject();
-        }
-      });
-      xhr.addEventListener('abort', function(e) {
-        return deferred.reject(e);
-      });
-      xhr.open('GET', url, true);
-      xhr.send('');
-      return deferred;
-    },
+  var EventEmitter = require('./events').EventEmitter;
 
-    loadSync: function(url) {
-      var deferred = new L20n.Promise();
-      var xhr = new XMLHttpRequest();
-      xhr.overrideMimeType('text/plain');
-      xhr.open('GET', url, false);
-      xhr.send('');
-      if (xhr.status == 200) {
-        return xhr.responseText;
-      } else {
-        // XXX should this fail more horribly?
-        return '';
-      }
-    },
-  }
-
-  this.L20n.IO = IO;
-
-}).call(this);
-(function() {
-  'use strict';
-
-  function Parser(Emitter) {
+  function Parser(throwOnErrors) {
 
     /* Public */
 
@@ -660,15 +697,16 @@ this.L20n.Promise = Promise;
 
     /* Private */
 
+    var MAX_PLACEABLES = 100;
+
     var _source, _index, _length, _emitter;
 
-    /* Depending on if we have emitter choose prop getLOL method */
     var getLOL;
-    if (Emitter) {
-      _emitter = new Emitter();
-      getLOL = getLOLWithRecover;
-    } else {
+    if (throwOnErrors) {
       getLOL = getLOLPlain;
+    } else {
+      _emitter = new EventEmitter();
+      getLOL = getLOLWithRecover;
     }
 
     function getComment() {
@@ -690,7 +728,7 @@ this.L20n.Promise = Promise;
       var attr, ws1, ch;
  
       while (true) {
-        attr = getKVPWithIndex();
+        attr = getKVPWithIndex('Attribute');
         attr.local = attr.key.name.charAt(0) === '_';
         attrs.push(attr);
         ws1 = getRequiredWS();
@@ -754,14 +792,16 @@ this.L20n.Promise = Promise;
       }
 
       var defItem, hi, comma, hash = [];
+      var hasDefItem = false;
       while (true) {
         defItem = false;
         if (_source.charAt(_index) === '*') {
           ++_index;
-          if (defItem) {
+          if (hasDefItem) {
             throw error('Default item redefinition forbidden');
           }
           defItem = true;
+          hasDefItem = true;
         }
         hi = getKVP('HashItem');
         hi['default'] = defItem;
@@ -798,7 +838,7 @@ this.L20n.Promise = Promise;
       while (close !== -1 &&
              _source.charCodeAt(close - 1) === 92 &&
              _source.charCodeAt(close - 2) !== 92) {
-        close = _source.indexOf(opchar, close + len);
+        close = _source.indexOf(opchar, close + 1);
       }
       if (close === -1) {
         throw error('Unclosed string literal');
@@ -808,7 +848,12 @@ this.L20n.Promise = Promise;
       _index = close + len;
       return {
         type: 'String',
-        content: str
+        content: str,
+        // we don't care about escaped cases here;  they are rare enough.
+        // if there is no {{ at all, it's definitely not a complex string.
+        // if there's a \{{, it's not complex either, but we will learn that 
+        // lazily in parseString
+        isNotComplex: str.indexOf('{{') === -1 || undefined
       };
     }
 
@@ -817,7 +862,8 @@ this.L20n.Promise = Promise;
         ch = _source.charAt(_index);
       }
       if (ch === "'" || ch === '"') {
-        if (ch === _source.charAt(_index + 1) && ch === _source.charAt(_index + 2)) {
+        if (ch === _source.charAt(_index + 1) && 
+            ch === _source.charAt(_index + 2)) {
           return getString(ch + ch + ch);
         }
         return getString(ch);
@@ -866,17 +912,17 @@ this.L20n.Promise = Promise;
 
       // a-zA-Z_
       if ((cc < 97 || cc > 122) && (cc < 65 || cc > 90) && cc !== 95) {
-        throw error('Identifier has to start with [a-zA-Z]');
+        throw error('Identifier has to start with [a-zA-Z_]');
       }
 
       cc = source.charCodeAt(++index);
-      while ((cc >= 95 && cc <= 122) || // a-z
+      while ((cc >= 97 && cc <= 122) || // a-z
              (cc >= 65 && cc <= 90) ||  // A-Z
              (cc >= 48 && cc <= 57) ||  // 0-9
              cc === 95) {               // _
         cc = source.charCodeAt(++index);
       }
-      _index += index - start;
+      _index = index;
       return {
         type: 'Identifier',
         name: source.slice(start, index)
@@ -930,7 +976,7 @@ this.L20n.Promise = Promise;
         type: 'Macro',
         id: id,
         args: idlist,
-        expression: exp,
+        expression: exp
       };
     }
 
@@ -943,11 +989,10 @@ this.L20n.Promise = Promise;
       var value = getValue(true, ch);
       var attrs = [];
       if (value === null) {
-        if (ch !== '>') {
-          attrs = getAttributes();
-        } else {
+        if (ch === '>') {
           throw error('Expected ">"');
         }
+        attrs = getAttributes();
       } else {
         var ws1 = getRequiredWS();
         if (_source.charAt(_index) !== '>') {
@@ -957,7 +1002,6 @@ this.L20n.Promise = Promise;
           attrs = getAttributes();
         }
       }
-      getWS();
 
       // skip '>'
       ++_index;
@@ -1024,6 +1068,8 @@ this.L20n.Promise = Promise;
       var body;                   // body of a complex string
       var bstart = _index;        // buffer start index
       var complex = false;
+      var placeables = 0;         // number of placeables found, capped by 
+                                  // MAX_PLACEABLES
 
       // unescape \\ \' \" \{{
       var pos = _source.indexOf('\\');
@@ -1051,6 +1097,10 @@ this.L20n.Promise = Promise;
           body = [];
           complex = true;
         }
+        if (placeables > MAX_PLACEABLES - 1) {
+          throw error('Too many placeables, maximum allowed is ' +
+                      MAX_PLACEABLES);
+        }
         if (bstart < pos) {
           body.push({
             type: 'String',
@@ -1062,9 +1112,10 @@ this.L20n.Promise = Promise;
         body.push(getExpression());
         getWS();
         if (_source.charCodeAt(_index) !== 125 ||
-            _source.charCodeAt(_index+1) !== 125) {
+            _source.charCodeAt(_index + 1) !== 125) {
           throw error('Expected "}}"');
         }
+        placeables++;
         pos = _index + 2;
         bstart = pos;
         pos = _source.indexOf('{{', pos);
@@ -1143,7 +1194,7 @@ this.L20n.Promise = Promise;
       try {
         return getComplexString();
       } catch (e) {
-        if (Emitter && e instanceof ParserError) {
+        if (_emitter && e instanceof ParserError) {
           _emitter.emit('error', e);
         }
         throw e;
@@ -1160,14 +1211,14 @@ this.L20n.Promise = Promise;
 
     function addEventListener(type, listener) {
       if (!_emitter) {
-        throw Error("Emitter not available");
+        throw Error('Emitter not available');
       }
       return _emitter.addEventListener(type, listener);
     }
 
     function removeEventListener(type, listener) {
       if (!_emitter) {
-        throw Error("Emitter not available");
+        throw Error('Emitter not available');
       }
       return _emitter.removeEventListener(type, listener);
     }
@@ -1269,7 +1320,7 @@ this.L20n.Promise = Promise;
     }
 
     function getEqualityExpression() {
-      return getPrefixExpression([['='], '=', true],
+      return getPrefixExpression([['=', '!'], '=', true],
                                  'BinaryExpression',
                                  'BinaryOperator',
                                  getRelationalExpression);
@@ -1328,10 +1379,10 @@ this.L20n.Promise = Promise;
 
     function getAttributeExpression(idref, computed) {
       if (idref.type !== 'ParenthesisExpression' &&
-          idref.type !== 'CallExpression' &&
           idref.type !== 'Identifier' &&
           idref.type !== 'ThisExpression') {
-        throw error('AttributeExpression must have Identifier, This, Call or Parenthesis as left node');
+        throw error('AttributeExpression must have Identifier, This or ' +
+                    'Parenthesis as left node');
       }
       var exp;
       if (computed) {
@@ -1568,299 +1619,9 @@ this.L20n.Promise = Promise;
   ParserError.prototype = Object.create(Error.prototype);
   ParserError.prototype.constructor = ParserError;
 
-  /* Expose the Parser constructor */
+  exports.Parser = Parser;
 
-  if (typeof exports !== 'undefined') {
-    exports.Parser = Parser;
-  } else if (this.L20n) {
-    this.L20n.Parser = Parser;
-  } else {
-    this.L20nParser = Parser;
-  }
-}).call(this);
-(function(){
-  'use strict';
-
-function RetranslationManager() {
-  var _usage = [];
-  var _counter = {};
-  var _callbacks = [];
-
-  this.bindGet = bindGet;
-  this.retranslate = retranslate;
-  this.globals = {};
-
-  for (var i in RetranslationManager._constructors) {
-    initGlobal.call(this, RetranslationManager._constructors[i]);
-  }
-
-  function initGlobal(globalCtor) {
-    var global = new globalCtor();
-    this.globals[global.id] = global;
-    _counter[global.id] = 0; 
-    global.addEventListener('change', function(id) {
-      for (var i = 0; i < _usage.length; i++) {
-        if (_usage[i] && _usage[i].globals.indexOf(id) !== -1) {
-          _usage[i].callback();
-        }  
-      }
-    });
-  };
-
-  function bindGet(get) {
-    // store the callback in case we want to retranslate the whole context
-    var inCallbacks;
-    for (var i = 0; i < _callbacks.length; i++) {
-      if (_callbacks[i].id === get.id) {
-        inCallbacks = true;
-        break;
-      }
-    }
-    if (!inCallbacks) {
-      _callbacks.push(get);
-    }
-
-    // handle the global usage
-    var inUsage = null;
-    for (var usageInc = 0; usageInc < _usage.length; usageInc++) {
-      if (_usage[usageInc] && _usage[usageInc].id === get.id) {
-        inUsage = _usage[usageInc];
-        break;
-      }
-    }
-    if (!inUsage) {
-      if (get.globals.length != 0) {
-        _usage.push(get);
-        get.globals.forEach(function(id) {
-          _counter[id]++;
-          this.globals[id].activate();
-        }, this);
-      }
-    } else {
-      if (get.globals.length == 0) {
-        delete(_usage[usageInc]);
-      } else {
-        var added = get.globals.filter(function(id) {
-          return inUsage.globals.indexOf(id) === -1;
-        });
-        added.forEach(function(id) {
-          _counter[id]++;
-          this.globals[id].activate();
-        }, this);
-        var removed = inUsage.globals.filter(function(id) {
-          return get.globals.indexOf(id) === -1;
-        });
-        removed.forEach(function(id) {
-          _counter[id]--;
-          if (_counter[id] == 0) {
-            this.globals[id].deactivate();
-          }
-        });
-        inUsage.globals = get.globals;
-      }
-    }
-  }
-
-  function retranslate() {
-    for (var i = 0; i < _callbacks.length; i++) {
-      _callbacks[i].callback();
-    }
-  }
-}
-
-RetranslationManager._constructors = [];
-
-RetranslationManager.registerGlobal = function(ctor) {
-  RetranslationManager._constructors.push(ctor);
-}
-
-function Global() {
-  this.id = null;
-  this._emitter = new L20n.EventEmitter();
-}
-
-Global.prototype.addEventListener = function(type, listener) {
-  if (type !== 'change') {
-    throw "Unknown event type";
-  }
-  this._emitter.addEventListener(type, listener);
-}
-
-Global.prototype.activate = function() {}
-Global.prototype.deactivate = function() {}
-
-RetranslationManager.Global = Global;
-
-
-// XXX: Warning, we're cheating here for now. We want to have @screen.width,
-// but since we can't get it from compiler, we call it @screen and in order to
-// keep API forward-compatible with 1.0 we return an object with key width to
-// make it callable as @screen.width
-function ScreenGlobal() {
-  Global.call(this);
-  this.id = 'screen';
-  this.get = get;
-  this.activate = activate;
-  this.isActive = false;
-
-  var value = null;
-  var self = this;
-
-  function get() {
-    if (!value) {
-      value = document.body.clientWidth;
-    }
-    return {'width': value};
-  }
-
-  function activate() {
-    if (!this.isActive) {
-      window.addEventListener('resize', onchange);
-      this.isActive = true;
-    }
-  }
-
-  function deactivate() {
-    window.removeEventListener('resize', onchange);
-  }
-
-  function onchange() {
-    value = document.body.clientWidth;
-    self._emitter.emit('change', self.id);
-  }
-}
-
-ScreenGlobal.prototype = Object.create(Global.prototype);
-ScreenGlobal.prototype.constructor = ScreenGlobal;
-
-
-function OSGlobal() {
-  Global.call(this);
-  this.id = 'os';
-  this.get = get;
-
-  function get() {
-    if (/^MacIntel/.test(navigator.platform)) {
-      return 'mac';
-    }
-    if (/^Linux/.test(navigator.platform)) {
-      return 'linux';
-    }
-    if (/^Win/.test(navigatgor.platform)) {
-      return 'win';
-    }
-    return 'unknown';
-  }
-
-}
-
-OSGlobal.prototype = Object.create(Global.prototype);
-OSGlobal.prototype.constructor = OSGlobal;
-
-function HourGlobal() {
-  Global.call(this);
-  this.id = 'hour';
-  this.get = get;
-  this.activate = activate;
-  this.deactivate = deactivate;
-  this.isActive = false;
-
-  var self = this;
-  var value = null;
-  var interval = 60 * 60 * 1000;
-  var I = null;
-
-  function get() {
-    if (!value) {
-      var time = new Date();
-      value = time.getHours();
-    }
-    return value;
-  }
-
-  function onchange() {
-    var time = new Date();
-    if (time.getHours() !== value) {
-      value = time.getHours();
-      self._emitter.emit('change', self.id);
-    }
-  }
-
-  function activate() {
-    if (!this.isActive) {
-      var time = new Date();
-      I = setTimeout(function() {
-        onchange();
-        I = setInterval(onchange, interval);
-      }, interval - (time.getTime() % interval));
-      this.isActive = true;
-    }
-  }
-
-  function deactivate() {
-    value = null;
-    clearInterval(I);
-    this.isActive = false;
-  }
-
-}
-
-HourGlobal.prototype = Object.create(Global.prototype);
-HourGlobal.prototype.constructor = HourGlobal;
-
-RetranslationManager.registerGlobal(ScreenGlobal);
-RetranslationManager.registerGlobal(OSGlobal);
-RetranslationManager.registerGlobal(HourGlobal);
-
-this.L20n.RetranslationManager = RetranslationManager;
-
-}).call(this);
-(function() {
-  'use strict';
-
-  function EventEmitter() {
-    this._listeners = {};
-  }
-
-  EventEmitter.prototype.emit = function ee_emit() {
-    var args = Array.prototype.slice.call(arguments);
-    var type = args.shift();
-    var typeListeners = this._listeners[type];
-    if (!typeListeners || !typeListeners.length) {
-      return false;
-    }
-    typeListeners.forEach(function(listener) {
-      listener.apply(this, args);
-    }, this);
-    return true;
-  }
-
-  EventEmitter.prototype.addEventListener = function ee_add(type, listener) {
-    if (!this._listeners[type]) {
-      this._listeners[type] = [];
-    }
-    this._listeners[type].push(listener);
-    return this;
-  }
-
-  EventEmitter.prototype.removeEventListener = function ee_remove(type, listener) {
-    var typeListeners = this._listeners[type];
-    var pos = typeListeners.indexOf(listener);
-    if (pos === -1) {
-      return this;
-    }
-    listeners.splice(pos, 1);
-    return this;
-  }
-
-  if (typeof exports !== 'undefined') {
-    exports.EventEmitter = EventEmitter;
-  } else if (this.L20n) {
-    this.L20n.EventEmitter = EventEmitter;
-  } else {
-    this.L20nEventEmitter = EventEmitter;
-  }
-}).call(this);
+});
 // This is L20n's on-the-fly compiler.  It takes the AST produced by the parser 
 // and uses it to create a set of JavaScript objects and functions representing 
 // entities and macros and other expressions.
@@ -1971,14 +1732,14 @@ this.L20n.RetranslationManager = RetranslationManager;
 // a `stringLiteral` and a `propertyExpression`.  The `PropertyExpression` 
 // contructor will do the same, etc...
 //
-// When `entity.toString(ctxdata)` is called by a third-party code, we need to 
+// When `entity.getString(ctxdata)` is called by a third-party code, we need to 
 // resolve the whole `complexString` <1> to return a single string value.  This 
 // is what **resolving** means and it involves some recursion.  On the other 
 // hand, **evaluating** means _to call the expression once and use what it 
 // returns_.
 // 
-// `toString` sets `locals.__this__` to the current entity, `about` and tells 
-// the `complexString` <1> to _resolve_ itself.
+// The identifier expression sets `locals.__this__` to the current entity, 
+// `about`, and tells the `complexString` <1> to _resolve_ itself.
 //
 // In order to resolve the `complexString` <1>, we start by resolving its first 
 // member <2> to a string.  As we resolve deeper down, we bubble down `locals` 
@@ -2005,17 +1766,13 @@ this.L20n.RetranslationManager = RetranslationManager;
 // compiler until a primitive value is returned.  This logic lives in the 
 // `_resolve` function.
 
-//
-// Inline comments
-// ---------------
-//
-// Isolate the code by using an immediately-invoked function expression.
-// Invoke it via `(function(){ ... }).call(this)` so that inside of the IIFE, 
-// `this` references the global object.
-(function() {
+define('l20n/compiler', function(require, exports, module) {
   'use strict';
 
-  function Compiler(Emitter, Parser) {
+  var EventEmitter = require('./events').EventEmitter;
+  var Parser = require('./parser').Parser;
+
+  function Compiler() {
 
     // Public
 
@@ -2027,12 +1784,14 @@ this.L20n.RetranslationManager = RetranslationManager;
 
     // Private
 
-    var _emitter = Emitter ? new Emitter() : null;
-    var _parser = Parser ? new Parser() : null;
+    var MAX_PLACEABLE_LENGTH = 2500;
+
+    var _emitter = new EventEmitter();
+    var _parser = new Parser(true);
     var _env = {};
-    var _globals = {};
+    var _globals = null;
     var _references = {
-      globals: {},
+      globals: {}
     };
 
     // Public API functions
@@ -2041,7 +1800,7 @@ this.L20n.RetranslationManager = RetranslationManager;
       _env = {};
       var types = {
         Entity: Entity,
-        Macro: Macro,
+        Macro: Macro
       };
       for (var i = 0, entry; entry = ast.body[i]; i++) {
         var constructor = types[entry.type];
@@ -2064,23 +1823,17 @@ this.L20n.RetranslationManager = RetranslationManager;
     }
 
     function addEventListener(type, listener) {
-      if (!_emitter) {
-        throw Error("Emitter not available");
-      }
       return _emitter.addEventListener(type, listener);
     }
 
     function removeEventListener(type, listener) {
-      if (!_emitter) {
-        throw Error("Emitter not available");
-      }
       return _emitter.removeEventListener(type, listener);
     }
 
     // reset the state of a compiler instance; used in tests
     function reset() {
       _env = {};
-      _globals = {};
+      _globals = null;
       _references.globals = {};
       return this;
     }
@@ -2089,12 +1842,9 @@ this.L20n.RetranslationManager = RetranslationManager;
 
     function emit(ctor, message, entry, source) {
       var e = new ctor(message, entry, source);
-      if (_emitter) {
-        _emitter.emit('error', e);
-      }
+      _emitter.emit('error', e);
       return e;
     }
-
 
     // The Entity object.
     function Entity(node) {
@@ -2105,7 +1855,7 @@ this.L20n.RetranslationManager = RetranslationManager;
       this.publicAttributes = [];
       var i;
       for (i = 0; i < node.index.length; i++) {
-        this.index.push(Expression(node.index[i], this));
+        this.index.push(IndexExpression(node.index[i], this));
       }
       for (i = 0; i < node.attrs.length; i++) {
         var attr = node.attrs[i];
@@ -2114,42 +1864,33 @@ this.L20n.RetranslationManager = RetranslationManager;
           this.publicAttributes.push(attr.key.name);
         }
       }
-      this.value = Expression(node.value, this, this.index);
+      if (node.value && node.value.isNotComplex) {
+        this.value = node.value.content;
+      } else {
+        this.value = Expression(node.value, this, this.index);
+      }
     }
-    // Entities are wrappers around their value expression.  _Yielding_ from 
-    // the entity is identical to _evaluating_ its value with the appropriate 
-    // value of `locals.__this__`.  See `PropertyExpression` for an example 
-    // usage.
-    Entity.prototype._yield = function E_yield(ctxdata, key) {
-      var locals = {
-        __this__: this,
-      };
-      return this.value(locals, ctxdata, key);
-    };
-    // Calling `entity._resolve` will _resolve_ its value to a primitive value.  
-    // See `ComplexString` for an example usage.
-    Entity.prototype._resolve = function E_resolve(ctxdata) {
-      var locals = {
-        __this__: this,
-      };
-      return _resolve(this.value, locals, ctxdata);
-    };
+
     Entity.prototype.getString = function E_getString(ctxdata) {
       try {
-        return this._resolve(ctxdata);
+        var locals = {
+          __this__: this
+        };
+        return _resolve(this.value, locals, ctxdata);
       } catch (e) {
         requireCompilerError(e);
         // `ValueErrors` are not emitted in `StringLiteral` where they are 
         // created, because if the string in question is being evaluated in an 
         // index, we'll emit an `IndexError` instead.  To avoid duplication, 
-        // the `ValueErrors` will only be emitted if it actually made it to 
-        // here.  See `HashLiteral` for an example of why it wouldn't make it.
-        if (e instanceof ValueError && _emitter) {
+        // `ValueErrors` are only be emitted if they actually make it to 
+        // here.  See `IndexExpression` for an example of why they wouldn't.
+        if (e instanceof ValueError) {
           _emitter.emit('error', e);
         }
         throw e;
       }
     };
+
     Entity.prototype.get = function E_get(ctxdata) {
       // reset `_references` to an empty state
       _references.globals = {};
@@ -2158,43 +1899,40 @@ this.L20n.RetranslationManager = RetranslationManager;
       // accordingly.
       var entity = {
         value: this.getString(ctxdata),
-        attributes: {},
+        attributes: {}
       };
       for (var i = 0, attr; attr = this.publicAttributes[i]; i++) {
         entity.attributes[attr] = this.attributes[attr].getString(ctxdata);
       }
       entity.globals = _references.globals;
       return entity;
-    }
+    };
+
 
     function Attribute(node, entity) {
       this.key = node.key.name;
       this.local = node.local || false;
       this.index = [];
       for (var i = 0; i < node.index.length; i++) {
-        this.index.push(Expression(node.index[i], this));
+        this.index.push(IndexExpression(node.index[i], this));
       }
-      this.value = Expression(node.value, entity, this.index);
+      if (node.value && node.value.isNotComplex) {
+        this.value = node.value.content;
+      } else {
+        this.value = Expression(node.value, entity, this.index);
+      }
       this.entity = entity;
     }
-    Attribute.prototype._yield = function A_yield(ctxdata, key) {
-      var locals = {
-        __this__: this.entity,
-      };
-      return this.value(locals, ctxdata, key);
-    };
-    Attribute.prototype._resolve = function A_resolve(ctxdata) {
-      var locals = {
-        __this__: this.entity,
-      };
-      return _resolve(this.value, locals, ctxdata);
-    };
+
     Attribute.prototype.getString = function A_getString(ctxdata) {
       try {
-        return this._resolve(ctxdata);
+        var locals = {
+          __this__: this.entity
+        };
+        return _resolve(this.value, locals, ctxdata);
       } catch (e) {
         requireCompilerError(e);
-        if (e instanceof ValueError && _emitter) {
+        if (e instanceof ValueError) {
           _emitter.emit('error', e);
         }
         throw e;
@@ -2207,15 +1945,23 @@ this.L20n.RetranslationManager = RetranslationManager;
       this.expression = Expression(node.expression, this);
       this.args = node.args;
     }
-    Macro.prototype._call = function M_call(ctxdata, args) {
+    Macro.prototype._call = function M_call(args, ctxdata) {
       var locals = {
-        __this__: this,
+        __this__: this
       };
+      // the number of arguments passed must equal the macro's arity
+      if (this.args.length !== args.length) {
+        throw new RuntimeError(this.id + '() takes exactly ' +
+                               this.args.length + ' argument(s) (' +
+                               args.length + ' given)');
+      }
       for (var i = 0; i < this.args.length; i++) {
         locals[this.args[i].id.name] = args[i];
       }
-      return this.expression(locals, ctxdata);
-    }
+      var final = this.expression(locals, ctxdata);
+      locals = final[0], final = final[1];
+      return [locals, _resolve(final, locals, ctxdata)];
+    };
 
 
     var EXPRESSION_TYPES = {
@@ -2242,13 +1988,14 @@ this.L20n.RetranslationManager = RetranslationManager;
       'CallExpression': CallExpression,
       'PropertyExpression': PropertyExpression,
       'AttributeExpression': AttributeExpression,
-      'ParenthesisExpression': ParenthesisExpression,
+      'ParenthesisExpression': ParenthesisExpression
     };
 
     // The 'dispatcher' expression constructor.  Other expression constructors 
     // call this to create expression functions for their components.  For 
-    // instance, `ConditionalExpression` calls `Expression` to create expression 
-    // functions for its `test`, `consequent` and `alternate` symbols.
+    // instance, `ConditionalExpression` calls `Expression` to create 
+    // expression functions for its `test`, `consequent` and `alternate` 
+    // symbols.
     function Expression(node, entry, index) {
       // An entity can have no value.  It will be resolved to `null`.
       if (!node) {
@@ -2263,33 +2010,52 @@ this.L20n.RetranslationManager = RetranslationManager;
       return EXPRESSION_TYPES[node.type](node, entry, index);
     }
 
-    function _resolve(expr, locals, ctxdata, index) {
+    function _resolve(expr, locals, ctxdata) {
       // Bail out early if it's a primitive value or `null`.  This is exactly 
       // what we want.
-      if (!expr || 
-          typeof expr === 'string' || 
+      if (typeof expr === 'string' || 
           typeof expr === 'boolean' || 
-          typeof expr === 'number') {
+          typeof expr === 'number' ||
+          !expr) {
         return expr;
       }
-      // Check if `expr` knows how to resolve itself (if it's an Entity or an 
-      // Attribute).
-      if (expr._resolve) {
-        return expr._resolve(ctxdata);
+
+      // Check if `expr` is an Entity or an Attribute
+      if (expr.value !== undefined) {
+        return _resolve(expr.value, locals, ctxdata);
       }
-      var current = expr(locals, ctxdata);
-      locals = current[0], current = current[1];
-      return _resolve(current, locals, ctxdata);
+
+      // Check if `expr` is an expression
+      if (typeof expr === 'function') {
+        var current = expr(locals, ctxdata);
+        locals = current[0], current = current[1];
+        return _resolve(current, locals, ctxdata);
+      }
+
+      // Throw if `expr` is a macro
+      if (expr.expression) {
+        throw new RuntimeError('Uncalled macro: ' + expr.id);
+      }
+
+      // Throw if `expr` is a non-primitive from ctxdata or a global
+      throw new RuntimeError('Cannot resolve ctxdata or global of type ' +
+                             typeof expr);
+
     }
 
     function Identifier(node, entry) {
       var name = node.name;
       return function identifier(locals, ctxdata) {
         if (!_env.hasOwnProperty(name)) {
-          throw new RuntimeError('Reference to an unknown entry: ' + name,
-                                 entry);
+          throw new RuntimeError('Reference to an unknown entry: ' + name);
         }
-        locals.__this__ = _env[name];
+        // The only thing we care about here is the new `__this__` so we 
+        // discard any other local variables.  Note that because this is an 
+        // assignment to a local variable, the original `locals` passed is not 
+        // changed.
+        locals = {
+          __this__: _env[name]
+        };
         return [locals, _env[name]];
       };
     }
@@ -2302,11 +2068,11 @@ this.L20n.RetranslationManager = RetranslationManager;
       var name = node.id.name;
       return function variableExpression(locals, ctxdata) {
         if (locals.hasOwnProperty(name)) {
+          // locals[name] is already a [locals, value] tuple on its own
           return locals[name];
         }
         if (!ctxdata || !ctxdata.hasOwnProperty(name)) {
-          throw new RuntimeError('Reference to an unknown variable: ' + name,
-                                 entry);
+          throw new RuntimeError('Reference to an unknown variable: ' + name);
         }
         return [locals, ctxdata[name]];
       };
@@ -2315,15 +2081,18 @@ this.L20n.RetranslationManager = RetranslationManager;
       var name = node.id.name;
       return function globalsExpression(locals, ctxdata) {
         if (!_globals) {
-          throw new RuntimeError('Globals missing (tried @' + name + ').',
-                                 entry);
+          throw new RuntimeError('No globals set (tried @' + name + ')');
         }
         if (!_globals.hasOwnProperty(name)) {
-          throw new RuntimeError('Reference to an unknown global: ' + name,
-                                 entry);
+          throw new RuntimeError('Reference to an unknown global: ' + name);
+        }
+        try {
+          var value = _globals[name].get();
+        } catch (e) {
+          throw new RuntimeError('Cannot evaluate global ' + name);
         }
         _references.globals[name] = true;
-        return [locals, _globals[name].get()];
+        return [locals, value];
       };
     }
     function NumberLiteral(node, entry) {
@@ -2333,12 +2102,18 @@ this.L20n.RetranslationManager = RetranslationManager;
     }
     function StringLiteral(node, entry) {
       var parsed, complex;
-      return function stringLiteral(locals, ctxdata) {
+      return function stringLiteral(locals, ctxdata, key) {
+        // if a key was passed, throw;  checking arguments is more reliable 
+        // than testing the value of key because if the key comes from context 
+        // data it can be any type, also undefined
+        if (arguments.length > 2) {
+          throw new RuntimeError('Cannot get property of a string: ' + key);
+        }
         if (!complex) {
           try {
             parsed = _parser.parseString(node.content);
           } catch (e) {
-            throw new ValueError("Malformed string. " + e.message, entry, 
+            throw new ValueError('Malformed string. ' + e.message, entry, 
                                  node.content);
           }
           if (parsed.type == 'String') {
@@ -2351,40 +2126,91 @@ this.L20n.RetranslationManager = RetranslationManager;
         } catch (e) {
           requireCompilerError(e);
           // only throw, don't emit yet.  If the `ValueError` makes it to 
-          // `toString()` it will be emitted there.  It might, however, be 
-          // cought by `HashLiteral` and changed into a `IndexError`.  See 
-          // those Expressions for more docs.
+          // `getString()` it will be emitted there.  It might, however, be 
+          // cought by `IndexExpression` and changed into a `IndexError`.  See 
+          // `IndexExpression` for more explanation.
           throw new ValueError(e.message, entry, node.content);
         }
       };
     }
-    function HashLiteral(node, entry, index) {
-      var content = [];
-      // if absent, `defaultKey` and `defaultIndex` are undefined
-      var defaultKey;
-      var defaultIndex = index.length ? index.shift() : undefined;
-      for (var i = 0; i < node.content.length; i++) {
-        var elem = node.content[i];
-        // use `elem.value` to skip `HashItem` and create the value right away
-        content[elem.key.name] = Expression(elem.value, entry, index);
-        if (elem.default) {
-          defaultKey = elem.key.name;
-        }
-      }
-      return function hashLiteral(locals, ctxdata, prop) {
-        var keysToTry = [prop, defaultIndex, defaultKey];
-        var keysTried = [];
-        for (var i = 0; i < keysToTry.length; i++) {
-          try {
-            // only defaultIndex needs to be resolved
-            var key = keysToTry[i] = _resolve(keysToTry[i], locals, ctxdata);
-          } catch (e) {
-            requireCompilerError(e);
 
-            // Throw and emit an IndexError so that ValueErrors from the index 
-            // don't make their way to the context.  The context only cares 
-            // about ValueErrors thrown by the value of the entity it has 
-            // requested, not entities used in the index.
+    function ComplexString(node, entry) {
+      var content = [];
+      for (var i = 0; i < node.content.length; i++) {
+        content.push(Expression(node.content[i], entry));
+      }
+
+      // Every complexString needs to have its own `dirty` flag whose state 
+      // persists across multiple calls to the given complexString.  On the 
+      // other hand, `dirty` must not be shared by all complexStrings.  Hence 
+      // the need to define `dirty` as a variable available in the closure.  
+      // Note that the anonymous function is a self-invoked one and it returns 
+      // the closure immediately.
+      return function() {
+        var dirty = false;
+        return function complexString(locals, ctxdata) {
+          if (dirty) {
+            throw new RuntimeError('Cyclic reference detected');
+          }
+          dirty = true;
+          var parts = [];
+          try {
+            for (var i = 0; i < content.length; i++) {
+              var part = _resolve(content[i], locals, ctxdata);
+              if (typeof part !== 'string' && typeof part !== 'number') {
+                throw new RuntimeError('Placeables must be strings or ' +
+                                       'numbers');
+              }
+              if (part.length > MAX_PLACEABLE_LENGTH) {
+                throw new RuntimeError('Placeable has too many characters, ' +
+                                       'maximum allowed is ' +
+                                       MAX_PLACEABLE_LENGTH);
+              }
+              parts.push(part);
+            }
+          } finally {
+            dirty = false;
+          }
+          return [locals, parts.join('')];
+        }
+      }();
+    }
+
+    function IndexExpression(node, entry) {
+      var expression = Expression(node, entry);
+
+      // This is analogous to `ComplexString` in that an individual index can 
+      // only be visited once during the resolution of an Entity.  `dirty` is 
+      // set in a closure context of the returned function.
+      return function() {
+        var dirty = false;
+        return function indexExpression(locals, ctxdata) {
+          if (dirty) {
+            throw new RuntimeError('Cyclic reference detected');
+          }
+          dirty = true;
+          try {
+            // We need to resolve `expression` here so that we catch errors 
+            // thrown deep within.  Without `_resolve` we might end up with an 
+            // unresolved Entity object, and no "Cyclic reference detected" 
+            // error would be thown.
+            var retval = _resolve(expression, locals, ctxdata);
+          } catch (e) {
+            // If it's an `IndexError` thrown deeper within `expression`, it 
+            // has already been emitted by its `indexExpression`.  We can 
+            // safely re-throw it here.
+            if (e instanceof IndexError) {
+              throw e;
+            }
+
+            // Otherwise, make sure it's a `RuntimeError` or a `ValueError` and 
+            // throw and emit an `IndexError`.
+            //
+            // If it's a `ValueError` we want to replace it by an `IndexError` 
+            // here so that `ValueErrors` from the index don't make their way 
+            // up to the context.  The context only cares about ValueErrors 
+            // thrown by the value of the entity it has requested, not entities 
+            // used in the index.
             //
             // To illustrate this point with an example, consider the following 
             // two strings, where `foo` is a missing entity.
@@ -2405,14 +2231,40 @@ this.L20n.RetranslationManager = RetranslationManager;
             //     }>
             //
             // On the other hand, `prompt2` will throw an `IndexError`.  This 
-            // is a more serious scenatio for the context.  We should not 
+            // is a more serious scenario for the context.  We should not 
             // assume that we know which variant to show to the user.  In fact, 
             // in the above (much contrived, but still) example, showing the 
             // incorrect variant will likely lead to data loss.  The context 
             // should be more strict in this case and should not try to recover 
             // from this error too hard.
+            requireCompilerError(e);
             throw emit(IndexError, e.message, entry);
+          } finally {
+            dirty = false;
           }
+          return [locals, retval];
+        }
+      }();
+    }
+
+    function HashLiteral(node, entry, index) {
+      var content = {};
+      // if absent, `defaultKey` and `defaultIndex` are undefined
+      var defaultKey;
+      var defaultIndex = index.length ? index.shift() : undefined;
+      for (var i = 0; i < node.content.length; i++) {
+        var elem = node.content[i];
+        // use `elem.value` to skip `HashItem` and create the value right away
+        content[elem.key.name] = Expression(elem.value, entry, index);
+        if (elem.default) {
+          defaultKey = elem.key.name;
+        }
+      }
+      return function hashLiteral(locals, ctxdata, prop) {
+        var keysToTry = [prop, defaultIndex, defaultKey];
+        var keysTried = [];
+        for (var i = 0; i < keysToTry.length; i++) {
+          var key = _resolve(keysToTry[i], locals, ctxdata);
           if (key === undefined) {
             continue;
           }
@@ -2425,162 +2277,134 @@ this.L20n.RetranslationManager = RetranslationManager;
           }
         }
 
-        throw emit(IndexError,
-                   keysTried.length ? 
-                     'Hash key lookup failed (tried "' + keysTried.join('", "') + '").' :
-                     'Hash key lookup failed.',
-                   entry);
+        // If no valid key was found, throw an `IndexError`
+        if (keysTried.length) {
+          var message = 'Hash key lookup failed ' +
+                        '(tried "' + keysTried.join('", "') + '").';
+        } else {
+          var message = 'Hash key lookup failed.';
+        }
+        throw emit(IndexError, message, entry);
       };
     }
-    function ComplexString(node, entry) {
-      var content = [];
-      for (var i = 0; i < node.content.length; i++) {
-        content.push(Expression(node.content[i], entry));
-      }
-      // Every complexString needs to have its own `dirty` flag whose state 
-      // persists across multiple calls to the given complexString.  On the other 
-      // hand, `dirty` must not be shared by all complexStrings.  Hence the need 
-      // to define `dirty` as a variable available in the closure.  Note that the 
-      // anonymous function is a self-invoked one and it returns the closure 
-      // immediately.
-      return function() {
-        var dirty = false;
-        return function complexString(locals, ctxdata) {
-          if (dirty) {
-            throw new RuntimeError("Cyclic reference detected", entry);
-          }
-          dirty = true;
-          var parts = [];
-          try {
-            for (var i = 0; i < content.length; i++) {
-              var part = _resolve(content[i], locals, ctxdata);
-              if (typeof part !== 'string' && typeof part !== 'number') {
-                throw new RuntimeError('Placeables must be strings or numbers', 
-                                       entry);
-              }
-              parts.push(part);
-            }
-          } finally {
-            dirty = false;
-          }
-          return [locals, parts.join('')];
-        }
-      }();
-    }
+
 
     function UnaryOperator(token, entry) {
       if (token == '-') return function negativeOperator(argument) {
         if (typeof argument !== 'number') {
-          throw new RuntimeError('The unary - operator takes a number', entry);
+          throw new RuntimeError('The unary - operator takes a number');
         }
         return -argument;
       };
       if (token == '+') return function positiveOperator(argument) {
         if (typeof argument !== 'number') {
-          throw new RuntimeError('The unary + operator takes a number', entry);
+          throw new RuntimeError('The unary + operator takes a number');
         }
         return +argument;
       };
       if (token == '!') return function notOperator(argument) {
         if (typeof argument !== 'boolean') {
-          throw new RuntimeError('The ! operator takes a boolean', entry);
+          throw new RuntimeError('The ! operator takes a boolean');
         }
         return !argument;
       };
-      throw emit(CompilationError, "Unknown token: " + token, entry);
+      throw emit(CompilationError, 'Unknown token: ' + token, entry);
     }
     function BinaryOperator(token, entry) {
       if (token == '==') return function equalOperator(left, right) {
         if ((typeof left !== 'number' || typeof right !== 'number') &&
             (typeof left !== 'string' || typeof right !== 'string')) {
-          throw new RuntimeError('The == operator takes two numbers or '+
-                                 'two strings', entry);
+          throw new RuntimeError('The == operator takes two numbers or ' +
+                                 'two strings');
         }
         return left == right;
       };
       if (token == '!=') return function notEqualOperator(left, right) {
         if ((typeof left !== 'number' || typeof right !== 'number') &&
             (typeof left !== 'string' || typeof right !== 'string')) {
-          throw new RuntimeError('The != operator takes two numbers or '+
-                                 'two strings', entry);
+          throw new RuntimeError('The != operator takes two numbers or ' +
+                                 'two strings');
         }
         return left != right;
       };
       if (token == '<') return function lessThanOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The < operator takes two numbers', entry);
+          throw new RuntimeError('The < operator takes two numbers');
         }
         return left < right;
       };
       if (token == '<=') return function lessThanEqualOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The <= operator takes two numbers', entry);
+          throw new RuntimeError('The <= operator takes two numbers');
         }
         return left <= right;
       };
       if (token == '>') return function greaterThanOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The > operator takes two numbers', entry);
+          throw new RuntimeError('The > operator takes two numbers');
         }
         return left > right;
       };
       if (token == '>=') return function greaterThanEqualOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The >= operator takes two numbers', entry);
+          throw new RuntimeError('The >= operator takes two numbers');
         }
         return left >= right;
       };
       if (token == '+') return function addOperator(left, right) {
         if ((typeof left !== 'number' || typeof right !== 'number') &&
             (typeof left !== 'string' || typeof right !== 'string')) {
-          throw new RuntimeError('The + operator takes two numbers or '+
-                                 'two strings', entry);
+          throw new RuntimeError('The + operator takes two numbers or ' +
+                                 'two strings');
         }
         return left + right;
       };
       if (token == '-') return function substractOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The - operator takes numbers', entry);
+          throw new RuntimeError('The - operator takes two numbers');
         }
         return left - right;
       };
       if (token == '*') return function multiplyOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The * operator takes numbers', entry);
+          throw new RuntimeError('The * operator takes two numbers');
         }
         return left * right;
       };
       if (token == '/') return function devideOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The / operator takes two numbers', entry);
+          throw new RuntimeError('The / operator takes two numbers');
         }
         if (right == 0) {
-          throw new RuntimeError('Division by zero not allowed.', entry);
+          throw new RuntimeError('Division by zero not allowed.');
         }
         return left / right;
       };
       if (token == '%') return function moduloOperator(left, right) {
         if (typeof left !== 'number' || typeof right !== 'number') {
-          throw new RuntimeError('The % operator takes two numbers', entry);
+          throw new RuntimeError('The % operator takes two numbers');
+        }
+        if (right == 0) {
+          throw new RuntimeError('Modulo zero not allowed.');
         }
         return left % right;
       };
-      throw emit(CompilationError, "Unknown token: " + token, entry);
+      throw emit(CompilationError, 'Unknown token: ' + token, entry);
     }
     function LogicalOperator(token, entry) {
       if (token == '&&') return function andOperator(left, right) {
         if (typeof left !== 'boolean' || typeof right !== 'boolean') {
-          throw new RuntimeError('The && operator takes two booleans', entry);
+          throw new RuntimeError('The && operator takes two booleans');
         }
         return left && right;
       };
       if (token == '||') return function orOperator(left, right) {
         if (typeof left !== 'boolean' || typeof right !== 'boolean') {
-          throw new RuntimeError('The || operator takes two booleans', entry);
+          throw new RuntimeError('The || operator takes two booleans');
         }
         return left || right;
       };
-      throw emit(CompilationError, "Unknown token: " + token, entry);
+      throw emit(CompilationError, 'Unknown token: ' + token, entry);
     }
     function UnaryExpression(node, entry) {
       var operator = UnaryOperator(node.operator.token, entry);
@@ -2618,8 +2442,8 @@ this.L20n.RetranslationManager = RetranslationManager;
       return function conditionalExpression(locals, ctxdata) {
         var tested = _resolve(test, locals, ctxdata);
         if (typeof tested !== 'boolean') {
-          throw new RuntimeError('Conditional expressions must test a boolean', 
-                                 entry);
+          throw new RuntimeError('Conditional expressions must test a ' + 
+                                 'boolean');
         }
         if (tested === true) {
           return consequent(locals, ctxdata);
@@ -2642,12 +2466,12 @@ this.L20n.RetranslationManager = RetranslationManager;
         // callee is an expression pointing to a macro, e.g. an identifier
         var macro = callee(locals, ctxdata);
         locals = macro[0], macro = macro[1];
-        if (!macro._call) {
-          throw new RuntimeError('Expected a macro, got a non-callable.',
-                                 entry);
+        if (!macro.expression) {
+          throw new RuntimeError('Expected a macro, got a non-callable.');
         }
-        // rely entirely on the platform implementation to detect recursion
-        return macro._call(ctxdata, evaluated_args);
+        // Rely entirely on the platform implementation to detect recursion.
+        // `Macro::_call` assigns `evaluated_args` to members of `locals`.
+        return macro._call(evaluated_args, ctxdata);
       };
     }
     function PropertyExpression(node, entry) {
@@ -2659,30 +2483,51 @@ this.L20n.RetranslationManager = RetranslationManager;
         var prop = _resolve(property, locals, ctxdata);
         var parent = expression(locals, ctxdata);
         locals = parent[0], parent = parent[1];
-        // If `parent` is an Entity or an Attribute, evaluate its value via the 
-        // `_yield` method.  This will ensure the correct value of 
-        // `locals.__this__`.
-        if (parent._yield) {
-          return parent._yield(ctxdata, prop);
-        }
-        // If `parent` is an object passed by the developer to the context 
-        // (i.e., `expression` was a `VariableExpression`), simply return the 
-        // member of the object corresponding to `prop`.  We don't really care 
-        // about `locals` here.
-        if (typeof parent !== 'function') {
-          if (!parent.hasOwnProperty(prop)) {
-            throw new RuntimeError(prop + 
-                                   ' is not defined in the context data',
-                                   entry);
+
+        // At this point, `parent` can be anything and we need to do some 
+        // type-checking to handle erros gracefully (bug 883664) and securely 
+        // (bug 815962).
+
+        // If `parent` is an Entity or an Attribute, `locals` has been 
+        // correctly set up by Identifier
+        if (parent && parent.value !== undefined) {
+          if (typeof parent.value !== 'function') {
+            throw new RuntimeError('Cannot get property of a ' +
+                                   typeof parent.value + ': ' + prop);
           }
-          return [null, parent[prop]];
+          return parent.value(locals, ctxdata, prop);
         }
-        return parent(locals, ctxdata, prop);
+
+        // If it's a hashLiteral or stringLiteral inside a hash, just call it
+        if (typeof parent === 'function') {
+          return parent(locals, ctxdata, prop);
+        }
+        if (parent && parent.expression) {
+          throw new RuntimeError('Cannot get property of a macro: ' + prop);
+        }
+
+        // If `parent` is an object passed by the developer to the context 
+        // (i.e., `expression` was a `VariableExpression`) or a global, return 
+        // the member of the object corresponding to `prop`
+        if (typeof parent === 'object') {
+          if (parent === null) {
+            throw new RuntimeError('Cannot get property of a null: ' + prop);
+          }
+          if (Array.isArray(parent)) {
+            throw new RuntimeError('Cannot get property of an array: ' + prop);
+          }
+          if (!parent.hasOwnProperty(prop)) {
+            throw new RuntimeError(prop + ' is not defined on the object.');
+          }
+          return [locals, parent[prop]];
+        }
+
+        // otherwise it's a primitive
+        throw new RuntimeError('Cannot get property of a ' + typeof parent + 
+                               ': ' + prop);
       }
     }
     function AttributeExpression(node, entry) {
-      // XXX looks similar to PropertyExpression, but it's actually closer to 
-      // Identifier
       var expression = Expression(node.expression, entry);
       var attribute = node.computed ?
         Expression(node.attribute, entry) :
@@ -2691,7 +2536,13 @@ this.L20n.RetranslationManager = RetranslationManager;
         var attr = _resolve(attribute, locals, ctxdata);
         var entity = expression(locals, ctxdata);
         locals = entity[0], entity = entity[1];
-        // XXX what if it's not an entity?
+        if (!entity.attributes) {
+          throw new RuntimeError('Cannot get attribute of a non-entity: ' +
+                                 attr);
+        }
+        if (!entity.attributes.hasOwnProperty(attr)) {
+          throw new RuntimeError(entity.id + ' has no attribute ' + attr);
+        }
         return [locals, entity.attributes[attr]];
       }
     }
@@ -2709,10 +2560,9 @@ this.L20n.RetranslationManager = RetranslationManager;
 
 
   // `CompilerError` is a general class of errors emitted by the Compiler.
-  function CompilerError(message, entry) {
+  function CompilerError(message) {
     this.name = 'CompilerError';
     this.message = message;
-    this.entry = entry.id;
   }
   CompilerError.prototype = Object.create(Error.prototype);
   CompilerError.prototype.constructor = CompilerError;
@@ -2720,8 +2570,9 @@ this.L20n.RetranslationManager = RetranslationManager;
   // `CompilationError` extends `CompilerError`.  It's a class of errors 
   // which happen during compilation of the AST.
   function CompilationError(message, entry) {
-    CompilerError.call(this, message, entry);
+    CompilerError.call(this, message);
     this.name = 'CompilationError';
+    this.entry = entry.id;
   }
   CompilationError.prototype = Object.create(CompilerError.prototype);
   CompilationError.prototype.constructor = CompilationError;
@@ -2729,24 +2580,25 @@ this.L20n.RetranslationManager = RetranslationManager;
   // `RuntimeError` extends `CompilerError`.  It's a class of errors which 
   // happen during the evaluation of entries, i.e. when you call 
   // `entity.toString()`.
-  function RuntimeError(message, entry) {
-    CompilerError.call(this, message, entry);
+  function RuntimeError(message) {
+    CompilerError.call(this, message);
     this.name = 'RuntimeError';
   };
   RuntimeError.prototype = Object.create(CompilerError.prototype);
-  RuntimeError.prototype.constructor = RuntimeError;;
+  RuntimeError.prototype.constructor = RuntimeError;
 
   // `ValueError` extends `RuntimeError`.  It's a class of errors which 
   // happen during the composition of a ComplexString value.  It's easier to 
   // recover from than an `IndexError` because at least we know that we're 
   // showing the correct member of the hash.
   function ValueError(message, entry, source) {
-    RuntimeError.call(this, message, entry);
+    RuntimeError.call(this, message);
     this.name = 'ValueError';
+    this.entry = entry.id;
     this.source = source;
   }
   ValueError.prototype = Object.create(RuntimeError.prototype);
-  ValueError.prototype.constructor = ValueError;;
+  ValueError.prototype.constructor = ValueError;
 
   // `IndexError` extends `RuntimeError`.  It's a class of errors which 
   // happen during the lookup of a hash member.  It's harder to recover 
@@ -2754,11 +2606,12 @@ this.L20n.RetranslationManager = RetranslationManager;
   // entity value to show and in case the meanings are divergent, the 
   // consequences for the user can be serious.
   function IndexError(message, entry) {
-    RuntimeError.call(this, message, entry);
+    RuntimeError.call(this, message);
     this.name = 'IndexError';
+    this.entry = entry.id;
   };
   IndexError.prototype = Object.create(RuntimeError.prototype);
-  IndexError.prototype.constructor = IndexError;;
+  IndexError.prototype.constructor = IndexError;
 
   function requireCompilerError(e) {
     if (!(e instanceof CompilerError)) {
@@ -2766,361 +2619,491 @@ this.L20n.RetranslationManager = RetranslationManager;
     }
   }
 
+  exports.Compiler = Compiler;
 
-  // Expose the Compiler constructor
+});
+/*
+ *  Any copyright is dedicated to the Public Domain.
+ *  http://creativecommons.org/publicdomain/zero/1.0/
+ */
 
-  // Depending on the environment the script is run in, define `Compiler` as 
-  // the exports object which can be `required` as a module, or as a member of 
-  // the L20n object defined on the global object in the browser, i.e. 
-  // `window`.
-
-  if (typeof exports !== 'undefined') {
-    exports.Compiler = Compiler;
-  } else if (this.L20n) {
-    this.L20n.Compiler = Compiler;
-  } else {
-    this.L20nCompiler = Compiler;
-  }
-}).call(this);
-(function() {
+define('l20n/promise', function(require, exports, module) {
   'use strict';
 
-  var data = {
-    'defaultLocale': 'en-US',
-    'systemLocales': ['en-US']
-  }
+  var Promise = function() {
+    this._state = 0; /* 0 = pending, 1 = fulfilled, 2 = rejected */
+    this._value = null; /* fulfillment / rejection value */
 
-  /* I18n API TC39 6.2.2 */
-  function isStructurallyValidLanguageTag(locale) {
-    return true;
-  }
+    this._cb = {
+      fulfilled: [],
+      rejected: []
+    };
 
+    this._thenPromises = []; /* promises returned by then() */
+  };
 
-  /* I18n API TC39 6.2.3 */
-  function canonicalizeLanguageTag(locale) {
-    return locale;
-  }
-
-  /* I18n API TC39 6.2.4 */
-  function defaultLocale() {
-    return data.defaultLocale;
-  }
-
-  /* I18n API TC39 9.2.1 */
-  function canonicalizeLocaleList(locales) {
-    if (locales === undefined) {
-      return [];
+  Promise.all = function(list) {
+    var pr = new Promise();
+    var toResolve = list.length;
+    if (toResolve == 0) {
+      pr.fulfill();
+      return pr;
     }
-    
-    var seen = [];
-    
-    if (typeof(locales) == 'string') {
-      locales = new Array(locales);
-    }
-
-    var len = locales.length;
-    var k = 0;
-
-    while (k < len) {
-      var Pk = k.toString();
-      var kPresent = locales.hasOwnProperty(Pk);
-      if (kPresent) {
-        var kValue = locales[Pk];
-
-        if (typeof(kValue) !== 'string' &&
-            typeof(kValue) !== 'object') {
-          throw new TypeError();
-        }
-        
-        var tag = kValue.toString();
-        if (!isStructurallyValidLanguageTag(tag)) {
-          throw new RangeError();
-        }
-        var tag = canonicalizeLanguageTag(tag);
-        if (seen.indexOf(tag) === -1) {
-          seen.push(tag);
-        }
-      }
-      k += 1;
-    }
-    return seen;
-  }
-
-  /* I18n API TC39 9.2.2 */
-  function bestAvailableLocale(availableLocales, locale) {
-    var candidate = locale;
-    while (1) {
-      if (availableLocales.indexOf(candidate) !== -1) {
-        return candidate;
-      }
-
-      var pos = candidate.lastIndexOf('-');
-
-      if (pos === -1) {
-        return undefined;
-      }
-
-      if (pos >= 2 && candidate[pos-2] == '-') {
-        pos -= 2;
-      }
-      candidate = candidate.substr(0, pos)
-    }
-  }
-
-  /* I18n API TC39 9.2.3 */
-  function lookupMatcher(availableLocales, requestedLocales) {
-    var i = 0;
-    var len = requestedLocales.length;
-    var availableLocale = undefined;
-
-    while (i < len && availableLocale === undefined) {
-      var locale = requestedLocales[i];
-      var noExtensionsLocale = locale;
-      var availableLocale = bestAvailableLocale(availableLocales,
-                                                noExtensionsLocale);
-      i += 1;
-    }
-    
-    var result = {};
-    
-    if (availableLocale !== undefined) {
-      result.locale = availableLocale;
-      if (locale !== noExtensionsLocale) {
-        throw "NotImplemented";
-      }
-    } else {
-      result.locale = defaultLocale();
-    }
-    return result;
-  }
-
-  /* I18n API TC39 9.2.4 */
-  var bestFitMatcher = lookupMatcher;
-
-  /* I18n API TC39 9.2.5 */
-  function resolveLocale(availableLocales,
-                         requestedLocales,
-                         options,
-                         relevantExtensionKeys,
-                         localeData) {
-
-    var matcher = options.localeMatcher;
-    if (matcher == 'lookup') {
-      var r = lookupMatcher(availableLocales, requestedLocales);
-    } else {
-      var r = bestFitMatcher(availableLocales, requestedLocales);
-    }
-    var foundLocale = r.locale;
-
-    if (r.hasOwnProperty('extension')) {
-      throw "NotImplemented";
-    }
-
-    var result = {};
-    result.dataLocale = foundLocale;
-
-    var supportedExtension = "-u";
-
-    var i = 0;
-    var len = 0;
-
-    if (relevantExtensionKeys !== undefined) {
-      len = relevantExtensionKeys.length;
-    }
-    
-    while (i < len) {
-      var key = relevantExtensionKeys[i.toString()];
-      var foundLocaleData = localeData(foundLocale);
-      var keyLocaleData = foundLocaleData[foundLocale];
-      var value = keyLocaleData[0];
-      var supportedExtensionAddition = "";
-      if (extensionSubtags !== undefined) {
-        throw "NotImplemented";
-      }
-
-      if (options.hasOwnProperty('key')) {
-        var optionsValue = options.key;
-        if (keyLocaleData.indexOf(optionsValue) !== -1) {
-          if (optionsValue !== value) {
-            value = optionsValue;
-            supportedExtensionAddition = "";
-          }
-        }
-        result.key = value;
-        supportedExtension += supportedExtensionAddition;
-        i += 1;
+    function onResolve() {
+      toResolve--;
+      if (toResolve == 0) {
+        pr.fulfill();
       }
     }
-
-    if (supportedExtension.length > 2) {
-      var preExtension = foundLocale.substr(0, extensionIndex);
-      var postExtension = foundLocale.substr(extensionIndex+1);
-      var foundLocale = preExtension + supportedExtension + postExtension;
+    for (var idx in list) {
+      // XXX should there be a different callback for promises errorring out?
+      // with two onResolve callbacks, all() is more like some().
+      list[idx].then(onResolve, onResolve);
     }
-    result.locale = foundLocale;
-    return result;
-  }
+    return pr;
+  };
 
   /**
-   * availableLocales - The list of locales that the system offers
-   *
-   * returns the list of availableLocales sorted by user preferred locales
-   **/
-  function prioritizeLocales(availableLocales) {
-    /**
-     * For now we just take nav.language, but we'd prefer to get
-     * a list of locales that the user can read sorted by user's preference
-     **/
-    var requestedLocales = [navigator.language || navigator.userLanguage];
-    var options = {'localeMatcher': 'lookup'};
-    var tag = resolveLocale(availableLocales,
-                            requestedLocales, options);
-    var pos = availableLocales.indexOf(tag.locale)
+   * @param {function} onFulfilled To be called once this promise is fulfilled.
+   * @param {function} onRejected To be called once this promise is rejected.
+   * @return {Promise}
+   */
+  Promise.prototype.then = function(onFulfilled, onRejected) {
+    this._cb.fulfilled.push(onFulfilled);
+    this._cb.rejected.push(onRejected);
 
-    if (pos === -1) {
-      // not sure why resolveLocale can return a locale that is not available
-      return availableLocales;
+    var thenPromise = new Promise();
+
+    this._thenPromises.push(thenPromise);
+
+    if (this._state > 0) {
+      setTimeout(this._processQueue.bind(this), 0);
     }
-    availableLocales.splice(pos, 1);
-    availableLocales.unshift(tag.locale)
-    return availableLocales;
-  }
 
-  this.L20n.Intl = {
-    prioritizeLocales: prioritizeLocales
+    // 3.2.6. then must return a promise.
+    return thenPromise; 
   };
-}).call(this);
-(function(){
+
+  /**
+   * Fulfill this promise with a given value
+   * @param {any} value
+   */
+  Promise.prototype.fulfill = function(value) {
+    if (this._state != 0) { return this; }
+
+    this._state = 1;
+    this._value = value;
+
+    this._processQueue();
+
+    return this;
+  };
+
+  /**
+   * Reject this promise with a given value
+   * @param {any} value
+   */
+  Promise.prototype.reject = function(value) {
+    if (this._state != 0) { return this; }
+
+    this._state = 2;
+    this._value = value;
+
+    this._processQueue();
+
+    return this;
+  };
+
+  Promise.prototype._processQueue = function() {
+    while (this._thenPromises.length) {
+      var onFulfilled = this._cb.fulfilled.shift();
+      var onRejected = this._cb.rejected.shift();
+      this._executeCallback(this._state == 1 ? onFulfilled : onRejected);
+    }
+  };
+
+  Promise.prototype._executeCallback = function(cb) {
+    var thenPromise = this._thenPromises.shift();
+
+    if (typeof(cb) != 'function') {
+      if (this._state == 1) {
+        // 3.2.6.4. If onFulfilled is not a function and promise1 is fulfilled, 
+        // promise2 must be fulfilled with the same value.
+        thenPromise.fulfill(this._value);
+      } else {
+        // 3.2.6.5. If onRejected is not a function and promise1 is rejected, 
+        // promise2 must be rejected with the same reason.
+        thenPromise.reject(this._value);
+      }
+      return;
+    }
+
+    try {
+      var returned = cb(this._value);
+
+      if (returned && typeof(returned.then) == 'function') {
+        // 3.2.6.3. If either onFulfilled or onRejected returns a promise (call 
+        // it returnedPromise), promise2 must assume the state of 
+        // returnedPromise
+        var fulfillThenPromise = function(value) { thenPromise.fulfill(value); 
+        };
+        var rejectThenPromise = function(value) { thenPromise.reject(value); };
+        returned.then(fulfillThenPromise, rejectThenPromise);
+      } else {
+        // 3.2.6.1. If either onFulfilled or onRejected returns a value that is 
+        // not a promise, promise2 must be fulfilled with that value.
+        thenPromise.fulfill(returned);
+      }
+
+    } catch (e) {
+
+      // 3.2.6.2. If either onFulfilled or onRejected throws an exception, 
+      // promise2 must be rejected with the thrown exception as the reason.
+      thenPromise.reject(e); 
+
+    }
+  };
+
+  exports.Promise = Promise;
+
+});
+define('l20n/retranslation', function(require, exports, module) {
   'use strict';
-  var ctx = this.L20n.getContext(document.location.host);
-  var headNode;
-  if (document.body) {
-    document.body.style.visibility = 'hidden';
-  }
 
-  function bootstrap() {
-    headNode = document.head;
-    var data = headNode.querySelector('script[type="application/l10n-data+json"]');
+  var EventEmitter = require('./events').EventEmitter;
 
-    if (data) {
-      ctx.data = JSON.parse(data.textContent);
+  function RetranslationManager() {
+    var _usage = [];
+    var _counter = {};
+    var _callbacks = [];
+
+    this.bindGet = bindGet;
+    this.all = all;
+    this.globals = {};
+
+    for (var i in RetranslationManager._constructors) {
+      initGlobal.call(this, RetranslationManager._constructors[i]);
     }
 
-    var script = headNode.querySelector('script[type="application/l20n"]');
-    if (script) {
-      if (script.hasAttribute('src')) {
-        ctx.linkResource(script.getAttribute('src'));
+    function initGlobal(globalCtor) {
+      var global = new globalCtor();
+      this.globals[global.id] = global;
+      if (!global.activate) {
+        return;
+      }
+      _counter[global.id] = 0; 
+      global.addEventListener('change', function(id) {
+        for (var i = 0; i < _usage.length; i++) {
+          if (_usage[i] && _usage[i].globals.indexOf(id) !== -1) {
+            // invoke the callback with the reason
+            _usage[i].callback({
+              global: global.id
+            });
+          }  
+        }
+      });
+    };
+
+    function bindGet(get, isRebind) {
+      var i;
+      // store the callback in case we want to retranslate the whole context
+      var inCallbacks;
+      for (i = 0; i < _callbacks.length; i++) {
+        if (_callbacks[i].id === get.id) {
+          inCallbacks = true;
+          break;
+        }
+      }
+      if (!inCallbacks) {
+        _callbacks.push(get);
+      } else if (isRebind) {
+        _callbacks[i] = get;
+      }
+
+      // handle the global usage
+      var bound;
+      for (i = 0; i < _usage.length; i++) {
+        if (_usage[i] && _usage[i].id === get.id) {
+          bound = _usage[i];
+          break;
+        }
+      }
+      if (!bound) {
+        // it's the first time we see this get
+        if (get.globals.length != 0) {
+          _usage.push(get);
+          get.globals.forEach(function(id) {
+            if (!this.globals[id].activate) {
+              return;
+            }
+            _counter[id]++;
+            this.globals[id].activate();
+          }, this);
+        }
+      } else if (isRebind) {
+        // if we rebinding the callback, don't remove globals
+        // because we're just adding new entities to the bind
+        bound.callback = get.callback;
+        var added = get.globals.filter(function(id) {
+          return this.globals[id].activate && bound.globals.indexOf(id) === -1;
+        }, this);
+        added.forEach(function(id) {
+          _counter[id]++;
+          this.globals[id].activate();
+        }, this);
+        bound.globals = bound.globals.concat(added);
+      } else if (get.globals.length == 0) {
+        // after a retranslation, no globals were used; remove the callback
+        delete _usage[i];
       } else {
-        ctx.addResource(script.textContent);
-      }
-      initializeDocumentContext();
-    } else {
-      var link = headNode.querySelector('link[rel="localization"]');
-      if (link) {
-        loadManifest(link.getAttribute('href')).then(
-          initializeDocumentContext
-        );
+        // see which globals were added and which ones were removed
+        var added = get.globals.filter(function(id) {
+          return this.globals[id].activate && bound.globals.indexOf(id) === -1;
+        }, this);
+        added.forEach(function(id) {
+          _counter[id]++;
+          this.globals[id].activate();
+        }, this);
+        var removed = bound.globals.filter(function(id) {
+          return this.globals[id].activate && get.globals.indexOf(id) === -1;
+        }, this);
+        removed.forEach(function(id) {
+          _counter[id]--;
+          if (_counter[id] == 0) {
+            this.globals[id].deactivate();
+          }
+        }, this);
+        bound.globals = get.globals;
       }
     }
-    return true;
-  }
 
-  bootstrap();
-
-  function initializeDocumentContext() {
-    localizeDocument();
-
-    ctx.addEventListener('ready', function() {
-      var event = document.createEvent('Event');
-      event.initEvent('LocalizationReady', false, false);
-      document.dispatchEvent(event);
-    });
-
-    ctx.addEventListener('error', function(e) {
-      if (e.code & L20n.NOVALIDLOCALE_ERROR) {
-        var event = document.createEvent('Event');
-        event.initEvent('LocalizationFailed', false, false);
-        document.dispatchEvent(event);
-      }
-    });
-
-    ctx.freeze();
-  }
-
-  function loadManifest(url) {
-    var deferred = new L20n.Promise();
-    L20n.IO.load(url, true).then(
-      function(text) {
-        var manifest = JSON.parse(text);
-        var langList = L20n.Intl.prioritizeLocales(manifest.languages);
-        ctx.registerLocales.apply(this, langList);
-        ctx.linkResource(function(lang) {
-          return manifest.resources[0].replace("{{lang}}", lang);
+    function all(locales) {
+      for (var i = 0; i < _callbacks.length; i++) {
+        // invoke the callback with the reason
+        _callbacks[i].callback({
+          locales: locales
         });
-        deferred.fulfill();
       }
-    );
-    return deferred;
+    }
   }
 
-  function fireLocalizedEvent() {
-    document.body.style.visibility = 'visible';
-    var event = document.createEvent('Event');
-    event.initEvent('DocumentLocalized', false, false);
-    document.dispatchEvent(event);
+  RetranslationManager._constructors = [];
+
+  RetranslationManager.registerGlobal = function(ctor) {
+    RetranslationManager._constructors.push(ctor);
+  };
+
+  exports.RetranslationManager = RetranslationManager;
+
+});
+define('l20n/platform/globals', function(require, exports, module) {
+  'use strict';
+
+  var EventEmitter = require('../events').EventEmitter;
+  var RetranslationManager = require('../retranslation').RetranslationManager;
+
+  function Global() {
+    this.id = null;
+    this._emitter = new EventEmitter();
+    this.value = null;
+    this.isActive = false;
   }
 
-  function onDocumentBodyReady() {
-    if (document.readyState === 'interactive') {
-      localizeNode(document);
-      fireLocalizedEvent();
-      document.removeEventListener('readystatechange', onDocumentBodyReady);
+  Global.prototype._get = function _get() {
+    throw new Error('Not implemented');
+  };
+
+  Global.prototype.get = function get() {
+    // invalidate the cached value if the global is not active;  active 
+    // globals handle `value` automatically in `onchange()`
+    if (!this.value || !this.isActive) {
+      this.value = this._get();
+    }
+    return this.value;
+  };
+
+  Global.prototype.addEventListener = function(type, listener) {
+    if (type !== 'change') {
+      throw 'Unknown event type';
+    }
+    this._emitter.addEventListener(type, listener);
+  };
+
+
+  // XXX: https://bugzilla.mozilla.org/show_bug.cgi?id=865226
+  // We want to have @screen.width, but since we can't get it from compiler, we 
+  // call it @screen and in order to keep API forward-compatible with 1.0 we 
+  // return an object with key width to
+  // make it callable as @screen.width
+  function ScreenGlobal() {
+    Global.call(this);
+    this.id = 'screen';
+    this._get = _get;
+    this.activate = activate;
+    this.deactivate = deactivate;
+
+    var self = this;
+
+    function _get() {
+      return {
+        width: {
+          px: document.body.clientWidth
+        }
+      };
+    }
+
+    function activate() {
+      if (!this.isActive) {
+        window.addEventListener('resize', onchange);
+        this.isActive = true;
+      }
+    }
+
+    function deactivate() {
+      window.removeEventListener('resize', onchange);
+      this.value = null;
+      this.isActive = false;
+    }
+
+    function onchange() {
+      self.value = _get();
+      self._emitter.emit('change', self.id);
     }
   }
 
-  function localizeDocument() {
-    if (document.body) {
-      localizeNode(document);
-      fireLocalizedEvent();
-    } else {
-      document.addEventListener('readystatechange', onDocumentBodyReady);
+  ScreenGlobal.prototype = Object.create(Global.prototype);
+  ScreenGlobal.prototype.constructor = ScreenGlobal;
+
+
+  function OSGlobal() {
+    Global.call(this);
+    this.id = 'os';
+    this.get = get;
+
+    function get() {
+      if (/^MacIntel/.test(navigator.platform)) {
+        return 'mac';
+      }
+      if (/^Linux/.test(navigator.platform)) {
+        return 'linux';
+      }
+      if (/^Win/.test(navigatgor.platform)) {
+        return 'win';
+      }
+      return 'unknown';
     }
-    HTMLDocument.prototype.__defineGetter__('l10n', function() {
-      return ctx;
-    });
+
   }
 
-  function retranslate(node, l10n) {
-    var nodes = node.querySelectorAll('[data-l10n-id]');
-    var entity;
-    for (var i = 0; i < nodes.length; i++) {
-      var id = nodes[i].getAttribute('data-l10n-id');
-      var entity = l10n.entities[id];
-      var node = nodes[i];
-      if (entity.value) {
-        node.innerHTML = entity.value;
-      }
-      for (var key in entity.attributes) {
-        node.setAttribute(key, entity.attributes[key]);
+  OSGlobal.prototype = Object.create(Global.prototype);
+  OSGlobal.prototype.constructor = OSGlobal;
+
+  function HourGlobal() {
+    Global.call(this);
+    this.id = 'hour';
+    this._get = _get;
+    this.activate = activate;
+    this.deactivate = deactivate;
+
+    var self = this;
+    var interval = 60 * 60 * 1000;
+    var I = null;
+
+    function _get() {
+      var time = new Date();
+      return time.getHours();
+    }
+
+    function onchange() {
+      var time = new Date();
+      if (time.getHours() !== self.value) {
+        self.value = time.getHours();
+        self._emitter.emit('change', self.id);
       }
     }
-    // readd data-l10n-attrs
-    // readd data-l10n-overlay
-    // secure attribute access
+
+    function activate() {
+      if (!this.isActive) {
+        var time = new Date();
+        I = setTimeout(function() {
+          onchange();
+          I = setInterval(onchange, interval);
+        }, interval - (time.getTime() % interval));
+        this.isActive = true;
+      }
+    }
+
+    function deactivate() {
+      clearInterval(I);
+      this.value = null;
+      this.isActive = false;
+    }
+
   }
 
-  function localizeNode(node) {
-    var nodes = node.querySelectorAll('[data-l10n-id]');
-    var ids = [];
-    for (var i = 0; i < nodes.length; i++) {
-      if (nodes[i].hasAttribute('data-l10n-args')) {
-        ids.push([nodes[i].getAttribute('data-l10n-id'),
-                  JSON.parse(nodes[i].getAttribute('data-l10n-args'))]);
+  HourGlobal.prototype = Object.create(Global.prototype);
+  HourGlobal.prototype.constructor = HourGlobal;
+
+  RetranslationManager.registerGlobal(ScreenGlobal);
+  RetranslationManager.registerGlobal(OSGlobal);
+  RetranslationManager.registerGlobal(HourGlobal);
+
+  exports.Global = Global;
+
+});
+define('l20n/platform/io', function(require, exports, module) {
+  'use strict';
+
+  var Promise = require('../promise').Promise;
+
+  exports.loadAsync = function loadAsync(url) {
+    var deferred = new Promise();
+    var xhr = new XMLHttpRequest();
+    if (xhr.overrideMimeType) {
+      xhr.overrideMimeType('text/plain');
+    }
+    xhr.addEventListener('load', function() {
+      if (xhr.status == 200) {
+        deferred.fulfill(xhr.responseText);
       } else {
-        ids.push(nodes[i].getAttribute('data-l10n-id'));
+        var ex = new IOError('Not found: ' + url);
+        deferred.reject(ex);
       }
-    }
-    ctx.localize(ids, retranslate.bind(this, node));
-  }
+    });
+    xhr.addEventListener('abort', function(e) {
+      return deferred.reject(e);
+    });
+    xhr.open('GET', url, true);
+    xhr.send('');
+    return deferred;
+  };
 
-}).call(this);
+  exports.loadSync = function loadSync(url) {
+    var xhr = new XMLHttpRequest();
+    if (xhr.overrideMimeType) {
+      xhr.overrideMimeType('text/plain');
+    }
+    xhr.open('GET', url, false);
+    xhr.send('');
+    if (xhr.status == 200) {
+      return xhr.responseText;
+    } else {
+      throw new IOError('Not found: ' + url);
+    }
+  };
+
+  function IOError(message) {
+    this.name = 'IOError';
+    this.message = message;
+  }
+  IOError.prototype = Object.create(Error.prototype);
+  IOError.prototype.constructor = IOError;
+
+  exports.Error = IOError;
+
+});
+// attach the L20n singleton to the global object
+this.L20n = require('l20n/shell');
+
+// close the function defined in build/prefix/microrequire.js
+})(this);

@@ -43,8 +43,8 @@ $(function() {
     ctx.bindResource(l20nSource);
     ctx.bindResource(sourceEditor.getValue());
     ctx.build();
-    localizeDocument();
 	}
+
 
 
 
@@ -58,6 +58,8 @@ $(function() {
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
 
+  update();
+  localizeDocument();
 
 
 	/* data-l10n-id attributes */

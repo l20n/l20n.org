@@ -54,10 +54,10 @@ title: Localization 2.0
   power through simple programming.
 """&gt;
 
-&lt;position() { @screen.width &lt; 1140 ?
+&lt;position() { @screen.width.px &lt; 1140 ?
                  "below" : "default" }&gt;
 
-&lt;try_link[position()] {
+&lt;tryLink[position()] {
   below: "Give it a try below",
   default: "Give it a try"
 }&gt;

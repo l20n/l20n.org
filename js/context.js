@@ -12,9 +12,8 @@ function Context(id) {
   this.getEntity = getEntity;
   this.localize = localize;
 
-  var _emitter = new L20n.EventEmitter();
-  var _parser = new L20n.Parser(L20n.EventEmitter);
-  var _compiler = new L20n.Compiler(L20n.EventEmitter, L20n.Parser);
+  var _parser = new L20n.Parser();
+  var _compiler = new L20n.Compiler();
   var _retr = new L20n.RetranslationManager();
 
   var _ast = null;
@@ -36,6 +35,7 @@ function Context(id) {
   function build() {
     _ast = _parser.parse(_source);
     this.entries = _compiler.compile(_ast); 
+    _retr.all();
   }
 
   function get(id, data) {
@@ -97,18 +97,12 @@ function Context(id) {
     }
   }
 
-  function localize(idsOrTuples, callback) {
+  function localize(ids, callback) {
     var vals = {};
     var globalsUsed = {};
     var id;
-    for (var i = 0, iot; iot = idsOrTuples[i]; i++) {
-      if (Array.isArray(iot)) {
-        id = iot[0];
-        vals[id] = getEntity.call(this, iot[0], iot[1]);
-      } else {
-        id = iot;
-        vals[id] = getEntity.call(this, iot);
-      }
+    for (var i = 0, id; id = ids[i]; i++) {
+      vals[id] = getEntity.call(this, id);
       for (var global in vals[id].globals) {
         if (vals[id].globals.hasOwnProperty(global)) {
           globalsUsed[global] = true;
@@ -117,14 +111,14 @@ function Context(id) {
     }
     var retobj = {
       'entities': vals,
-      'retranslate': localize.bind(this, idsOrTuples, callback)
+      'retranslate': localize.bind(this, ids, callback)
     };
     if (callback) {
-      callback(retobj);
       _retr.bindGet({
         'id': callback,
-        'callback': localize.bind(this, idsOrTuples, callback),
+        'callback': localize.bind(this, ids, callback),
         'globals': Object.keys(globalsUsed)});
+      callback(retobj);
     }
     return retobj;
   }
