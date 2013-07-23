@@ -16,7 +16,7 @@ next_title: Context data
 			<li>grammar meta-data, such as gender, animate vs. inanimate, etc.</li>
 			<li>UI meta-data, such as tooltips, accesskeys, keyboard shortcuts, etc.</li>
 		</ul>
-		<p>Attributes come after the entity value and are defined with a colon, followed by the name of the attribute.  You can reference attributes from other parts of the L20n code with the double-colon (<code>::</code>) syntax.</p>
+		<p>Attributes come after the entity value and are defined with the name of the attribute, followed by a colon and a value.  You can reference attributes from other parts of the L20n code with the double-colon (<code>::</code>) syntax.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height15"
