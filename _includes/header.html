@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title data-l10n-id="title"></title>
+        <title data-l10n-id="title">{% if page.category == "learn" %}L20n by example • {{ page.title }}{% endif %}</title>
         <meta name="description" content="Unleashing your native language's power through simple programming.">
         <meta name="viewport" content="width=device-width">
 
@@ -28,7 +28,7 @@
         <![endif]-->
         <script type="application/l20n">
             <name "L20n">
-            <title "{% raw %}{{ name }}{% endraw %}{% if page.category == "learn" %} by example{% endif %} • {{ page.title }}">
+            <title "{% raw %}{{ name }}{% endraw %} • {{ page.title }}">
             <welcome "Welcome to {% raw %}{{ name }}{% endraw %}">
 
             <lead """
