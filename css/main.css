@@ -124,15 +124,20 @@ p {
 }
 
 code {
-    background: #F8F8F0;
-    border: 1px solid #05B1CC;
-    border-radius: 5px;
-    color: #05B1CC;
+    color: #F92672;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     font-size: 0.8em;
     line-height: 1em;
     padding: 0.1em 0.2em 0;
     white-space: nowrap;
+}
+
+dt code,
+code.entity {
+    background: #F8F8F0;
+    border: 1px solid #05B1CC;
+    border-radius: 5px;
+    color: #05B1CC;
 }
 
 a {

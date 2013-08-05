@@ -12,8 +12,8 @@ next_title: Indexes for hash tables
 	<div class="left">
 		<p>One of the powerful paradigms of L20n is that ultimately every entity should evaluate to a single string, ready to be displayed in the UI.</p>
 		<p>Dictionaries are multi-valued, so to work within this paradigm, we need a way to tell L20n which value to display if no specific member was requested.</p>
-		<p>The asterisk <code>*</code> on a key does just that:  it denotes the default member to return in the absence of a more specific request.  In the <a href="{% post_url 2012-07-03-dictionary-values %}">previous chapter</a>, evaluating <code>name</code> resulted in an <code>IndexError</code>.  Now, with the default value defined via <code>*short</code>, <code>name</code> evaluates to "Loki".</p>
-		<p>You can still reference any member of the dictionary explicitly, like it's done in the <code>license</code> entity below.</p>
+		<p>The asterisk <code>*</code> on a key does just that:  it denotes the default member to return in the absence of a more specific request.  In the <a href="{% post_url 2012-07-03-dictionary-values %}">previous chapter</a>, evaluating <code class="entity">name</code> resulted in an <code>IndexError</code>.  Now, with the default value defined via <code>*short</code>, <code class="entity">name</code> evaluates to "Loki".</p>
+		<p>You can still reference any member of the dictionary explicitly, like it's done in the <code class="entity">license</code> entity below.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height15"
