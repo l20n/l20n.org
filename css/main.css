@@ -140,6 +140,11 @@ code.entity {
     color: #05B1CC;
 }
 
+code.disabled {
+    color: #999999;
+    border-color: #999999;
+}
+
 a {
     color: #F92672;
     text-decoration: none;

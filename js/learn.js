@@ -33,7 +33,7 @@ $(function() {
 				if (e.source) {
 					val = e.source;
 				} else {
-					output.append("<div><dt><code class=\"disabled\">" + e.entry + "</code></dt><dd></dd></div>");
+					output.append("<div><dt><code class=\"disabled\">" + id + "</code></dt><dd></dd></div>");
 					continue;
 				}
 
