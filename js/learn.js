@@ -29,13 +29,13 @@ $(function() {
 			try {
 				val = ctx.getOrError(id);
 			} catch (e) {
-        // XXX show the error somewhere?
-				if (e.source) {
-					val = e.source;
-				} else {
-					output.append("<div><dt><code class=\"disabled\">" + id + "</code></dt><dd></dd></div>");
-					continue;
-				}
+
+        var val = e.source ? e.source : '',
+            error = '<div>' + e.name + ': ' + e.message + '</div>';
+
+				output.append('<div class="error"><dt><code>' + id + '</code></dt>' + 
+          '<dd>' + val + error + '</dd></div>');
+				continue;
 
 			}
 			output.append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");

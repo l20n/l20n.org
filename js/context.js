@@ -68,7 +68,7 @@ function Context(id) {
       return entry.getString(getArgs.call(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
-        _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
+        throw e;
       }
       throw e;
     }
