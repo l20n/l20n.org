@@ -2,10 +2,7 @@ $(function() {
 
 	/* L20n */
 
-  // use one context for all editors on the page
-  var ctx = new Context();
-
-  function update(sourceEditorId, dataEditorId, outputId) {
+  function update(sourceEditorId, dataEditorId, outputId, ctx) {
     var sourceEditor = ace.edit(sourceEditorId);
     var dataEditor = dataEditorId && ace.edit(dataEditorId);
     var output = $("#" + outputId);
@@ -33,7 +30,7 @@ $(function() {
         var val = e.source ? e.source : '',
             error = '<div>' + e.name + ': ' + e.message + '</div>';
 
-				output.append('<div class="error"><dt><code>' + id + '</code></dt>' + 
+				output.append('<div class="error"><dt><code>' + id + '</code></dt>' +
           '<dd>' + val + error + '</dd></div>');
 				continue;
 
@@ -53,6 +50,9 @@ $(function() {
     var id = $(this).attr('id');
     var editor = ace.edit(id);
 
+    // use one context for each editor on the page
+    var ctx = new Context(outputId);
+
     editor.setTheme("ace/theme/monokai");
     editor.setShowPrintMargin(false);
     editor.setDisplayIndentGuides(false);
@@ -64,8 +64,8 @@ $(function() {
     }
     editor.clearSelection();
     editor.getSession().on('change', 
-      update.bind(this, sourceEditorId, dataEditorId, outputId));
-    update(sourceEditorId, dataEditorId, outputId);
+      update.bind(this, sourceEditorId, dataEditorId, outputId, ctx));
+    update(sourceEditorId, dataEditorId, outputId, ctx);
   });
 
 });

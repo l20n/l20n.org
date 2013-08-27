@@ -19,10 +19,15 @@ function Context(id) {
   var _ast = null;
   var _source = null;
 
+  _parser.addEventListener('error', function(e) {
+    $('#' + id).prepend('<div class="error"><dt>' +
+      e.name + '</dt><dd><div>' + e.message + '</div></dd></div>');
+  });
+
   _compiler.setGlobals(_retr.globals);
 
   function restart() {
-    _source = null;
+    _source = "";
     _ast = null;
     this.data = {};
     this.entries = {};
@@ -142,4 +147,5 @@ function Context(id) {
     }
     return args;
   }
+
 }
