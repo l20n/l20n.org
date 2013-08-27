@@ -140,6 +140,10 @@ code.entity {
     color: #05B1CC;
 }
 
+.error dt {
+    color: #FF0000;
+}
+
 .error dt code {
     color: #999999;
     border-color: #999999;
@@ -148,7 +152,6 @@ code.entity {
 .error dd div {
     color: #FF0000;
     font-style: italic;
-    font-size: 0.8em;
 }
 
 a {
@@ -304,6 +307,10 @@ a.title {
 .learn dl[id^="output"] {
     background: #DBDBD6;
     padding: 0.4em;
+}
+
+.learn dl[id^="output"] dd {
+    font-size: 0.8em;
 }
 
 .learn .navigation {
