@@ -34,7 +34,3 @@ next_title: "Entities: public vs. local"
     </dl>
   </div>
 </section>
-
-
-
-
