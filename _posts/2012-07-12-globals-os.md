@@ -10,9 +10,8 @@ next_title: "Globals: @screen"
 
 <section class="clearfix">
   <div class="left">
-    <p>Many applications, especially web based, are used in different operating systems, which use different linguistic style. To make localized software sound more naturally, different translations are needed for each OS.</p>
-    <p>Globals allow just that &mdash; adapting applications to the environment being used. Variable <code>@os</code> has three possible values: "win", "mac" and "linux".</p>
-    <p>Another popular example of different translations for different operating systems are access keys.</p>
+    <p>If the user's operating system has a distinct and established glossary, you may need multiple variants of the translation to ensure consistency.  The <code>@os</code> global can be used to achieve this.  As of L20n 1.0, it has three possible values: "win", "mac" and "linux".</p>
+    <p>In a similar fashion, it may be desirable to define multiple accesskeys depending on the translation variant being used.  In the example to the right, <code>accesskey</code> is an <a href="{% post_url 2012-07-06-attributes %}">attribute</a> defined on the <code class="entity">settings</code> entity.</p>
   </div>
   <div class="right">
     <div class="editor sourceEditor height35"
@@ -43,7 +42,7 @@ next_title: "Globals: @screen"
 
 <section class="clearfix">
   <div class="left">
-    <p>To simplify the common cases, catch-all (<code>*</code>) can be used. In the following example, mac and linux are jointly represented as <code>nix</code>, and win and linux as <code>pc</code>.</p>
+    <p>To simplify the common cases, a specific key can be defined as the default with an asterisk (<code>*</code>). In the second example, <code>mac</code> and <code>linux</code> are jointly represented as <code>nix</code> in the <code class="entity">settings</code> entity, and <code>win</code> and <code>linux</code> as <code>pc</code> in <code class="entity">help</code>.</p>
     <p>See <a href="{% post_url 2012-07-14-entities-public-vs-local %}">Chapter 14. "Entities: public vs. local"</a> for yet a different way of achieving the same result.</p>
   </div>
   <div class="right">

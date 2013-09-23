@@ -19,8 +19,8 @@ next_title: Attributes
 		  data-source="sourceEditor1"
 		  data-output="output1"
 		>&lt;name["short"] {
-  short: "Twitter",
-  long: "Twitter Mobile Client"
+  short: "Loki",
+  long: "Loki Mobile Client"
 }&gt;
 &lt;about "About {% raw %}{{ name }}{% endraw %}"&gt;
 &lt;licensing "{% raw %}{{ name.long }}{% endraw %} is both free and open-source."&gt;
