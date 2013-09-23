@@ -12,7 +12,7 @@ next_title: "Globals: @hour"
   <div class="left">
     <p>L20n uses a simple arithmetic and logical expression syntax inspired by C.  Expressions can be used inside of strings, in indexes, as arguments passed to macros and, most commonly, as macro bodies.</p>
     <p>Expressions look like anonymous macros, but there is one important difference:  macros force the return values to be primitives (string, number or boolean).</p>
-    <p>In the example to the right we take the <code>$sizeInKB</code> variable from context data and convert it to megabytes by using an arithmetic expression.</p>
+    <p>In the first example we take the <code>$sizeInKB</code> variable from context data and convert it to megabytes by using an arithmetic expression.</p>
   </div>
   <div class="right">
     <div class="editor dataEditor height5"
