@@ -4,7 +4,8 @@ layout: learn
 title: "Attributes: public vs. local"
 prev_section: entities-public-vs-local
 prev_title: "Entities: public vs. local"
-next_title: Complex plurals
+next_section: declensions
+next_title: Declensions
 ---
 
 <section class="clearfix">
