@@ -27,40 +27,46 @@
             <script src="/js/html5-3.6-respond-1.1.0.min.js"></script>
         <![endif]-->
         <script type="application/l20n">
-            <name "L20n">
+            <name {
+                *short: "L20n",
+                long: "Localization 2.0"
+            }>
             <title "{% raw %}{{ name }}{% endraw %} • {{ page.title }}">
-            <welcome "Welcome to {% raw %}{{ name }}{% endraw %}">
+            <welcome "Welcome to {% raw %}{{ name.long }}{% endraw %}">
 
             <lead """
-              Unleashing your native language's
-              power through simple programming.
+              {% raw %}{{ name }}{% endraw %} is a free and open source
+              localization framework by Mozilla.
             """>
 
-            <position() { @screen.width.px < 1140 ?
-                            "below" : "default" }>
-
-            <tryLink[position()] {
-              below: "Give it a try below",
-              default: "Give it a try"
-            }>
-
             <learn "Learn">
-            <learnTitle "{% raw %}{{ learn }}{% endraw %}">
-            <learnText "Explore how L20n empowers uninhibited natural language expression within web and software localization.">
-            <learnLink "L20n by example →">
-
             <implement "Implement">
-            <implementTitle "{% raw %}{{ implement }}{% endraw %}">
-            <implementText "Using different translations on different screens is a killer feature for mobile and responsive design.">
-            <implementLink "Developer docs →">
-
-            <improve "Improve">
-            <improveTitle "{% raw %}{{ improve }}{% endraw %}">
-            <improveText "Developed by Mozilla, it's not only free, but also open source and a proposed open standard.">
-            <improveLink "Fork it on GitHub →">
-
+            <tinker "Tinker">
+            <fork "Fork">
             <discuss "Discuss">
             <irc "IRC">
+
+            <cta "Download">
+
+            <naturalTitle "Natural language">
+            <naturalText "Benefit from the entire expressive power of a natural language to provide the best translations.">
+            <naturalLink "Learn {% raw %}{{ name }}{% endraw %} by example">
+
+            <responsiveTitle "Responsive localization">
+            <responsiveText "Use different translations on different screens ― a killer feature for mobile and responsive design.">
+            <responsiveLink "Tinker with {% raw %}{{ name }}{% endraw %}">
+
+            <trustedTitle "By someone you trust">
+            <trustedText "Developed by the non-profit behind Firefox, it's not only free, but also proposed as an open standard.">
+            <trustedLink "Fork it on GitHub">
+
+            <howToUse "">
+            <step1 "1. Mark localizable HTML elements.">
+            <step2 "2. Include the library as the last script in the head.">
+            <step3a "3. Inlclude the localization manifest file.">
+            <step3b "It defines available languages and their resource files:">
+
+            <learnImplement "Learn more about implementation">
 
             <show "Show data-l10n-id values on hover">
             <nameFooter "{% raw %}{{ name }}{% endraw %}">

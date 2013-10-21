@@ -14,59 +14,92 @@ title: Localization 2.0
 
             <h2 data-l10n-id="lead"></h2>
 
-            <hr class="bottom" />
-            <div class="wrapper">
-                <div class="inner-wrapper">
-                  <a id="cta" href="#try" data-l10n-id="tryLink">&nbsp;</a>
-                </div>
-            </div>
+                  <a id="cta" href="https://raw.github.com/l20n/builds/master/l20n.min.js" data-l10n-id="cta">&nbsp;</a>
         </header>
 
         <article class="clearfix">
             <div class="blocks clearfix">
                 <section>
                     <img src="/img/learn.png" alt="Learn">
-                    <h3 data-l10n-id="learnTitle"></h3>
-                    <p data-l10n-id="learnText"></p>
-                    <a href="{{ site.url }}learn" data-l10n-id="learnLink"></a>
+                    <h3 data-l10n-id="naturalTitle"></h3>
+                    <p data-l10n-id="naturalText"></p>
+                    <a href="{{ site.url }}learn" data-l10n-id="naturalLink"></a>
                 </section>
                 <section>
                     <img src="/img/implement.png" alt="Implement">
-                    <h3 data-l10n-id="implementTitle"></h3>
-                    <p data-l10n-id="implementText"></p>
-                    <a href="https://github.com/l20n/l20n.js/blob/master/README.md" data-l10n-id="implementLink"></a>
+                    <h3 data-l10n-id="responsiveTitle"></h3>
+                    <p data-l10n-id="responsiveText"></p>
+                    <a href="http://l20n.github.io/tinker/" data-l10n-id="responsiveLink"></a>
                 </section>
                 <section>
                     <img src="/img/GitHub-Mark-120px-plus-red.png" alt="Improve">
-                    <h3 data-l10n-id="improveTitle"></h3>
-                    <p data-l10n-id="improveText"></p>
-                    <a href="https://github.com/l20n/" data-l10n-id="improveLink"></a>
+                    <h3 data-l10n-id="trustedTitle"></h3>
+                    <p data-l10n-id="trustedText"></p>
+                    <a href="https://github.com/l20n/" data-l10n-id="trustedLink"></a>
                 </section>
             </div>
-            <aside id="try" class="window">
-                <h3>Try it on this page</h3> 
-                {% raw %}
-                <div id="editor" class="editor height25">&lt;name "L20n"&gt;
-&lt;welcome "Welcome to {{ name }}"&gt;
+            <hr class="middle">
+            <div class="use clearfix">
+                <section>
+                    <h3 data-l10n-id="howToUse">How do I use it?</h3>
+                    <ol>
+                        <li>
+                            <span data-l10n-id="step1"></span>                            
+                            <code>&lt;p data-l10n-id="about"&gt;&lt;/p&gt;</code>
+                        </li><li>
+                            <span data-l10n-id="step2"></span>                            
+                            <code>&lt;script src="l20n.js"&gt;&lt;/script&gt;</code>
+                        </li><li>
+                            <span data-l10n-id="step3a"></span>
+                            <code>&lt;link rel="localization" href="browser.json"&gt;</code>
+                        </li><li>
+                            <span data-l10n-id="step3b"></span>
+                            <code>{<br/>
+&nbsp;&nbsp;"locales": [<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"en-US",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"pl"<br/>
+&nbsp;&nbsp;],<br/>
+&nbsp;&nbsp;"resources": [<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"../locales/{{ raw }}{{locale}}{{ endraw }}/website.l20n",<br/>
+&nbsp;&nbsp;]<br/>
+}</code>
+                        </li><li data-l10n-id="step4"></li>
+                    </ol>
+                    <a class="developer-docs" href="https://github.com/l20n/l20n.js/blob/master/README.md" data-l10n-id="learnImplement"></a>
+                </section>
+                <aside id="try" class="window">
+                    <h3>Try L20n on this page</h3>
+                    {% raw %}
+                    <div id="editor" class="editor height35">&lt;name {
+  *short: "L20n",
+  long: "Localization 2.0"
+}&gt;
+&lt;welcome "Welcome to {{ name.long }}"&gt;
 
 &lt;lead """
-  Unleashing your native language's
-  power through simple programming.
+  {{ name }} is a free and open source
+  localization framework by Mozilla.
 """&gt;
 
 &lt;position() { @screen.width.px &lt; 1140 ?
-                 "below" : "default" }&gt;
-
-&lt;tryLink[position()] {
-  below: "Give it a try below",
-  default: "Give it a try"
+                 "default" : "right" }&gt;
+&lt;step4[position()] {
+  default: """
+    4. Start localizing a resource file
+    as you see below.
+  """,
+  right: """
+    4. Start localizing a resource file
+    as you see on the right.
+  """
 }&gt;
-                </div>
-                {% endraw %}
-                <h3 class="status">
-                    <input id="inspect" name="inspect" type="checkbox">
-                    <label for="inspect" data-l10n-id="show"></label>
-                </h3>
-            </aside>
+                    </div>
+                    {% endraw %}
+                    <h3 class="status">
+                        <input id="inspect" name="inspect" type="checkbox">
+                        <label for="inspect" data-l10n-id="show"></label>
+                    </h3>
+                </aside>
+            </div>
         </article>
     </div>

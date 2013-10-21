@@ -75,7 +75,7 @@ body {
 }
 
 .error body {
-    background: #05B1CC;
+    background: #66D9EF;
     display: table-cell;
     vertical-align: middle;
 }
@@ -83,16 +83,16 @@ body {
 h3 {
     font-size: 1.2em;
     letter-spacing: -1px;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin: 0;
     text-shadow: 0 2px 0px #CFCFCF;
     text-transform: uppercase;
 }
 
 h5 {
-    background: #05B1CC;
+    background: #66D9EF;
     display: inline-block;
     font-size: 1.2em;
+    font-weight: 400;
     letter-spacing: -1px;
     margin: 0;
     padding: 0.5em 2em;
@@ -100,18 +100,32 @@ h5 {
 }
 
 a#cta {
-    background: #E6DB74;
+    background: url('../img/download.png') no-repeat 2em 7px #E6DB74; /* Icon source: http://www.visualpharm.com */
+    border: 1px solid #333333;
     display: inline-block;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: -1px;
-    padding: 0.5em 2em;
+    margin-bottom: 0.2em;
+    padding: 0.5em 2em 0.5em 4em;
+    text-align: left;
     text-transform: uppercase;
+}
+
+.error a#cta {
+    background: #E6DB74;
+    padding-left: 2em;    
 }
 
 hr {
     font-size: 0.8em;
-    margin: 0 1em;
-    border-color: #068599;
+    border-color: #666666;
+}
+
+hr.middle {
+    border-bottom: 1px solid #FFFFFF;
+    border-top: 1px solid #CCCCCC;
+    height: 0;
+    margin-bottom: 5em;
 }
 
 hr.top {
@@ -138,6 +152,16 @@ code.entity {
     border: 1px solid #05B1CC;
     border-radius: 5px;
     color: #05B1CC;
+}
+
+.use code {
+    border-left: 2px solid #CCCCCC;
+    color: #8F908A;
+    display: block;
+    line-height: 1.3em;
+    margin: 4px 0;
+    padding: 0 8px;
+    white-space: normal;
 }
 
 .error dt {
@@ -174,7 +198,7 @@ a#cta {
 
 a#cta:hover,
 a#cta:active {
-    background: #FD971F;
+    background-color: #FD971F;
 }
 
 .main-container {
@@ -212,7 +236,32 @@ a.title {
 }
 
 .main > article > .blocks > section {
-    margin-bottom: 3em;
+    margin-bottom: 4em;
+}
+
+.main > article > .blocks > section > h3 {
+    margin: 1em 0 0.5em;
+}
+
+.main > article > .blocks > section > a:after,
+.main > article > .use > section > a.developer-docs:after {
+    content: " →";
+}
+
+.main > article > .use {
+    text-align: left;
+}
+
+.main > article > .use > section {
+    margin-bottom: 4em;
+}
+.main > article > .use > section ol {
+    list-style: none;
+    padding: 0;
+}
+
+.main > article > .use > section li {
+    padding-bottom: 20px;
 }
 
 .header-container {
@@ -254,6 +303,10 @@ a.title {
     height: 5em;
 }
 
+.editor.height10 {
+    height: 10em;
+}
+
 .editor.height15 {
     height: 15em;
 }
@@ -266,6 +319,14 @@ a.title {
     height: 35em;
 }
 
+.editor.height45 {
+    height: 45em;
+}
+
+.editor.height52 {
+    height: 52em;
+}
+
 /* =======
     Learn
    ======= */
@@ -276,11 +337,11 @@ a.title {
 }
 
 .learn button.toggle {
-    background-color: #05B1CC;
+    background-color: #66D9EF;
 }
 
 .learn header nav {
-    background: #05B1CC;
+    background: #66D9EF;
 }
 
 .learn header nav a {
@@ -379,7 +440,7 @@ footer nav a {
 footer nav p {
     color: #70716A;
     font-size: 0.7em;
-    margin-bottom: 1em;
+    margin: -2em 0 1em;
     padding: 2em 0;
     text-shadow: 1px 1px 0 #F8F8F0;
 }
@@ -397,24 +458,26 @@ a.title {
    ============== */
 
 .main header {
-    background: #05B1CC;
+    background: #66D9EF;
     padding: 2em 0;
 }
 
 .main header h2 {
-    color: #F8F8F0;
-    font-size: 2em;
-    font-weight: 300;
+    color: #333333;
+    font-size: 1.8em;
+    font-weight: 800;
+    letter-spacing: -1px;
     line-height: 1.2em;
-    margin-bottom: 1.6em;
+    margin-bottom: 1em;
+    text-transform: uppercase;
 }
 
 .main header .wrapper {
-    margin-top: -1.4em;
+    margin-top: -2.2em;
 }
 
 .main header .inner-wrapper {
-    background: #05B1CC;
+    background: #66D9EF;
     display: inline-block;
     padding: 0 2em;
 }
@@ -434,7 +497,7 @@ a.title {
     border-radius: 7px 7px 7px 7px;
     box-shadow: 0 0 30px #52524D;
     color: #FFFFFF;
-    margin-bottom: 3em;
+    margin-bottom: 4em;
     text-align: left;
 }
 
@@ -544,7 +607,7 @@ a.title {
         border-bottom: none;
         float: left;
         line-height: 4.6em;
-        margin: 0em 2em;
+        margin: 0em 1.7em;
         padding: 0;
     }
 
@@ -608,13 +671,14 @@ a.title {
    ============ */
 
     .main header h2 {
-        font-size: 3em;
-        margin-bottom: 1.0em;
+        font-size: 2.5em;
+        letter-spacing: -2px;
+        margin: 0.5em auto 0.7em;
     }
 
     .main > article {
         margin: 0 auto 0;
-        padding-top: 2em;
+        padding-top: 4em;
     }
 
     .main > article > .blocks > section {
@@ -649,30 +713,32 @@ a.title {
     Maximal Width
    =============== */
 
+    .main header .wrapper {
+        margin-top: -1.4em;
+    }
+
     hr,
     .main header h2 {
-        margin: 0 auto;
         width: 1026px;
+    }
+
+    hr {
+        margin: 0 auto;        
+    }
+
+    .main header h2 {
+        font-size: 2.7em;
+        letter-spacing: -3px;
     }
 
     .main > article {
         width: 1026px;
     }
 
-    .main header h2 {
-        margin-top: 0.5em;
-        margin-bottom: 1.0em;
-    }
-
-    .main > article > .blocks {
+    .main > article > .use > section {
         float: left;
-        margin: 0;
-        width: 50%;
-    }
-
-    .main > article > .blocks > section {
-        width: 100%;
-        float: none;
+        text-align: left;
+        width: 48%;
     }
 
     .main .window {
@@ -681,7 +747,7 @@ a.title {
     }
 
     .editor {
-        height: 30em;
+        height: 50em;
     }
 }
 
