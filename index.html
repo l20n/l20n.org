@@ -1,7 +1,7 @@
 ---
 category: home
 layout: home
-title: Localization 2.0
+title: Home
 ---
 
 <div class="main-container">
@@ -70,15 +70,12 @@ title: Localization 2.0
                 <aside id="try" class="window">
                     <h3>Try L20n on this page</h3>
                     {% raw %}
-                    <div id="editor" class="editor height35">&lt;name {
-  *short: "L20n",
-  long: "Localization 2.0"
-}&gt;
-&lt;welcome "Welcome to {{ name.long }}"&gt;
+                    <div id="editor" class="editor height35">&lt;name "L20n"&gt;
+&lt;welcome "{{ name }} by Mozilla"&gt;
 
 &lt;lead """
-  {{ name }} is a free and open source
-  localization framework by Mozilla.
+  Localization framework for localizers,
+  which understands developers.
 """&gt;
 
 &lt;position() { @screen.width.px &lt; 1140 ?
