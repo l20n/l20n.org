@@ -181,7 +181,7 @@ code.entity {
 a {
     color: #F92672;
     text-decoration: none;
-    transition-duration: .25s;
+    transition-duration: .2s;
     transition-property: background, color;
 }
 
@@ -645,7 +645,7 @@ a.title {
         right: -300px;
         top: 3.7em;
         width: 300px;
-        transition: all 0.3s ease-out;
+        transition: all 0.2s ease-out;
         z-index: 100;
     }
 
