@@ -43,7 +43,7 @@ next_title: "15. Adapting translations to screen size"
 <section class="clearfix">
   <div class="left">
     <p>To simplify the common cases, a specific key can be defined as the default with an asterisk (<code>*</code>). In the second example, <code>mac</code> and <code>linux</code> are jointly represented as <code>nix</code> in the <code class="entity">settings</code> entity, and <code>win</code> and <code>linux</code> as <code>pc</code> in <code class="entity">help</code>.</p>
-    <p>See <a href="{% post_url 2012-07-16-entities-public-vs-local %}">Chapter 14. "16. Don't repeat yourself: helper entities"</a> for yet a different way of achieving the same result.</p>
+    <p>See <a href="{% post_url 2012-07-16-entities-public-vs-local %}">Chapter 16. "Don't repeat yourself: helper entities"</a> for yet a different way of achieving the same result.</p>
   </div>
   <div class="right">
     <div class="editor sourceEditor height25"

@@ -40,7 +40,7 @@ next_title: "10. Making translations depend on custom data"
 <section class="clearfix">
 	<div class="left">
 		<p>Attribute values follow the exact same rules as entity values do:  they can be strings or dictionaries (also nested ones), and can define indexes and default values.</p>
-		<p>See <a href="{% post_url 2012-07-14-globals-os %}">Chapter 12. "14. Adapting translations to user's operating system"</a> for a better way of implementing this.</p>
+		<p>See <a href="{% post_url 2012-07-14-globals-os %}">Chapter 14. "Adapting translations to user's operating system"</a> for a better way of implementing this.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height25"
