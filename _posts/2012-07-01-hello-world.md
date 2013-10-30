@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: Hello world
+title: "1. Hello World"
 prev_section: " "
-prev_title: "Introduction"
+prev_title: "0. Introduction"
 next_section: string-values
-next_title: String values
+next_title: "2. Working with text: multiline, interpolation"
 ---
 
 <section class="clearfix">

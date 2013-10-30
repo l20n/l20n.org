@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: "Globals: @os"
+title: "14. Adapting translations to user's operating system"
 prev_section: globals-hour
-prev_title: "Globals: @hour"
+prev_title: "13. Adapting translations to current time"
 next_section: globals-screen
-next_title: "Globals: @screen"
+next_title: "15. Adapting translations to screen size"
 ---
 
 <section class="clearfix">
@@ -43,7 +43,7 @@ next_title: "Globals: @screen"
 <section class="clearfix">
   <div class="left">
     <p>To simplify the common cases, a specific key can be defined as the default with an asterisk (<code>*</code>). In the second example, <code>mac</code> and <code>linux</code> are jointly represented as <code>nix</code> in the <code class="entity">settings</code> entity, and <code>win</code> and <code>linux</code> as <code>pc</code> in <code class="entity">help</code>.</p>
-    <p>See <a href="{% post_url 2012-07-14-entities-public-vs-local %}">Chapter 14. "Entities: public vs. local"</a> for yet a different way of achieving the same result.</p>
+    <p>See <a href="{% post_url 2012-07-14-entities-public-vs-local %}">Chapter 14. "16. Don't repeat yourself: helper entities"</a> for yet a different way of achieving the same result.</p>
   </div>
   <div class="right">
     <div class="editor sourceEditor height25"

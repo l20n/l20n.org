@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: String values
+title: "2. Working with text: multiline, interpolation"
 prev_section: hello-world
-prev_title: Hello World
+prev_title: "1. Hello World"
 next_section: dictionary-values
-next_title: Dictionary values
+next_title: "3. Translations with multiple variants"
 ---
 
 <section class="clearfix">

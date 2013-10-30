@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: Dictionary values
+title: "3. Translations with multiple variants"
 prev_section: string-values
-prev_title: String values
+prev_title: "2. Working with text: multiline, interpolation"
 next_section: default-values-for-dictionaries
-next_title: Default values for dictionaries
+next_title: "4. Defining the default variant"
 ---
 
 <section class="clearfix">

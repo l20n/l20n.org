@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: Declensions
+title: "6. Using variants to define grammatical cases"
 prev_section: attributes-public-vs-local
-prev_title: "Attributes: public vs. local"
+prev_title: "5. Choosing one variant"
 next_section: genders
-next_title: "Genders"
+next_title: "7. Using external variables in translations"
 ---
 
 <section class="clearfix">

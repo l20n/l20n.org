@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: Default values for dictionaries
+title: "4. Defining the default variant"
 prev_section: dictionary-values
-prev_title: Dictionary values
+prev_title: "3. Translations with multiple variants"
 next_section: indexes-for-hash-tables
-next_title: Indexes for hash tables
+next_title: "5. Choosing one variant"
 ---
 
 <section class="clearfix">

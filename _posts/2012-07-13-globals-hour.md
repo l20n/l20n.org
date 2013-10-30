@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: "Globals: @hour"
+title: "13. Adapting translations to current time"
 prev_section: expressions
-prev_title: Expressions
+prev_title: "12. Building macros and expressions"
 next_section: globals-os
-next_title: "Globals: @os"
+next_title: "14. Adapting translations to user's operating system"
 ---
 
 <section class="clearfix">

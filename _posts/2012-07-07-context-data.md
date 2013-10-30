@@ -1,11 +1,11 @@
 ---
 category: learn
 layout: learn
-title: Context data
+title: "7. Using external variables in translations"
 prev_section: attributes
-prev_title: Attributes
+prev_title: "6. Using variants to define grammatical cases"
 next_section: context-data-and-localization-logic
-next_title: Context data and localization logic
+next_title: "8. Making translations depend on external variables"
 ---
 
 <section class="clearfix">

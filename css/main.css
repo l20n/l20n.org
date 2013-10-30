@@ -445,12 +445,18 @@ footer nav p {
     text-shadow: 1px 1px 0 #F8F8F0;
 }
 
-nav a,
+.home nav a,
 a.title {
     color: #F8F8F0;
     font-weight: 700;
     font-size: 0.8em;
     text-transform: uppercase;
+}
+
+.learn nav a {
+    color: #333333;
+    font-size: 0.8em;
+    text-align: left;
 }
 
 /* ==============
@@ -642,9 +648,9 @@ a.title {
     .learn .header-container nav {
         display: inline-block;
         position: absolute;
-        right: -300px;
+        right: -400px;
         top: 3.7em;
-        width: 300px;
+        width: 400px;
         transition: all 0.2s ease-out;
         z-index: 100;
     }
