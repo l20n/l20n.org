@@ -445,7 +445,7 @@ footer nav p {
     text-shadow: 1px 1px 0 #F8F8F0;
 }
 
-.home nav a,
+nav a,
 a.title {
     color: #F8F8F0;
     font-weight: 700;
@@ -453,10 +453,11 @@ a.title {
     text-transform: uppercase;
 }
 
-.learn nav a {
+.learn header nav a {
     color: #333333;
-    font-size: 0.8em;
+    font-weight: 300;
     text-align: left;
+    text-transform: none;
 }
 
 /* ==============
