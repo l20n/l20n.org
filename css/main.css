@@ -199,21 +199,21 @@ a#cta:active {
     background-color: #FFFFFF;
 }
 
-.main {
+main {
     background: url('../img/grain.png') #F8F8F0;
 }
 
-.main article a {
+main article a {
     display: block;
     margin-top: 0.5em;
 }
 
-.main article p a {
+main article p a {
     display: inline;
 }
 
-.main article a:hover,
-.main article a:active {
+main article a:hover,
+main article a:active {
     text-decoration: underline;
 }
 
@@ -223,46 +223,46 @@ a.title {
     margin: 0 2em;
 }
 
-.main header h2 {
+main header h2 {
     width: 90%;
     margin: 0.5em 5%;
 }
 
-.main > article {
+main > article {
     width: 90%;
     margin: 0 5%;
 }
 
-.main > article > .introduction {
+main > article > .introduction {
     margin-bottom: 4em;
 }
 
-.main > article > .highlights > section {
+main > article > .highlights > section {
     margin-bottom: 4em;
 }
 
-.main > article > .highlights > section > h3 {
+main > article > .highlights > section > h3 {
     margin: 1em 0 0.5em;
 }
 
-.main > article > .highlights > section > a:after,
-.main > article > .implement > section > a.developer-docs:after {
+main > article > .highlights > section > a:after,
+main > article > .implement > section > a.developer-docs:after {
     content: " →";
 }
 
-.main > article > .implement {
+main > article > .implement {
     text-align: left;
 }
 
-.main > article > .implement > section {
+main > article > .implement > section {
     margin-bottom: 4em;
 }
-.main > article > .implement > section ol {
+main > article > .implement > section ol {
     list-style: none;
     padding: 0;
 }
 
-.main > article > .implement > section li {
+main > article > .implement > section li {
     padding-bottom: 20px;
 }
 
@@ -333,7 +333,7 @@ body > footer {
     Learn
    ======= */
 
-.learn .main {
+.learn main {
     text-align: left;
     padding-top: 4em;
 }
@@ -354,7 +354,7 @@ body > footer {
     margin-bottom: 2em;
 }
 
-.learn .main ul {
+.learn main ul {
     margin: -1em 0 2em 0;
 }
 
@@ -465,12 +465,12 @@ a.title {
     MOBILE: Main
    ============== */
 
-.main header {
+main header {
     background: #66D9EF;
     padding: 2em 0;
 }
 
-.main header h2 {
+main header h2 {
     color: #333333;
     font-size: 1.8em;
     font-weight: 800;
@@ -480,26 +480,26 @@ a.title {
     text-transform: uppercase;
 }
 
-.main header .wrapper {
+main header .wrapper {
     margin-top: -2.2em;
 }
 
-.main header .inner-wrapper {
+main header .inner-wrapper {
     background: #66D9EF;
     display: inline-block;
     padding: 0 2em;
 }
 
-.main > article {
+main > article {
     margin: 0 auto;
     padding-top: 4em;
 }
 
-.learn .main > article {
+.learn main > article {
     padding-top: 2em;
 }
 
-.main .window {
+main .window {
     background: #3D3D3D;
     border: 1px solid #777777;
     border-radius: 7px 7px 7px 7px;
@@ -509,7 +509,7 @@ a.title {
     text-align: left;
 }
 
-.main .window h3 {
+main .window h3 {
     background: -moz-linear-gradient(top, #f7f7f7 0%, #cfcfcf 7%, #aaaaaa 100%);
     background: -webkit-linear-gradient(top, #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
     background: linear-gradient(top, #f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
@@ -528,7 +528,7 @@ a.title {
     text-transform: none;
 }
 
-.main .window h3.status {
+main .window h3.status {
     background: -moz-linear-gradient(top, #cfcfcf, #aaaaaa);
     background: -webkit-linear-gradient(top, #cfcfcf, #aaaaaa);
     background: linear-gradient(top, #cfcfcf, #aaaaaa);
@@ -682,24 +682,24 @@ a.title {
     WIDE: Main
    ============ */
 
-    .main header h2 {
+    main header h2 {
         font-size: 2.5em;
         letter-spacing: -2px;
         margin: 0.5em auto 0.7em;
     }
 
-    .main > article {
+    main > article {
         margin: 0 auto 0;
     }
 
-    .main > article > .highlights > section {
+    main > article > .highlights > section {
         float: left;
         margin-right: 5%;
         width: 30%;
     }
 
-    .main > article > .highlights > section:nth-child(3),
-    .main > article > .highlights > section:nth-child(6) {
+    main > article > .highlights > section:nth-child(3),
+    main > article > .highlights > section:nth-child(6) {
         margin-right: 0;
     }
 
@@ -721,12 +721,12 @@ a.title {
     Maximal Width
    =============== */
 
-    .main header .wrapper {
+    main header .wrapper {
         margin-top: -1.4em;
     }
 
     hr,
-    .main header h2 {
+    main header h2 {
         width: 1026px;
     }
 
@@ -734,22 +734,22 @@ a.title {
         margin: 0 auto;        
     }
 
-    .main header h2 {
+    main header h2 {
         font-size: 2.7em;
         letter-spacing: -3px;
     }
 
-    .main > article {
+    main > article {
         width: 1026px;
     }
 
-    .main > article > .implement > section {
+    main > article > .implement > section {
         float: left;
         text-align: left;
         width: 48%;
     }
 
-    .main .window {
+    main .window {
         float: right;
         width: 48%;
     }
