@@ -1,5 +1,5 @@
 /* Menu */
 
 $('.toggle').click(function() {
-  $(this).parents('.header-container').toggleClass('extended');
+  $(this).parents('header').toggleClass('extended');
 });

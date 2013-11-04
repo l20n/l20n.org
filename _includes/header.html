@@ -90,12 +90,10 @@
         <script src="/js/l20n.js"></script>
     </head>
     <body class="{{ page.category }}">
-        <div class="header-container">
-            <header class="clearfix">
-                {% if page.category == "home" %}
-                    {% include menu-container.html %}
-                {% else if page.category == "learn" %}
-                    {% include toc-container.html %}
-                {% endif %}
-            </header>
-        </div>
+        <header class="clearfix">
+            {% if page.category == "home" %}
+                {% include menu-container.html %}
+            {% else if page.category == "learn" %}
+                {% include toc-container.html %}
+            {% endif %}
+        </header>

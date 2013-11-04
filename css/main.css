@@ -265,7 +265,7 @@ a.title {
     padding-bottom: 20px;
 }
 
-.header-container {
+body > header {
     background: #272822;
     line-height: 0;
 }
@@ -647,7 +647,7 @@ a.title {
         display: block;
     }
 
-    .learn .header-container nav {
+    .learn > header nav {
         display: inline-block;
         position: absolute;
         right: -400px;
@@ -657,11 +657,11 @@ a.title {
         z-index: 100;
     }
 
-    .learn .header-container.extended nav {
+    .learn > header.extended nav {
         right: 0;
     }
 
-    .learn .header-container nav li a {
+    .learn > header nav li a {
         border-bottom: 1px solid #068599;
         display: block;
         line-height: 0;
@@ -670,7 +670,7 @@ a.title {
         float: none;
     }
 
-    .learn .header-container nav li:last-child a {
+    .learn > header nav li:last-child a {
         border-bottom: none;
     }
 
