@@ -102,17 +102,6 @@ h5 {
 hr {
     font-size: 0.8em;
     border-color: #666666;
-}
-
-hr.middle {
-    border-bottom: 1px solid #FFFFFF;
-    border-top: 1px solid #CCCCCC;
-    height: 0;
-    margin-bottom: 5em;
-    margin-top: 0;
-}
-
-hr.top {
     margin-top: 2em;
 }
 
@@ -234,7 +223,8 @@ main > .content {
 }
 
 main > .content > .introduction {
-    margin-bottom: 4em;
+    border-bottom: 1px solid #CCCCCC;
+    padding-bottom: 4em;
 }
 
 main > .content > .introduction :nth-child(3):before,
@@ -244,6 +234,12 @@ main > .content > .introduction :nth-child(3):after {
     font-size: 1.5em;
     font-weight: bold;
     margin: 1em 0;
+}
+
+main > .content > .highlights {
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #FFFFFF;
+    padding-top: 4em;
 }
 
 main > .content > .highlights > figure {
@@ -260,6 +256,8 @@ main > .content > .implementation > section > a.developer-docs:after {
 }
 
 main > .content > .implementation {
+    border-top: 1px solid #FFFFFF;
+    padding-top: 4em;
     text-align: left;
 }
 
@@ -760,7 +758,7 @@ main .window h3.status {
     }
 
     hr {
-        margin: 0 auto;        
+        margin: 0 auto;
     }
 
     main header h2 {
