@@ -5,7 +5,8 @@
                             <li><a {% if page.category == "home" %}class="active" {% endif %}href="/" data-l10n-id="nameFooter">{% if page.category == "learn" %}L20n{% endif %}</a></li>
                             {% include menu.html %}
                         </ul>
-                        <p data-l10n-id="signature"></p>
+                        <!-- Leave text nodes for learn pages, which are not localizable with L20n -->
+                        <p data-l10n-id="signature">Crafted by Mozilla.</p>
                     </nav>
                 </footer>
             </div>
