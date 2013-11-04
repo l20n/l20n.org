@@ -246,15 +246,15 @@ main > .content > .introduction :nth-child(3):after {
     margin: 1em 0;
 }
 
-main > .content > .highlights > section {
+main > .content > .highlights > figure {
     margin-bottom: 4em;
 }
 
-main > .content > .highlights > section > h3 {
+main > .content > .highlights > figure > h3 {
     margin: 1em 0 0.5em;
 }
 
-main > .content > .highlights > section > a:after,
+main > .content > .highlights > figure > a:after,
 main > .content > .implementation > section > a.developer-docs:after {
     content: " →";
 }
@@ -701,14 +701,14 @@ main .window h3.status {
         margin: 0 auto 0;
     }
 
-    main > .content > .highlights > section {
+    main > .content > .highlights > figure {
         float: left;
         margin-right: 5%;
         width: 30%;
     }
 
-    main > .content > .highlights > section:nth-child(3),
-    main > .content > .highlights > section:nth-child(6) {
+    main > .content > .highlights > figure:nth-child(3),
+    main > .content > .highlights > figure:nth-child(6) {
         margin-right: 0;
     }
 
