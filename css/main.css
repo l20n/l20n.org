@@ -270,7 +270,7 @@ body > header {
     line-height: 0;
 }
 
-.footer-container {
+body > footer {
     background: #DBDBD6;
     text-align: center;
 }
