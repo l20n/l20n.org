@@ -251,7 +251,7 @@ main > .content > .highlights > figure > h3 {
 }
 
 main > .content > .highlights > figure > a:after,
-main > .content > .implementation > section > a.developer-docs:after {
+main > .content > .implementation > div > a.developer-docs:after {
     content: " →";
 }
 
@@ -261,15 +261,15 @@ main > .content > .implementation {
     text-align: left;
 }
 
-main > .content > .implementation > section {
+main > .content > .implementation > div {
     margin-bottom: 4em;
 }
-main > .content > .implementation > section ol {
+main > .content > .implementation > div ol {
     list-style: none;
     padding: 0;
 }
 
-main > .content > .implementation > section li {
+main > .content > .implementation > div li {
     padding-bottom: 20px;
 }
 
@@ -780,7 +780,7 @@ main .window h3.status {
         margin-right: 0;
     }
 
-    main > .content > .implementation > section {
+    main > .content > .implementation > div {
         float: left;
         text-align: left;
         width: 48%;
