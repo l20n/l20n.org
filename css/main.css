@@ -701,6 +701,25 @@ main .window h3.status {
         margin: 0 auto 0;
     }
 
+    main > .content .introduction {
+        text-align: left;
+    }
+
+    main > .content .introduction p {
+        font-size: 1.2em;
+        padding-bottom: 1em;
+        padding-left: 4em;
+    }
+
+    main > .content .introduction :nth-child(3):before,
+    main > .content .introduction :nth-child(3):after {
+        content: none;
+    }
+
+    main > .content .introduction :nth-child(4) {
+        padding-bottom: 0;
+    }
+
     main > .content > .highlights > figure {
         float: left;
         margin-right: 5%;
@@ -744,7 +763,6 @@ main .window h3.status {
     }
 
     main header h2 {
-        font-size: 2.7em;
         letter-spacing: -3px;
     }
 
