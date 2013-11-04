@@ -237,6 +237,15 @@ main > .content > .introduction {
     margin-bottom: 4em;
 }
 
+main > .content > .introduction :nth-child(3):before,
+main > .content > .introduction :nth-child(3):after {
+    content: "∴";
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 1em 0;
+}
+
 main > .content > .highlights > section {
     margin-bottom: 4em;
 }
