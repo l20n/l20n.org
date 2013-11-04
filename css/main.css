@@ -198,7 +198,7 @@ a#cta:active {
     background-color: #FFFFFF;
 }
 
-.main-container {
+.main {
     background: url('../img/grain.png') #F8F8F0;
 }
 
@@ -332,7 +332,7 @@ a.title {
     Learn
    ======= */
 
-.learn .main-container {
+.learn .main {
     text-align: left;
     padding-top: 4em;
 }
