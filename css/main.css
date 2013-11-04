@@ -203,17 +203,17 @@ main {
     background: url('../img/grain.png') #F8F8F0;
 }
 
-main article a {
+main .content a {
     display: block;
     margin-top: 0.5em;
 }
 
-main article p a {
+main .content p a {
     display: inline;
 }
 
-main article a:hover,
-main article a:active {
+main .content a:hover,
+main .content a:active {
     text-decoration: underline;
 }
 
@@ -228,41 +228,41 @@ main header h2 {
     margin: 0.5em 5%;
 }
 
-main > article {
+main > .content {
     width: 90%;
     margin: 0 5%;
 }
 
-main > article > .introduction {
+main > .content > .introduction {
     margin-bottom: 4em;
 }
 
-main > article > .highlights > section {
+main > .content > .highlights > section {
     margin-bottom: 4em;
 }
 
-main > article > .highlights > section > h3 {
+main > .content > .highlights > section > h3 {
     margin: 1em 0 0.5em;
 }
 
-main > article > .highlights > section > a:after,
-main > article > .implement > section > a.developer-docs:after {
+main > .content > .highlights > section > a:after,
+main > .content > .implement > section > a.developer-docs:after {
     content: " →";
 }
 
-main > article > .implement {
+main > .content > .implement {
     text-align: left;
 }
 
-main > article > .implement > section {
+main > .content > .implement > section {
     margin-bottom: 4em;
 }
-main > article > .implement > section ol {
+main > .content > .implement > section ol {
     list-style: none;
     padding: 0;
 }
 
-main > article > .implement > section li {
+main > .content > .implement > section li {
     padding-bottom: 20px;
 }
 
@@ -490,12 +490,12 @@ main header .inner-wrapper {
     padding: 0 2em;
 }
 
-main > article {
+main > .content {
     margin: 0 auto;
     padding-top: 4em;
 }
 
-.learn main > article {
+.learn main > .content {
     padding-top: 2em;
 }
 
@@ -688,18 +688,18 @@ main .window h3.status {
         margin: 0.5em auto 0.7em;
     }
 
-    main > article {
+    main > .content {
         margin: 0 auto 0;
     }
 
-    main > article > .highlights > section {
+    main > .content > .highlights > section {
         float: left;
         margin-right: 5%;
         width: 30%;
     }
 
-    main > article > .highlights > section:nth-child(3),
-    main > article > .highlights > section:nth-child(6) {
+    main > .content > .highlights > section:nth-child(3),
+    main > .content > .highlights > section:nth-child(6) {
         margin-right: 0;
     }
 
@@ -739,11 +739,11 @@ main .window h3.status {
         letter-spacing: -3px;
     }
 
-    main > article {
+    main > .content {
         width: 1026px;
     }
 
-    main > article > .implement > section {
+    main > .content > .implement > section {
         float: left;
         text-align: left;
         width: 48%;
