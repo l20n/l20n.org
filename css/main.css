@@ -707,17 +707,17 @@ main .window h3.status {
 
     main > .content .introduction p {
         font-size: 1.2em;
+        padding: 0 4em;
+    }
+
+    main > .content .introduction :nth-child(3) {
+        padding-top: 1em;
         padding-bottom: 1em;
-        padding-left: 4em;
     }
 
     main > .content .introduction :nth-child(3):before,
     main > .content .introduction :nth-child(3):after {
         content: none;
-    }
-
-    main > .content .introduction :nth-child(4) {
-        padding-bottom: 0;
     }
 
     main > .content > .highlights > figure {
