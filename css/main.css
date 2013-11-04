@@ -83,7 +83,7 @@ body {
 h3 {
     font-size: 1.2em;
     letter-spacing: -1px;
-    margin: 0;
+    margin: 0 0 1em;
     text-shadow: 0 2px 0px #CFCFCF;
     text-transform: uppercase;
 }
