@@ -99,23 +99,6 @@ h5 {
     text-transform: uppercase;
 }
 
-a#cta {
-    background: url('../img/download.png') no-repeat 2em 7px #E6DB74; /* Icon source: http://www.visualpharm.com */
-    border: 1px solid #333333;
-    display: inline-block;
-    font-weight: 400;
-    letter-spacing: -1px;
-    margin-bottom: 0.2em;
-    padding: 0.5em 2em 0.5em 4em;
-    text-align: left;
-    text-transform: uppercase;
-}
-
-.error a#cta {
-    background: #E6DB74;
-    padding-left: 2em;    
-}
-
 hr {
     font-size: 0.8em;
     border-color: #666666;
@@ -193,7 +176,21 @@ a.active {
 }
 
 a#cta {
+    background: url('../img/download.png') no-repeat 2em 7px #E6DB74; /* Icon source: http://www.visualpharm.com */
+    border: 1px solid #333333;
     color: inherit;
+    display: inline-block;
+    font-weight: 400;
+    letter-spacing: -1px;
+    margin-bottom: 0.2em;
+    padding: 0.5em 2em 0.5em 4em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.error a#cta {
+    background: #E6DB74;
+    padding-left: 2em;
 }
 
 a#cta:hover,
