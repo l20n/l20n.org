@@ -109,6 +109,7 @@ hr.middle {
     border-top: 1px solid #CCCCCC;
     height: 0;
     margin-bottom: 5em;
+    margin-top: 0;
 }
 
 hr.top {
@@ -492,7 +493,7 @@ a.title {
 
 .main > article {
     margin: 0 auto;
-    padding-top: 3em;
+    padding-top: 4em;
 }
 
 .learn .main > article {
@@ -686,7 +687,6 @@ a.title {
 
     .main > article {
         margin: 0 auto 0;
-        padding-top: 4em;
     }
 
     .main > article > .highlights > section {
