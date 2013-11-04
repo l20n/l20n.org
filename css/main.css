@@ -233,7 +233,7 @@ a.title {
     margin: 0 5%;
 }
 
-.main > article > .introduction > p {
+.main > article > .introduction {
     margin-bottom: 4em;
 }
 
