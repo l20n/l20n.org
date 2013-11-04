@@ -154,7 +154,7 @@ code.entity {
     color: #05B1CC;
 }
 
-.use code {
+.implement code {
     border-left: 2px solid #CCCCCC;
     color: #8F908A;
     display: block;
@@ -235,32 +235,32 @@ a.title {
     margin: 0 5%;
 }
 
-.main > article > .blocks > section {
+.main > article > .highlights > section {
     margin-bottom: 4em;
 }
 
-.main > article > .blocks > section > h3 {
+.main > article > .highlights > section > h3 {
     margin: 1em 0 0.5em;
 }
 
-.main > article > .blocks > section > a:after,
-.main > article > .use > section > a.developer-docs:after {
+.main > article > .highlights > section > a:after,
+.main > article > .implement > section > a.developer-docs:after {
     content: " →";
 }
 
-.main > article > .use {
+.main > article > .implement {
     text-align: left;
 }
 
-.main > article > .use > section {
+.main > article > .implement > section {
     margin-bottom: 4em;
 }
-.main > article > .use > section ol {
+.main > article > .implement > section ol {
     list-style: none;
     padding: 0;
 }
 
-.main > article > .use > section li {
+.main > article > .implement > section li {
     padding-bottom: 20px;
 }
 
@@ -688,18 +688,15 @@ a.title {
         padding-top: 4em;
     }
 
-    .main > article > .blocks > section {
-        width: 30%;
+    .main > article > .highlights > section {
         float: left;
-    }
-
-    .main > article > .blocks > section:first-child {
         margin-right: 5%;
+        width: 30%;
     }
 
-    .main > article > .blocks > section:last-child {
-        float: right;
-        margin-left: 5%;
+    .main > article > .highlights > section:nth-child(3),
+    .main > article > .highlights > section:nth-child(6) {
+        margin-right: 0;
     }
 
     .learn section .left {
@@ -742,7 +739,7 @@ a.title {
         width: 1026px;
     }
 
-    .main > article > .use > section {
+    .main > article > .implement > section {
         float: left;
         text-align: left;
         width: 48%;
