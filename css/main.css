@@ -721,13 +721,14 @@ main .window h3.status {
     }
 
     main > .content > .highlights > figure {
-        float: left;
-        margin-right: 5%;
-        width: 30%;
+        display: inline-block;
+        /* TODO: why not 4%?; */
+        margin-right: 3%;
+        vertical-align: top;
+        width: 48%;
     }
 
-    main > .content > .highlights > figure:nth-child(3),
-    main > .content > .highlights > figure:nth-child(6) {
+    main > .content > .highlights > figure:nth-child(2n) {
         margin-right: 0;
     }
 
@@ -768,6 +769,17 @@ main .window h3.status {
 
     main > .content {
         width: 1026px;
+    }
+
+    main > .content > .highlights > figure:nth-child(n) {
+        /* TODO: why not 5%?; */
+        margin-right: 4%;
+        width: 30%;
+    }
+
+    main > .content > .highlights > figure:nth-child(3),
+    main > .content > .highlights > figure:nth-child(6) {
+        margin-right: 0;
     }
 
     main > .content > .implementation > section {
