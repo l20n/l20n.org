@@ -138,7 +138,7 @@ code.entity {
     color: #05B1CC;
 }
 
-.implement code {
+.implementation code {
     border-left: 2px solid #CCCCCC;
     color: #8F908A;
     display: block;
@@ -246,23 +246,23 @@ main > .content > .highlights > section > h3 {
 }
 
 main > .content > .highlights > section > a:after,
-main > .content > .implement > section > a.developer-docs:after {
+main > .content > .implementation > section > a.developer-docs:after {
     content: " →";
 }
 
-main > .content > .implement {
+main > .content > .implementation {
     text-align: left;
 }
 
-main > .content > .implement > section {
+main > .content > .implementation > section {
     margin-bottom: 4em;
 }
-main > .content > .implement > section ol {
+main > .content > .implementation > section ol {
     list-style: none;
     padding: 0;
 }
 
-main > .content > .implement > section li {
+main > .content > .implementation > section li {
     padding-bottom: 20px;
 }
 
@@ -743,7 +743,7 @@ main .window h3.status {
         width: 1026px;
     }
 
-    main > .content > .implement > section {
+    main > .content > .implementation > section {
         float: left;
         text-align: left;
         width: 48%;
