@@ -235,6 +235,10 @@ a.title {
     margin: 0 5%;
 }
 
+.main > article > .introduction > p {
+    margin-bottom: 4em;
+}
+
 .main > article > .highlights > section {
     margin-bottom: 4em;
 }

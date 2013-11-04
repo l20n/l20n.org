@@ -28,13 +28,6 @@
         <![endif]-->
         <script type="application/l20n">
             <name "L20n">
-            <title "{% raw %}{{ name }}{% endraw %} • {{ page.title }}">
-            <welcome "{% raw %}{{ name }}{% endraw %} by Mozilla">
-
-            <lead """
-              A developer-friendly framework
-              that places language in the localizer's hands.
-            """>
 
             <learn "Learn">
             <implement "Implement">
@@ -43,7 +36,19 @@
             <discuss "Discuss">
             <irc "IRC">
 
+            <title "{% raw %}{{ name }}{% endraw %} • {{ page.title }}">
+            <welcome "{% raw %}{{ name }}{% endraw %} by Mozilla">
+
+            <lead """
+              A developer-friendly framework
+              that places language in the localizer's hands.
+            """>
+
             <cta "Download">
+
+            <intro1 "L20n is a new localization framework developed by Mozilla for the Web. It allows localizers to put small bits of logic into localization resources to codify the grammar of the language.">
+            <intro2 "Challenges unique to individual languages can then be processed outside of the internationalized core source code, enabling richer natural language expression without globally affecting all other locales (and the source code).">
+            <intro3 "L20n's framework removes the need for developers to thoroughly understand the specifics of a natural language and provides an opportunity for localizers to create better translations.">
 
             <naturalTitle "Natural language">
             <naturalText "L20n enables the entire expressive power of a natural language by enabling translation with greater accuracy.">
