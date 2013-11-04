@@ -442,7 +442,6 @@ footer nav a {
 footer nav p {
     color: #70716A;
     font-size: 0.7em;
-    margin: -2em 0 1em;
     padding: 2em 0;
     text-shadow: 1px 1px 0 #F8F8F0;
 }
@@ -627,6 +626,10 @@ a.title {
 
     footer nav a {
         border-bottom: none;
+    }
+
+    footer nav p {
+        margin: -2em 0 1em;
     }
 
     .learn {
