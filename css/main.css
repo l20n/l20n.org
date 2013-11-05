@@ -226,8 +226,7 @@ main > .content > .introduction {
     padding-bottom: 4em;
 }
 
-main > .content > .introduction :nth-child(3):before,
-main > .content > .introduction :nth-child(3):after {
+main > .content > .introduction :nth-child(3):before {
     content: "∴";
     display: block;
     font-size: 1.5em;
@@ -703,17 +702,14 @@ main .window h3.status {
     }
 
     main > .content .introduction p {
-        font-size: 1.2em;
         padding: 0 4em;
     }
 
     main > .content .introduction :nth-child(3) {
         padding-top: 1em;
-        padding-bottom: 1em;
     }
 
-    main > .content .introduction :nth-child(3):before,
-    main > .content .introduction :nth-child(3):after {
+    main > .content .introduction :nth-child(3):before {
         content: none;
     }
 
