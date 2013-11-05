@@ -224,6 +224,7 @@ main > .content {
 
 main > .content > .introduction {
     padding-bottom: 4em;
+    padding-top: 4em;
 }
 
 main > .content > .introduction :nth-child(3):before {
@@ -497,7 +498,6 @@ main header .inner-wrapper {
 
 main > .content {
     margin: 0 auto;
-    padding-top: 4em;
 }
 
 .learn main > .content {
