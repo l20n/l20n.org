@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "16. Don't repeat yourself: helper entities"
+title: "Don't repeat yourself: helper entities"
 ---
 
 <section class="clearfix">

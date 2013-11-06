@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "12. Building macros and expressions"
+title: "Building macros and expressions"
 ---
 
 <section class="clearfix">

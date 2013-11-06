@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "4. Defining the default variant"
+title: "Defining the default variant"
 ---
 
 <section class="clearfix">

@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "5. Choosing one variant"
+title: "Choosing one variant"
 ---
 
 <section class="clearfix">

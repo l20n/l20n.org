@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "3. Translations with multiple variants"
+title: "Translations with multiple variants"
 ---
 
 <section class="clearfix">

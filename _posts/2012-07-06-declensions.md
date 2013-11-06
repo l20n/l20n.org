@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "6. Using variants to define grammatical cases"
+title: "Using variants to define grammatical cases"
 ---
 
 <section class="clearfix">

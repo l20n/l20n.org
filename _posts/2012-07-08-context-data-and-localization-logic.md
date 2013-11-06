@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "8. Making translations depend on external variables"
+title: "Making translations depend on external variables"
 ---
 
 <section class="clearfix">

@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "14. Adapting translations to user's operating system"
+title: "Adapting translations to user's operating system"
 ---
 
 <section class="clearfix">

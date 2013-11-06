@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "2. Working with text: multiline, interpolation"
+title: "Working with text: multiline, interpolation"
 ---
 
 <section class="clearfix">

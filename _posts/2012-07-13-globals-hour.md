@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "13. Adapting translations to current time"
+title: "Adapting translations to current time"
 ---
 
 <section class="clearfix">

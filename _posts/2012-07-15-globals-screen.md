@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "15. Adapting translations to screen size"
+title: "Adapting translations to screen size"
 ---
 
 <section class="clearfix">

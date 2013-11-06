@@ -1,14 +1,14 @@
 <section class="navigation">
     <p class="clearfix">
     {% if page.previous != null %}
-        <a class="back" href="{{ page.previous.url }}">{{ page.previous.title }}</a>
+        <a class="back" href="{{ page.previous.url }}">{{ page.previous.date | date: "%-d" }}. {{ page.previous.title }}</a>
     {% endif %}
     {% if page.next != null %}
-        <a class="next" href="{{ page.next.url }}">{{ page.next.title }}</a>
+        <a class="next" href="{{ page.next.url }}">{{ page.next.date | date: "%-d" }}. {{ page.next.title }}</a>
     {% endif %}
 
     <!-- Special case: 1st page -->
-    {% if page.title == "1. Hello World" %}
+    {% if page.title == "Hello World" %}
         <a class="back" href="/learn">0. Introduction</a>
     {% endif %}
     </p>

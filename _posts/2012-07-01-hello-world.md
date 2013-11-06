@@ -1,7 +1,6 @@
 ---
 category: learn
 layout: learn
-title: "1. Hello World"
 ---
 
 <section class="clearfix">

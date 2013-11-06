@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "17. Putting it all together: Complex plurals example"
+title: "Putting it all together: Complex plurals example"
 ---
 
 <section class="clearfix">

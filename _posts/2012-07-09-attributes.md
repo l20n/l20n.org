@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "9. Describing translations with custom data"
+title: "Describing translations with custom data"
 ---
 
 <section class="clearfix">

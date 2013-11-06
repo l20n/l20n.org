@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "7. Using external variables in translations"
+title: "Using external variables in translations"
 ---
 
 <section class="clearfix">
