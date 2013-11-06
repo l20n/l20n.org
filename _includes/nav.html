@@ -7,10 +7,7 @@
         <a class="next" href="{{ page.next.url }}">{{ page.next.title }}</a>
     {% endif %}
 
-    <!-- Special cases: 1st and 2nd page -->
-    {% if page.title == "0. Introduction" %}
-        <a class="next" href="/learn/hello-world">1. Hello World</a>
-    {% endif %}
+    <!-- Special case: 1st page -->
     {% if page.title == "1. Hello World" %}
         <a class="back" href="/learn">0. Introduction</a>
     {% endif %}
