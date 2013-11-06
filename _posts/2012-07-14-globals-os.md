@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "14. Adapting translations to user's operating system"
-prev_section: globals-hour
-prev_title: "13. Adapting translations to current time"
-next_section: globals-screen
-next_title: "15. Adapting translations to screen size"
 ---
 
 <section class="clearfix">

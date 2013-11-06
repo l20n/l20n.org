@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "12. Building macros and expressions"
-prev_section: macros
-prev_title: "11. Plural forms (introduction to macros)"
-next_section: globals-hour
-next_title: "13. Adapting translations to current time"
 ---
 
 <section class="clearfix">

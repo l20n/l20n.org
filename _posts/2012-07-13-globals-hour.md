@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "13. Adapting translations to current time"
-prev_section: expressions
-prev_title: "12. Building macros and expressions"
-next_section: globals-os
-next_title: "14. Adapting translations to user's operating system"
 ---
 
 <section class="clearfix">

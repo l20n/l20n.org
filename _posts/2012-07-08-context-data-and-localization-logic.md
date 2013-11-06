@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "8. Making translations depend on external variables"
-prev_section: context-data
-prev_title: "7. Using external variables in translations"
-next_section: macros
-next_title: "9. Describing translations with custom data"
 ---
 
 <section class="clearfix">

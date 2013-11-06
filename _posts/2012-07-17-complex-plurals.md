@@ -2,8 +2,6 @@
 category: learn
 layout: learn
 title: "17. Putting it all together: Complex plurals example"
-prev_section: genders
-prev_title: "16. Don't repeat yourself: helper entities"
 ---
 
 <section class="clearfix">

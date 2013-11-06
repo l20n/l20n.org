@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "15. Adapting translations to screen size"
-prev_section: globals-os
-prev_title: "14. Adapting translations to user's operating system"
-next_section: entities-public-vs-local
-next_title: "16. Don't repeat yourself: helper entities"
 ---
 
 <section class="clearfix">

@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "9. Describing translations with custom data"
-prev_section: indexes-for-hash-tables
-prev_title: "8. Making translations depend on external variables"
-next_section: context-data
-next_title: "10. Making translations depend on custom data"
 ---
 
 <section class="clearfix">

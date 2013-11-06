@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "6. Using variants to define grammatical cases"
-prev_section: attributes-public-vs-local
-prev_title: "5. Choosing one variant"
-next_section: genders
-next_title: "7. Using external variables in translations"
 ---
 
 <section class="clearfix">

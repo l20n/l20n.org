@@ -1,10 +1,18 @@
 <section class="navigation">
     <p class="clearfix">
-    {% if page.prev_section != null %}
-        <a class="back" href="{{ site.url }}learn/{{ page.prev_section }}">&larr; {{ page.prev_title }}</a>
+    {% if page.previous != null %}
+        <a class="back" href="{{ page.previous.url }}">&larr; {{ page.previous.title }}</a>
     {% endif %}
-    {% if page.next_section != null %}
-        <a class="next" href="{{ site.url }}learn/{{ page.next_section }}">{{ page.next_title }} &rarr;</a>
+    {% if page.next != null %}
+        <a class="next" href="{{ page.next.url }}">{{ page.next.title }} &rarr;</a>
+    {% endif %}
+
+    <!-- Special cases: 1st and 2nd page -->
+    {% if page.title == "0. Introduction" %}
+        <a class="next" href="/learn/hello-world">"1. Hello World" &rarr;</a>
+    {% endif %}
+    {% if page.title == "1. Hello World" %}
+        <a class="back" href="/learn">&larr; "0. Introduction"</a>
     {% endif %}
     </p>
 </section>

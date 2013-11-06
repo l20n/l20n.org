@@ -2,10 +2,6 @@
 category: learn
 layout: learn
 title: "16. Don't repeat yourself: helper entities"
-prev_section: globals-screen
-prev_title: "15. Adapting translations to screen size"
-next_section: attributes-public-vs-local
-next_title: "17. Putting it all together: Complex plurals example"
 ---
 
 <section class="clearfix">
