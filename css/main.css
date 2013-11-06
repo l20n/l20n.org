@@ -303,8 +303,16 @@ body > footer {
     float: left;
 }
 
+.navigation .back:before {
+    content: "← ";
+}
+
 .navigation .next {
     float: right;
+}
+
+.navigation .next:after {
+    content: " →";
 }
 
 .editor.height5 {
