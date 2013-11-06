@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "Plural forms (introduction to macros)"
+title: "Plural Forms (Introduction To Macros)"
 ---
 
 <section class="clearfix">

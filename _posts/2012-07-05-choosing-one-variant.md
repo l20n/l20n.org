@@ -1,7 +1,6 @@
 ---
 category: learn
 layout: learn
-title: "Choosing one variant"
 ---
 
 <section class="clearfix">
@@ -28,7 +27,7 @@ title: "Choosing one variant"
 
 <section class="clearfix">
 	<div class="left">
-		<p>You can get much more creative in indexes and put expressions in them, too (see <a href="{% post_url 2012-07-12-expressions %}">Chapter 12. "Building macros and expressions"</a>).</p>
+		<p>You can get much more creative in indexes and put expressions in them, too (see <a href="{% post_url 2012-07-12-building-macros-and-expressions %}">Chapter 12. Building macros and expressions</a>).</p>
 		<p>If you nest dictionaries, you can define multivalued indexes.</p>
 	</div>
 	<div class="right">

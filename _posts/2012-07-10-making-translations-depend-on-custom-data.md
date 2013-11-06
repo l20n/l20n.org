@@ -1,7 +1,6 @@
 ---
 category: learn
 layout: learn
-title: "Making translations depend on custom data"
 ---
 
 <section class="clearfix">

@@ -1,7 +1,6 @@
 ---
 category: learn
 layout: learn
-title: "Adapting translations to current time"
 ---
 
 <section class="clearfix">
@@ -24,7 +23,7 @@ title: "Adapting translations to current time"
 
 <section class="clearfix">
   <div class="left">
-    <p>In L20n 1.0 there are three global variables available client-side: <code>@hour</code>, <a href="{% post_url 2012-07-14-globals-os %}"><code>@os</code></a> and <a href="{% post_url 2012-07-15-globals-screen %}"><code>@screen</code></a>. In the next example, we'll demonstrate how to use the first one to change a greeting based on time of day.</p>
+    <p>In L20n 1.0 there are three global variables available client-side: <code>@hour</code>, <a href="{% post_url 2012-07-14-adapting-translations-to-users-operating-system %}"><code>@os</code></a> and <a href="{% post_url 2012-07-15-adapting-translations-to-screen-size %}"><code>@screen</code></a>. In the next example, we'll demonstrate how to use the first one to change a greeting based on time of day.</p>
     <p>We start with an entity <code class="entity">greeting</code>, which is a dictionary of four different greetings with the macro <code>timeOfDay()</code> used as in the index.  The macro takes <code>@hour</code> as the only argument.</p>
     <p>Inside of the macro body, the argument is referenced as <code>$h</code>.  At runtime, <code>@hour</code> is set by L20n to the hour of the current system time.  Based on the numerical value of the current hour, the <code>timeOfDay</code> macro returns the appropriate part of the day, which is used to select one of the available variants of the greeting.</p>
   </div>

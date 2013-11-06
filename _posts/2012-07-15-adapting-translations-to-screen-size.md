@@ -1,7 +1,6 @@
 ---
 category: learn
 layout: learn
-title: "Adapting translations to screen size"
 ---
 
 <section class="clearfix">

@@ -1,13 +1,13 @@
 ---
 category: learn
 layout: learn
-title: "Adapting translations to user's operating system"
+title: "Adapting Translations To User's Operating System"
 ---
 
 <section class="clearfix">
   <div class="left">
     <p>If the user's operating system has a distinct and established glossary, you may need multiple variants of the translation to ensure consistency.  The <code>@os</code> global can be used to achieve this.  As of L20n 1.0, it has three possible values: "win", "mac" and "linux".</p>
-    <p>In a similar fashion, it may be desirable to define multiple accesskeys depending on the translation variant being used.  In the first example, <code>accesskey</code> is an <a href="{% post_url 2012-07-09-attributes %}">attribute</a> defined on the <code class="entity">settings</code> entity.</p>
+    <p>In a similar fashion, it may be desirable to define multiple accesskeys depending on the translation variant being used.  In the first example, <code>accesskey</code> is an <a href="{% post_url 2012-07-09-describing-translations-with-custom-data %}">attribute</a> defined on the <code class="entity">settings</code> entity.</p>
   </div>
   <div class="right">
     <div class="editor sourceEditor height35"
@@ -39,7 +39,7 @@ title: "Adapting translations to user's operating system"
 <section class="clearfix">
   <div class="left">
     <p>To simplify the common cases, a specific key can be defined as the default with an asterisk (<code>*</code>). In the second example, <code>mac</code> and <code>linux</code> are jointly represented as <code>nix</code> in the <code class="entity">settings</code> entity, and <code>win</code> and <code>linux</code> as <code>pc</code> in <code class="entity">help</code>.</p>
-    <p>See <a href="{% post_url 2012-07-16-entities-public-vs-local %}">Chapter 16. "Don't repeat yourself: helper entities"</a> for yet a different way of achieving the same result.</p>
+    <p>See <a href="{% post_url 2012-07-16-dont-repeat-yourself-helper-entities %}">Chapter 16. Don't repeat yourself: helper entities</a> for yet a different way of achieving the same result.</p>
   </div>
   <div class="right">
     <div class="editor sourceEditor height25"

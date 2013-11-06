@@ -1,7 +1,6 @@
 ---
 category: learn
 layout: learn
-title: "Describing translations with custom data"
 ---
 
 <section class="clearfix">
@@ -36,7 +35,7 @@ title: "Describing translations with custom data"
 <section class="clearfix">
 	<div class="left">
 		<p>Attribute values follow the exact same rules as entity values do:  they can be strings or dictionaries (also nested ones), and can define indexes and default values.</p>
-		<p>See <a href="{% post_url 2012-07-14-globals-os %}">Chapter 14. "Adapting translations to user's operating system"</a> for a better way of implementing this.</p>
+		<p>See <a href="{% post_url 2012-07-14-adapting-translations-to-users-operating-system %}">Chapter 14. Adapting translations to user's operating system</a> for a better way of implementing this.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height25"
