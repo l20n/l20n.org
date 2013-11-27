@@ -46,14 +46,12 @@ function Context(id) {
   function get(id, data) {
     var entry = this.entries[id];
     if (entry === undefined) {
-      _emitter.emit('error', new L20n.Context.EntityError("Not found", id, null));
       return id;
     } 
     try {
       return entry.getString(getArgs.call(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
-        _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
         return e.source || id;
       } else {
         throw e;
@@ -66,7 +64,6 @@ function Context(id) {
     var entry = this.entries[id];
     if (entry === undefined) {
       var ex = new L20n.Context.EntityError("Not found", id, null);
-      _emitter.emit('error', ex);
       throw ex;
     } 
     try {
@@ -83,14 +80,12 @@ function Context(id) {
   function getEntity(id, data) {
     var entry = this.entries[id];
     if (entry === undefined) {
-      _emitter.emit('error', new L20n.Context.EntityError("Not found", id, null));
       return id;
     }
     try {
       return entry.get(getArgs.call(this, data));
     } catch(e) {
       if (e instanceof L20n.Compiler.RuntimeError) {
-        _emitter.emit('error', new L20n.Context.EntityError(e.message, id, null));
         return {
           value: e.source || id,
           attributes: {},
