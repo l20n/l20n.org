@@ -135,6 +135,7 @@ code.entity {
     margin: 4px 0;
     padding: 0 8px;
     white-space: normal;
+    word-wrap: break-word;
 }
 
 .error dt {
