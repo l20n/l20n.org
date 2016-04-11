@@ -86,7 +86,7 @@ title: Home
 &nbsp;&nbsp;&nbsp;&nbsp;"pl"<br/>
 &nbsp;&nbsp;],<br/>
 &nbsp;&nbsp;"resources": [<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;"../locales/{% raw %}{{locale}}{% endraw %}/website.l20n"<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"../locales/{% raw %}{{locale}}{% endraw %}/website.ftl"<br/>
 &nbsp;&nbsp;]<br/>
 }</code>
                     </li><li data-l10n-id="step4"></li>
@@ -96,28 +96,22 @@ title: Home
             <aside id="try" class="window">
                 <h3>Try L20n on this page</h3>
                 {% raw %}
-                <div id="editor" class="editor height35">&lt;name "L20n"&gt;
+                <div id="editor" class="editor height35">name = L20n
 
-&lt;welcome "{{ name }} by Mozilla"&gt;
+welcome { name } by Mozilla
 
-&lt;lead """
-  A developer-friendly framework
-  that places language in the localizer's hands.
-"""&gt;
+lead =
+  | A developer-friendly framework
+  | that places language in the localizer's hands.
 
-&lt;position() { @screen.width.px &lt; 1140 ?
-             "default" : "right" }&gt;
-
-&lt;step4[position()] {
-  default: """
-    4. Start localizing a resource file
-    as you see below.
-  """,
-  right: """
-    4. Start localizing a resource file
-    as you see on the right.
-  """
-}&gt;</div>
+step4 = { $position ->
+ *[default]
+    | 4. Start localizing a resource file
+    | as you see below.
+  [right]
+    | 4. Start localizing a resource file
+    | as you see on the right.
+}</div>
                 {% endraw %}
                 <h3 class="status">
                     <input id="inspect" name="inspect" type="checkbox">

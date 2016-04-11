@@ -14,7 +14,7 @@ layout: learn
 		  id="sourceEditor1"
 		  data-source="sourceEditor1"
 		  data-output="output1"
-		>&lt;hello "Hello, World!"&gt;</div>
+		>hello = Hello, World!</div>
 		<dl id="output1">
 		</dl>
 	</div>

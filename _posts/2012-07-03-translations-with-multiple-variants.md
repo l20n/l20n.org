@@ -15,12 +15,12 @@ layout: learn
 		  id="sourceEditor1"
 		  data-source="sourceEditor1"
 		  data-output="output1"
-		>&lt;name {
-  short: "Loki",
-  long: "Loki Mobile Client"
-}&gt;
-&lt;about "About {% raw %}{{ name.short }}{% endraw %}"&gt;
-&lt;license "{% raw %}{{ name['long'] }}{% endraw %} is open-source."&gt;
+		>name =
+  [short] Loki
+  [long] Loki Mobile Client
+
+about = About {% raw %}{ name[short] }{% endraw %}
+license = {% raw %}{ name[long] }{% endraw %} is open-source.
 		</div>
 		<dl id="output1">
 		</dl>
@@ -36,16 +36,15 @@ layout: learn
 		  id="sourceEditor2"
 		  data-source="sourceEditor2"
 		  data-output="output2"
-		>&lt;name {
-  short: {
-  	subjective: "Loki",
-    objective: "Loki",
-    possessive: "Loki's"
-  },
-  long: "Loki Mobile Client"
-}&gt;
-&lt;about "About {% raw %}{{ name.short.objective }}{% endraw %}"&gt;
-&lt;license "{% raw %}{{ name.long }}{% endraw %} is open-source."&gt;
+		>name =
+  [short]
+  	[subjective] Loki
+    [objective] Loki
+    [possessive] Loki's
+  [long] Loki Mobile Client
+
+about = About {% raw %}{ name[short][objective] }{% endraw %}
+license = {% raw %}{ name[long] }{% endraw %} is open-source.
 		</div>
 		<dl id="output2">
 		</dl>

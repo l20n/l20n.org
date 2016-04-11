@@ -15,13 +15,12 @@ title: "Working With Text: Multiline, Interpolation"
 		  id="sourceEditor1"
 		  data-source="sourceEditor1"
 		  data-output="output1"
-		>&lt;name "Loki"&gt;
-&lt;about "About {% raw %}{{ name }}{% endraw %}"&gt;
-&lt;description """
-  {% raw %}{{ name }}{% endraw %} is a simple micro-blogging
-  app written entirely in HTML5.  It uses
-  L20n to implement localization.
-"""&gt;
+		>name = Loki
+about = About {% raw %}{ name }{% endraw %}
+description =
+  | {% raw %}{ name }{% endraw %} is a simple micro-blogging
+  | app written entirely in HTML5.  It uses
+  | L20n to implement localization.
 		</div>
 		<dl id="output1">
 		</dl>
