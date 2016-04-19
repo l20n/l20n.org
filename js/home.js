@@ -2,7 +2,6 @@ $(function() {
 
 	/* L20n */
 
-  var ctx = new Context();
   var l20nSource = "";
   var headerScript = document.head.querySelector('script[type="application/l20n"]');
   if (headerScript) { 
@@ -20,29 +19,28 @@ $(function() {
     }
   }
 
-  function localizeDocument() {
-    if (!docCallback) {
-      var nodes = document.querySelectorAll('[data-l10n-id]');
-      var ids = [];
-      for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].hasAttribute('data-l10n-args')) {
-          ids.push([nodes[i].getAttribute('data-l10n-id'),
-              JSON.parse(nodes[i].getAttribute('data-l10n-args'))]);
-        } else {
-          ids.push(nodes[i].getAttribute('data-l10n-id'));
-        }
-      }
-      docCallback = ctx.localize(ids, translateDocument);
-    } else {
-      docCallback.retranslate();
+  function localizeDocument(ctx, entries) {
+    var nodes = document.querySelectorAll('[data-l10n-id]');
+    var ids = [];
+    for (var i = 0; i < nodes.length; i++) {
+      let l10nId = nodes[i].getAttribute('data-l10n-id');
+      let l10nArgs = nodes[i].getAttribute('data-l10n-args');
+      console.log(entries);
+      console.log(l10nId);
+
+      let val = L20n.format(ctx, L20n.lang, l10nArgs, entries[l10nId]);
+
+      console.log(val);
     }
   }
 
   function update() {
-    //ctx.restart();
-    ctx.bindResource(l20nSource);
-    ctx.bindResource(sourceEditor.getValue());
-    //ctx.build();
+    let source = l20nSource + '\n' + sourceEditor.getValue();
+    let {
+      entries,
+      _errors
+    } = L20n.Parser.parseResource(source);
+    return [new L20n.Context(entries), entries];
 	}
 
 
@@ -58,8 +56,8 @@ $(function() {
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
 
-  update();
-  //localizeDocument();
+  let [ctx, entries] = update();
+  localizeDocument(ctx, entries);
 
 
 	/* data-l10n-id attributes */

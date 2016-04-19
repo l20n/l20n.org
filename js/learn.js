@@ -1,8 +1,5 @@
 $(function() {
 
-  let ctx;
-	/* L20n */
-
   function update(sourceEditorId, dataEditorId, outputId) {
     var sourceEditor = ace.edit(sourceEditorId);
     var dataEditor = dataEditorId && ace.edit(dataEditorId);
@@ -19,7 +16,7 @@ $(function() {
       $(`#${outputId}`).prepend(
           `<div class="error"><dt>${e.name}</dt><dd>${e.message}</dd></div>`);
     });
-    ctx = new L20n.Context(entries);
+    let ctx = new L20n.Context(entries);
 
     let data = dataEditor && JSON.parse(dataEditor.getValue());
     
@@ -58,9 +55,9 @@ $(function() {
     editor.setDisplayIndentGuides(false);
     editor.getSession().setUseWrapMode(true);
     if ($(this).hasClass('sourceEditor')) {
-      editor.getSession().setMode("ace/mode/php");
+      editor.getSession().setMode("ace/mode/yaml");
     } else {
-      editor.getSession().setMode("ace/mode/json");
+      editor.getSession().setMode("ace/mode/yaml");
     }
     editor.clearSelection();
     editor.getSession().on('change', 
