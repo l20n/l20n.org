@@ -1,31 +1,34 @@
 $(function() {
 
+  let ctx;
 	/* L20n */
 
-  function update(sourceEditorId, dataEditorId, outputId, ctx) {
+  function update(sourceEditorId, dataEditorId, outputId) {
     var sourceEditor = ace.edit(sourceEditorId);
     var dataEditor = dataEditorId && ace.edit(dataEditorId);
     var output = $("#" + outputId);
 
     output.empty();
-    ctx.restart();
+    let {
+      entries,
+      _errors
+    } = L20n.Parser.parseResource(sourceEditor.getValue());
 
-    ctx.bindResource(sourceEditor.getValue());
-    ctx.data = dataEditor && JSON.parse(dataEditor.getValue());
-    ctx.build();
+
+    _errors.forEach(e => {
+      $(`#${outputId}`).prepend(
+          `<div class="error"><dt>${e.name}</dt><dd>${e.message}</dd></div>`);
+    });
+    ctx = new L20n.Context(entries);
+
+    let data = dataEditor && JSON.parse(dataEditor.getValue());
     
-		for (var id in ctx.entries) {
-			if (ctx.entries[id].expression) {
-				continue;
-				output.append("<div><dt><code class=\"disabled\">" + id + "()</code></dt><dd></dd></div>");
-			}
-      // we don't use ctx.get() because we want to work with the exception if 
-      // it's thrown (ctx.get doesn't throw; instead it falls back nicely on 
-      // the sourceString or the id)
+		for (var id in entries) {
 			var val;
 			try {
-				val = ctx.getOrError(id);
+				val = L20n.format(ctx, L20n.lang, data, entries[id])[1];
 			} catch (e) {
+        console.log(e);
 
         var val = e.source ? e.source : '',
             error = '<div>' + e.name + ': ' + e.message + '</div>';
@@ -49,9 +52,6 @@ $(function() {
 
     var id = $(this).attr('id');
     var editor = ace.edit(id);
-
-    // use one context for each editor on the page
-    var ctx = new Context(outputId);
 
     editor.setTheme("ace/theme/monokai");
     editor.setShowPrintMargin(false);

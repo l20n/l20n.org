@@ -39,10 +39,10 @@ $(function() {
   }
 
   function update() {
-    ctx.restart();
+    //ctx.restart();
     ctx.bindResource(l20nSource);
     ctx.bindResource(sourceEditor.getValue());
-    ctx.build();
+    //ctx.build();
 	}
 
 
@@ -59,7 +59,7 @@ $(function() {
   sourceEditor.getSession().on('change', update);
 
   update();
-  localizeDocument();
+  //localizeDocument();
 
 
 	/* data-l10n-id attributes */

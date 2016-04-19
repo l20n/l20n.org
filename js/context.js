@@ -1,4 +1,4 @@
-function Context(id) {
+function Context2(id) {
   this.id = id;
   this.data = {};
   this.entries = {};
@@ -12,19 +12,19 @@ function Context(id) {
   this.getEntity = getEntity;
   this.localize = localize;
 
-  var _parser = new L20n.Parser();
-  var _compiler = new L20n.Compiler();
-  var _retr = new L20n.RetranslationManager();
+  var _parser = L20n.Parser;
+  //var _compiler = new L20n.Compiler();
+  //var _retr = new L20n.RetranslationManager();
 
   var _ast = null;
   var _source = null;
 
-  _parser.addEventListener('error', function(e) {
-    $('#' + id).prepend('<div class="error"><dt>' +
-      e.name + '</dt><dd><div>' + e.message + '</div></dd></div>');
-  });
+  //_parser.addEventListener('error', function(e) {
+  //  $('#' + id).prepend('<div class="error"><dt>' +
+  //    e.name + '</dt><dd><div>' + e.message + '</div></dd></div>');
+  //});
 
-  _compiler.setGlobals(_retr.globals);
+  //_compiler.setGlobals(_retr.globals);
 
   function restart() {
     _source = "";
