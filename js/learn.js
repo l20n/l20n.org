@@ -1,12 +1,12 @@
 $(function() {
 
   function update(sourceEditorId, dataEditorId, outputId) {
-    var sourceEditor = ace.edit(sourceEditorId);
-    var dataEditor = dataEditorId && ace.edit(dataEditorId);
-    var output = $("#" + outputId);
+    const sourceEditor = ace.edit(sourceEditorId);
+    const dataEditor = dataEditorId && ace.edit(dataEditorId);
+    const output = $("#" + outputId);
 
     output.empty();
-    let {
+    const {
       entries,
       _errors
     } = L20n.Parser.parseResource(sourceEditor.getValue());
@@ -16,26 +16,21 @@ $(function() {
       $(`#${outputId}`).prepend(
           `<div class="error"><dt>${e.name}</dt><dd>${e.message}</dd></div>`);
     });
-    let ctx = new L20n.Context(entries);
+    const ctx = new L20n.Context(entries);
 
-    let data = dataEditor && JSON.parse(dataEditor.getValue());
+    const data = dataEditor && JSON.parse(dataEditor.getValue());
     
-		for (var id in entries) {
-			var val;
+		for (let id in entries) {
 			try {
-				val = L20n.format(ctx, L20n.lang, data, entries[id])[1];
+				let val = L20n.format(ctx, L20n.lang, data, entries[id])[1];
+			  output.append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
 			} catch (e) {
-        console.log(e);
-
-        var val = e.source ? e.source : '',
+        let val = e.source ? e.source : '',
             error = '<div>' + e.name + ': ' + e.message + '</div>';
 
 				output.append('<div class="error"><dt><code>' + id + '</code></dt>' +
           '<dd>' + val + error + '</dd></div>');
-				continue;
-
 			}
-			output.append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
 		}
 	}
 
@@ -61,8 +56,8 @@ $(function() {
     }
     editor.clearSelection();
     editor.getSession().on('change', 
-      update.bind(this, sourceEditorId, dataEditorId, outputId, ctx));
-    update(sourceEditorId, dataEditorId, outputId, ctx);
+      update.bind(this, sourceEditorId, dataEditorId, outputId));
+    update(sourceEditorId, dataEditorId, outputId);
   });
 
 });

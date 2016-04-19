@@ -1,34 +1,28 @@
 $(function() {
 
-	/* L20n */
-
-  var l20nSource = "";
-  var headerScript = document.head.querySelector('script[type="application/l20n"]');
-  if (headerScript) { 
-    l20nSource = headerScript.textContent;
-  }
+  const headerScript = document.head.querySelector('script[type="application/l20n"]');
+  const l20nSource = headerScript ? headerScript.textContent : '';
 
 
   function localizeDocument(ctx, entries) {
-    var nodes = document.querySelectorAll('[data-l10n-id]');
-    var ids = [];
-    for (var i = 0; i < nodes.length; i++) {
-      let l10nId = nodes[i].getAttribute('data-l10n-id');
-      let l10nArgs = nodes[i].getAttribute('data-l10n-args');
+    const nodes = document.querySelectorAll('[data-l10n-id]');
+    for (let i = 0; i < nodes.length; i++) {
+      const l10nId = nodes[i].getAttribute('data-l10n-id');
+      const l10nArgs = nodes[i].getAttribute('data-l10n-args');
 
-      let val = L20n.format(ctx, L20n.lang, l10nArgs, entries[l10nId]);
+      const val = L20n.format(ctx, L20n.lang, l10nArgs, entries[l10nId]);
 
       nodes[i].textContent = val[1];
     }
   }
 
   function update() {
-    let source = l20nSource + '\n' + sourceEditor.getValue();
-    let {
+    const source = l20nSource + '\n' + sourceEditor.getValue();
+    const {
       entries,
       _errors
     } = L20n.Parser.parseResource(source);
-    let ctx = new L20n.Context(entries);
+    const ctx = new L20n.Context(entries);
     localizeDocument(ctx, entries);
 	}
 
