@@ -25,7 +25,7 @@ layout: learn
 		  data-source="sourceEditor1"
 		  data-ctxdata="dataEditor1"
 		  data-output="output1"
-		>&lt;liked "{% raw %}{{ $user }}{% endraw %} liked your post."&gt;
+		>liked = { $user } liked your post.
 		</div>
 		<dl id="output1">
 		</dl>
@@ -42,11 +42,10 @@ layout: learn
 		  data-source="sourceEditor2"
 		  data-ctxdata="dataEditor2"
 		  data-output="output2"
-		>{
-    "user": {
-        "name": "Jane",
-        "followers": 1337
-    }
+		>
+{
+    "user_name": "Jane",
+    "user_followers": 1337
 }
 		</div>
 		<div class="editor sourceEditor height5"
@@ -54,7 +53,8 @@ layout: learn
 		  data-source="sourceEditor2"
 		  data-ctxdata="dataEditor2"
 		  data-output="output2"
-		>&lt;shared "{% raw %}{{ $user.name }}{% endraw %} shared your post to {% raw %}{{ $user.followers }}{% endraw %} follower(s)."&gt;
+		>
+shared = { $user_name } shared your post to { $user_followers } follower(s).
 		</div>
 		<dl id="output2">
 		</dl>

@@ -5,6 +5,7 @@ layout: learn
 
 <section class="clearfix">
 	<div class="left">
+  <p> ????? - Should we remove this? </p>
 		<p>The asterisk <code>*</code> syntax is short-hand for a specific use in another of L20n's features: indexes.</p>
 		<p>When the entity's value is a dictionary, an index (<code>["short"]</code> below) can be added to it to indicate which key of the dictionary should be returned.</p>
 	</div>

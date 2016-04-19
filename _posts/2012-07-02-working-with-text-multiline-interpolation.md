@@ -7,8 +7,8 @@ title: "Working With Text: Multiline, Interpolation"
 <section class="clearfix">
 	<div class="left">
 		<p>L20n entities mostly store string values. A string is a sequence of characters that you can assign to an entity, store, and retrieve.</p>
-		<p>You can reference other entities in a string by using the double brace syntax <code>{% raw %}{{ name }}{% endraw %}</code>.  The value of an entity called <code class="entity">name</code> will be retrieved and inserted into the <code class="entity">about</code> entity's value before it's returned by the context.</p>
-		<p>You can also define easy-to-read, multiline strings with triple quotes, as can be seen in the <code class="entity">description</code> entity.</p>
+		<p>You can reference other entities in a string by using the brace syntax <code>{% raw %}{ name }{% endraw %}</code>.  The value of an entity called <code class="entity">name</code> will be retrieved and inserted into the <code class="entity">about</code> entity's value before it's returned by the context.</p>
+		<p>You can also define easy-to-read, multiline strings with a pipe operator, as can be seen in the <code class="entity">description</code> entity.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height15"

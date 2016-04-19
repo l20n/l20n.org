@@ -6,8 +6,9 @@ layout: learn
 <section class="clearfix">
 	<div class="left">
 		<p>Sometimes you might want to store more than one variant of the same entity.  Maybe you want to have one variant for the masculine gender, and another for the feminine one.  Or maybe your string uses a number and you need a few variants, one for each plural form.</p>
-		<p>Enter dictionary values.  Dictionaries are the second value type an entity can have.  They associate a key (e.g., <code>short</code>) with a value (e.g., <code>Loki</code>).  The value of the key is often called a member.</p>
-		<p>You can access the values in a dictionary by using a single dot syntax (<code>name.short</code>) or by using the square bracket syntax (<code>name['long']</code>) should you need to compute the member's key at runtime.
+		<p>Enter value variants.  Variants associate a key (e.g., <code>short</code>) with a value (e.g., <code>Loki</code>).</p>
+		<p>You can access the variants by placing the variant token in a square
+    bracket after the entity id (<code>name[short]</code>).
 (You'll learn how to prevent the <code>IndexError</code> in <code class="entity">name</code> in the <a href="{% post_url 2012-07-04-defining-the-default-variant %}">next chapter</a>.)</p>
 	</div>
 	<div class="right">
@@ -29,7 +30,7 @@ license = {% raw %}{ name[long] }{% endraw %} is open-source.
 
 <section class="clearfix">
 	<div class="left">
-		<p>Dictionaries can be nested and mixed with regular strings.</p>
+		<p>Variants can be nested and mixed with regular strings.</p>
 	</div>
 	<div class="right">
 		<div class="editor sourceEditor height15"

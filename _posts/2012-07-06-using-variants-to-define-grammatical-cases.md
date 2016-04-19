@@ -16,16 +16,16 @@ layout: learn
       id="sourceEditor1"
       data-source="sourceEditor1"
       data-output="output1"
-    >&lt;brandShortName {
-  *nominative: "Aurora",
-  genitive: "Aurore",
-  dative: "Aurori",
-  accusative: "Auroro",
-  locative: "Aurori",
-  instrumental: "Auroro"
-}&gt;
-&lt;aboutOld "O brskalniku {% raw %}{{ brandShortName }}{% endraw %}"&gt;
-&lt;about "O {% raw %}{{ brandShortName.locative }}{% endraw %}"&gt;
+    >brandShortName =
+ *[nominative] Aurora
+  [genitive] Aurore
+  [dative] Aurori
+  [accusative] Auroro
+  [locative] Aurori
+  [instrumental] Auroro
+
+aboutOld = O brskalniku {% raw %}{ brandShortName }{% endraw %}
+about = O {% raw %}{ brandShortName[locative] }{% endraw %}
     </div>
     <dl id="output1">
     </dl>
