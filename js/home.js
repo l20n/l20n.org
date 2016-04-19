@@ -23,7 +23,6 @@ $(function() {
   }
 
   function update() {
-    console.log('foo');
     let source = l20nSource + '\n' + sourceEditor.getValue();
     let {
       entries,
@@ -42,7 +41,7 @@ $(function() {
   sourceEditor.setShowPrintMargin(false);
   sourceEditor.setDisplayIndentGuides(false);
   sourceEditor.getSession().setUseWrapMode(true);
-  sourceEditor.getSession().setMode("ace/mode/php");
+  sourceEditor.getSession().setMode("ace/mode/yaml");
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
 
