@@ -7,17 +7,7 @@ $(function() {
   if (headerScript) { 
     l20nSource = headerScript.textContent;
   }
-  var docCallback = null;
 
-  function translateDocument(l10n) {
-    for (var id in l10n.entities) {
-      var entity = l10n.entities[id];
-      if (entity.value) {
-        var node = document.querySelector('[data-l10n-id=' + id + ']');
-        node.textContent = entity.value;
-      }
-    }
-  }
 
   function localizeDocument(ctx, entries) {
     var nodes = document.querySelectorAll('[data-l10n-id]');
@@ -25,22 +15,22 @@ $(function() {
     for (var i = 0; i < nodes.length; i++) {
       let l10nId = nodes[i].getAttribute('data-l10n-id');
       let l10nArgs = nodes[i].getAttribute('data-l10n-args');
-      console.log(entries);
-      console.log(l10nId);
 
       let val = L20n.format(ctx, L20n.lang, l10nArgs, entries[l10nId]);
 
-      console.log(val);
+      nodes[i].textContent = val[1];
     }
   }
 
   function update() {
+    console.log('foo');
     let source = l20nSource + '\n' + sourceEditor.getValue();
     let {
       entries,
       _errors
     } = L20n.Parser.parseResource(source);
-    return [new L20n.Context(entries), entries];
+    let ctx = new L20n.Context(entries);
+    localizeDocument(ctx, entries);
 	}
 
 
@@ -56,8 +46,7 @@ $(function() {
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
 
-  let [ctx, entries] = update();
-  localizeDocument(ctx, entries);
+  update();
 
 
 	/* data-l10n-id attributes */
