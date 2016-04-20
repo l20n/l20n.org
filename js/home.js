@@ -35,7 +35,7 @@ $(function() {
   sourceEditor.setShowPrintMargin(false);
   sourceEditor.setDisplayIndentGuides(false);
   sourceEditor.getSession().setUseWrapMode(true);
-  sourceEditor.getSession().setMode("ace/mode/yaml");
+  sourceEditor.getSession().setMode("ace/mode/properties");
   sourceEditor.clearSelection();
   sourceEditor.getSession().on('change', update);
 

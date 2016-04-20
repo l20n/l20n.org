@@ -50,9 +50,9 @@ $(function() {
     editor.setDisplayIndentGuides(false);
     editor.getSession().setUseWrapMode(true);
     if ($(this).hasClass('sourceEditor')) {
-      editor.getSession().setMode("ace/mode/yaml");
+      editor.getSession().setMode("ace/mode/properties");
     } else {
-      editor.getSession().setMode("ace/mode/yaml");
+      editor.getSession().setMode("ace/mode/properties");
     }
     editor.clearSelection();
     editor.getSession().on('change', 
