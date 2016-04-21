@@ -13,7 +13,7 @@ layout: learn
 		<div class="editor sourceEditor height5"
 		  id="sourceEditor1"
 		  data-source="sourceEditor1"
-		  data-output="output3"
+		  data-output="output1"
 		>hello = Hello, World!</div>
 		<dl id="output1">
 		</dl>
