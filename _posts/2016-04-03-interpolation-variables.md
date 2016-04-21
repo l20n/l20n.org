@@ -6,11 +6,11 @@ title: "Interpolation and External Arguments"
 
 <section class="clearfix">
 	<div class="left">
-		<p>In L20n string may use special syntax to incorporate small pieces of
+		<p>In L20n strings may use special syntax to incorporate small pieces of
     programmable interface. Those pieces are denoted with curly braces
     <code>{</code> and <code>}</code> and are called placeables.</p>
     <p>The most common use case for a placeable is to put an external argument,
-    provide by the developer, into the string.</p>
+    provided by the developer, into the string.</p>
     <p>There are all kinds of external data that might be useful in providing a
     good localization: user names, number of unread messages, battery level,
     current time, time left before an alarm goes off, etc.</p>

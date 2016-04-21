@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "HTML Traits"
+title: "HTML Attributes"
 ---
 
 <section class="clearfix">

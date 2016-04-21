@@ -9,9 +9,9 @@ title: "Selectors"
 		<p>One of the most common cases when a localizer needs to use a placeable
     is when there are multiple variants of the string that depend on some
     external argument.</p>
-    <p>L20n provides a select expression that chooses one of the provide
+    <p>L20n provides a select expression that chooses one of the provided
     variants based on the given selector.</p>
-    <p>By default, when a number external argument is used as a selector, L20n
+    <p>By default, when a number is used as a selector, L20n
     implicitly uses <code>PLURAL</code> formatter that selects the proper
     plural case for a given language. In English it will be either
     <code>one</code> or <code>other</code>.</p>

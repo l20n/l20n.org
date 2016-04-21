@@ -1,7 +1,7 @@
 ---
 category: learn
 layout: learn
-title: "Local Traits"
+title: "Additional information"
 ---
 
 <section class="clearfix">
