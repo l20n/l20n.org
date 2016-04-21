@@ -1,5 +1,12 @@
 $(function() {
 
+  function makeError(e) {
+    return `<div class="error">
+      <dt><code>${e.name}</code></dt>
+      <dd>${e.message}</dd>
+    </div>`;
+  }
+
   function update(sourceEditorId, dataEditorId, outputId) {
     const sourceEditor = ace.edit(sourceEditorId);
     const dataEditor = dataEditorId && ace.edit(dataEditorId);
@@ -11,28 +18,39 @@ $(function() {
       _errors
     } = L20n.FTLEntriesParser.parseResource(sourceEditor.getValue());
 
+    _errors.forEach(
+      e => output.prepend(makeError(e))
+    );
 
-    _errors.forEach(e => {
-      $(`#${outputId}`).prepend(
-          `<div class="error"><dt>${e.name}</dt><dd>${e.message}</dd></div>`);
-    });
     const ctx = new L20n.MockContext(entries);
 
-    const data = dataEditor && JSON.parse(dataEditor.getValue());
+    let args;
+    if (dataEditor) {
+      try {
+        args = JSON.parse(dataEditor.getValue());
+      } catch (e) {
+        output.append(makeError(e));
+      }
+    }
 
-		for (let id in entries) {
-			try {
-				let val = L20n.format(ctx, L20n.lang, data, entries[id])[1];
-			  output.append("<div><dt><code>" + id + "</code></dt><dd>" + val + "</dd></div>");
-			} catch (e) {
-        let val = e.source ? e.source : '',
-            error = '<div>' + e.name + ': ' + e.message + '</div>';
+    for (let id in entries) {
+      try {
+        var [errs, val] = L20n.format(ctx, L20n.lang, args, entries[id]);
+        output.append(
+          `<div>
+            <dt><code>${id}</code></dt>
+            <dd>${val}</dd>
+          </div>`
+        );
 
-				output.append('<div class="error"><dt><code>' + id + '</code></dt>' +
-          '<dd>' + val + error + '</dd></div>');
-			}
-		}
-	}
+        errs.forEach(
+          e => output.append(makeError(e))
+        );
+      } catch (e) {
+        output.append(makeError(e));
+      }
+    }
+  }
 
 
 
