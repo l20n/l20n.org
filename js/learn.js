@@ -50,9 +50,9 @@ $(function() {
     editor.setDisplayIndentGuides(false);
     editor.getSession().setUseWrapMode(true);
     if ($(this).hasClass('sourceEditor')) {
-      editor.getSession().setMode("ace/mode/properties");
+      editor.getSession().setMode("ace/mode/ft");
     } else {
-      editor.getSession().setMode("ace/mode/properties");
+      editor.getSession().setMode("ace/mode/json");
     }
     editor.clearSelection();
     editor.getSession().on('change', 
