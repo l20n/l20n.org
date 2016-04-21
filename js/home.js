@@ -21,8 +21,8 @@ $(function() {
     const {
       entries,
       _errors
-    } = L20n.Parser.parseResource(source);
-    const ctx = new L20n.Context(entries);
+    } = L20n.FTLEntriesParser.parseResource(source);
+    const ctx = new L20n.MockContext(entries);
     localizeDocument(ctx, entries);
 	}
 

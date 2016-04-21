@@ -9,14 +9,14 @@ $(function() {
     const {
       entries,
       _errors
-    } = L20n.Parser.parseResource(sourceEditor.getValue());
+    } = L20n.FTLEntriesParser.parseResource(sourceEditor.getValue());
 
 
     _errors.forEach(e => {
       $(`#${outputId}`).prepend(
           `<div class="error"><dt>${e.name}</dt><dd>${e.message}</dd></div>`);
     });
-    const ctx = new L20n.Context(entries);
+    const ctx = new L20n.MockContext(entries);
 
     const data = dataEditor && JSON.parse(dataEditor.getValue());
 
