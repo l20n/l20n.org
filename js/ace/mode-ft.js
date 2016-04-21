@@ -14,7 +14,7 @@ var FtHighlightRules = function() {
             },
             {
                 token : "keyword",
-                regex : /\*?\[.*]/,
+                regex : /\*?\[.*\]/,
                 push  : "value"
             },
             {
@@ -22,14 +22,14 @@ var FtHighlightRules = function() {
                 regex : /(.*=)\s*$/,
             },
             {
-                token : "entity.name.tag",
-                regex : /(.*=)/,
+                regex : /^\s*\|/,
+                token : "string",
                 push  : "value"
             },
             {
-                regex : /\|/,
-                token : "string",
-                push : "value"
+                token : "entity.name.tag",
+                regex : /(.*=)/,
+                push  : "value"
             },
             {
                 defaultToken: "string"
@@ -38,7 +38,7 @@ var FtHighlightRules = function() {
         "placeable" : [
             {
                 token : "entity.other",
-                regex : /^\s*\*?\[.*]/,
+                regex : /^\s*\*?\[.*\]/,
                 push  : "value"
             },
             {
@@ -56,6 +56,10 @@ var FtHighlightRules = function() {
             }
         ],
         "value" : [
+            {
+                regex : /^\s*\|/,
+                token : "string",
+            },
             {
                 regex : /{/,
                 token : "variable.parameter",
