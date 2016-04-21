@@ -77,18 +77,13 @@ title: Home
                         <code>&lt;script src="l20n.js"&gt;&lt;/script&gt;</code>
                     </li><li>
                         <p data-l10n-id="step3a"></p>
-                        <code>&lt;link rel="localization" href="browser.json"&gt;</code>
+                        <code>&lt;meta name="defaultLanguage"
+                          content="en-US"><br/>
+&lt;meta name="availableLanguages" content="en-US, fr"></code>
                     </li><li>
                         <p data-l10n-id="step3b"></p>
-                        <code>{<br/>
-&nbsp;&nbsp;"locales": [<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;"en-US",<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;"pl"<br/>
-&nbsp;&nbsp;],<br/>
-&nbsp;&nbsp;"resources": [<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;"../locales/{% raw %}{{locale}}{% endraw %}/website.ftl"<br/>
-&nbsp;&nbsp;]<br/>
-}</code>
+                        <code>&lt;link rel="localization"
+                          href="./example.{locale}.ftl"&gt;</code>
                     </li><li data-l10n-id="step4"></li>
                 </ol>
                 <a class="developer-docs" href="https://github.com/l20n/l20n.js/blob/master/docs/html.md" data-l10n-id="learnImplement"></a>
