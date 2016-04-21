@@ -33,6 +33,7 @@ $(function() {
   sourceEditor = ace.edit('editor');
   sourceEditor.setTheme("ace/theme/monokai");
   sourceEditor.setShowPrintMargin(false);
+  sourceEditor.setFontSize(16);
   sourceEditor.setDisplayIndentGuides(false);
   sourceEditor.getSession().setUseWrapMode(true);
   sourceEditor.getSession().setMode("ace/mode/ft");

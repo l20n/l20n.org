@@ -47,6 +47,7 @@ $(function() {
 
     editor.setTheme("ace/theme/monokai");
     editor.setShowPrintMargin(false);
+    editor.setFontSize(18);
     editor.setDisplayIndentGuides(false);
     editor.getSession().setUseWrapMode(true);
     if ($(this).hasClass('sourceEditor')) {
