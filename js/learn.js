@@ -19,7 +19,7 @@ $(function() {
     const ctx = new L20n.Context(entries);
 
     const data = dataEditor && JSON.parse(dataEditor.getValue());
-    
+
 		for (let id in entries) {
 			try {
 				let val = L20n.format(ctx, L20n.lang, data, entries[id])[1];
