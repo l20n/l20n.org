@@ -6,12 +6,17 @@ title: "Entity References"
 
 <section class="clearfix">
 	<div class="left">
-		<p>In some scenarios it may be useful to reference one entity from another.</p>
-    <p>Cases like referencing brand name or menu options allow for easier
-    localization maintainence and consistency.</p>
-    <p>In L20n user can reference another entity by simply passing an entity ID
-    into the placeable.</p>
+		<p>Sometimes it may be useful to reference one entity from another.  
+        This generally helps to keep certain translations consistent across the 
+        interface and makes maintenance easier.</p>
+        <p>It is also particularly handy for keeping branding separated from the 
+        rest of the translations, so that it can be changed easily when needed, 
+        e.g. during the build process of the application.</p>
+        <p>In l20n you can use the same  <code>{</code> and <code>}</code> 
+        syntax to interpolate other entities by their identifier.</p>
+
 	</div>
+
   <div class="right">
 		<div class="editor sourceEditor height10"
 		  id="sourceEditor1"
