@@ -1190,6 +1190,10 @@ var L20n = (function () {
   }
 
   class FTLNone {
+    constructor(value, opts) {
+      this.value = value;
+      this.opts = opts;
+    }
     format() {
       return this.value || '???';
     }
@@ -1199,10 +1203,6 @@ var L20n = (function () {
   };
 
   class FTLText extends FTLNone {
-    constructor(value) {
-      super();
-      this.value = value;
-    }
     format() {
       return this.value.toString();
     }
@@ -1231,6 +1231,22 @@ var L20n = (function () {
           );
           return pr.select(this.value) === value;
       }
+    }
+  }
+
+  class FTLDateTime extends FTLText {
+    constructor(value, opts) {
+      super(new Date(value));
+      this.opts = opts;
+    }
+    format(res) {
+      const dtf = res.ctx._memoizeIntlObject(
+        L20nIntl.DateTimeFormat, res.lang, this.opts
+      );
+      return dtf.format(this.value);
+    }
+    match() {
+      return false;
     }
   }
 
@@ -1288,6 +1304,7 @@ var L20n = (function () {
 
   var builtins = {
     'NUMBER': ([arg], opts) => new FTLNumber(arg.value, values(opts)),
+    'DATETIME': ([arg], opts) => new FTLDateTime(arg.value, values(opts)),
     'PLURAL': ([arg], opts) => new FTLCategory(arg.value, values(opts)),
     'LIST': (...args) => new FTLList(...args),
     'LEN': ([arg], opts) => new FTLNumber(arg.value.length, values(opts)),
@@ -1491,13 +1508,19 @@ var L20n = (function () {
     const arg = args[name];
 
     switch (typeof arg) {
-      case 'number': return unit(new FTLNumber(arg));
-      case 'string': return unit(new FTLText(arg));
-      default:
+      case 'number':
+        return unit(new FTLNumber(arg));
+      case 'string':
+        return unit(new FTLText(arg));
+      case 'object':
         if (Array.isArray(arg)) {
           return mapValues(res, arg);
         }
 
+        if (arg instanceof Date) {
+          return unit(new FTLDateTime(arg));
+        }
+      default:
         return [
           [new L10nError(
             'Unsupported external type: ' + name + ', ' + typeof arg
@@ -1994,6 +2017,10 @@ var L20n = (function () {
         return this.getComplexPattern();
       }
       let eol = this._source.indexOf('\n', this._index);
+
+      if (eol === -1) {
+        eol = this._length;
+      }
 
       let line = this._source.slice(start, eol);
 

@@ -8,7 +8,7 @@ title: "Advanced Selectors"
 	<div class="left">
     <p>Selectors are pretty powerful. A localizer can use any builtin
     explicitly and select a string variant depending on its output. In case of
-    <code class="entity">key1</code> entity, we used the <code>LEN</code> builtin
+    <code class="entity">available-users</code> entity, we used the <code>LEN</code> builtin
     and select the variant of the string depending on its output.</p>
     <p>Explicit values can be used in the <code>PLURAL</code> selector example to specify
     a special case for when there are no unread emails.</p>
