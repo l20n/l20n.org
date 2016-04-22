@@ -389,6 +389,7 @@ body > footer {
 
 .learn dl[id^="output"] dd {
     font-size: 0.8em;
+    white-space: pre-wrap;
 }
 
 .learn .navigation {
