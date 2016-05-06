@@ -18,10 +18,7 @@ $(function() {
 
   function update() {
     const source = l20nSource + '\n' + sourceEditor.getValue();
-    const {
-      entries,
-      _errors
-    } = L20n.FTLEntriesParser.parseResource(source);
+    const [entries, errors] = L20n.FTLEntriesParser.parseResource(source);
     const ctx = new L20n.MockContext(entries);
     localizeDocument(ctx, entries);
 	}

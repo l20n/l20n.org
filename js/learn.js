@@ -13,12 +13,9 @@ $(function() {
     const output = $("#" + outputId);
 
     output.empty();
-    const {
-      entries,
-      _errors
-    } = L20n.FTLEntriesParser.parseResource(sourceEditor.getValue());
+    const [entries, errors] = L20n.FTLEntriesParser.parseResource(sourceEditor.getValue());
 
-    _errors.forEach(
+    errors.forEach(
       e => output.prepend(makeError(e))
     );
 

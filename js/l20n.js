@@ -1,14 +1,15 @@
 var L20n = (function () {
   'use strict';
 
-  function L10nError(message, id, lang) {
-    this.name = 'L10nError';
-    this.message = message;
-    this.id = id;
-    this.lang = lang;
+  class L10nError extends Error {
+    constructor(message, id, lang) {
+      super();
+      this.name = 'L10nError';
+      this.message = message;
+      this.id = id;
+      this.lang = lang;
+    }
   }
-  L10nError.prototype = Object.create(Error.prototype);
-  L10nError.prototype.constructor = L10nError;
 
   const HTTP_STATUS_CODE_OK = 200;
 
@@ -1150,7 +1151,7 @@ var L20n = (function () {
     // return a function that gives the plural form name for a given integer
     const index = locales2rules[code.replace(/-.*$/, '')];
     if (!(index in pluralRules)) {
-      return n => 'other';
+      return () => 'other';
     }
     return pluralRules[index];
   }
@@ -1200,7 +1201,7 @@ var L20n = (function () {
     match() {
       return false;
     }
-  };
+  }
 
   class FTLText extends FTLNone {
     format() {
@@ -1209,7 +1210,7 @@ var L20n = (function () {
     match(res, {value}) {
       return this.value === value;
     }
-  };
+  }
 
   class FTLNumber extends FTLText {
     constructor(value, opts) {
@@ -1278,14 +1279,14 @@ var L20n = (function () {
     match(res, {namespace, value}) {
       return this.namespace === namespace && this.value === value;
     }
-  };
+  }
 
   class FTLKeyValueArg extends FTLText {
     constructor(value, id) {
       super(value);
       this.id = id;
     }
-  };
+  }
 
   class FTLList extends FTLText {
     format(res) {
@@ -1300,7 +1301,7 @@ var L20n = (function () {
     match() {
       return false;
     }
-  };
+  }
 
   var builtins = {
     'NUMBER': ([arg], opts) => new FTLNumber(arg.value, values(opts)),
@@ -1338,7 +1339,9 @@ var L20n = (function () {
     );
   }
 
+
     // XXX add this back later
+    // const MAX_PLACEABLE_LENGTH = 2500;
     // if (value.length >= MAX_PLACEABLE_LENGTH) {
     //   throw new L10nError(
     //     'Too many characters in placeable (' + value.length +
@@ -1475,7 +1478,7 @@ var L20n = (function () {
     }
 
     switch (node.type) {
-      case 'id':
+      case 'kw':
         return unit(new FTLKeyword(node.name, node.ns));
       case 'num':
         return unit(new FTLNumber(node.val));
@@ -1652,7 +1655,6 @@ var L20n = (function () {
       if (entity.attrs) {
         formatted.attrs = Object.create(null);
         for (let key in entity.attrs) {
-          /* jshint -W089 */
           const [, attrValue] = this._formatTuple(
             lang, args, entity.attrs[key], id, key);
           formatted.attrs[key] = attrValue;
@@ -1730,8 +1732,8 @@ var L20n = (function () {
         if (resource instanceof L10nError) {
           continue;
         }
-        if (name in resource.entries) {
-          return resource.entries[name];
+        if (name in resource) {
+          return resource[name];
         }
       }
       return undefined;
@@ -1770,29 +1772,22 @@ var L20n = (function () {
       this._length = string.length;
 
       this._lastGoodEntryEnd = 0;
-      this._section = null;
     }
 
     getResource() {
       const entries = {};
-      let errors = [];
+      const errors = [];
 
       this.getWS();
       while (this._index < this._length) {
         try {
-          let entry = this.getEntry();
+          const entry = this.getEntry();
           if (!entry) {
             this.getWS();
             continue;
           }
 
-          let id = entry.id.name;
-
-          if (entry.id.namespace) {
-            id = `${entry.id.namespace}/${id}`;
-          } else if (this._section !== null) {
-            id = `${this._section.name}/${id}`;
-          }
+          const id = entry.id;
           entries[id] = {};
 
           if (entry.traits !== null &&
@@ -1816,10 +1811,7 @@ var L20n = (function () {
         this.getWS();
       }
 
-      return {
-        entries,
-        _errors: errors
-      };
+      return [entries, errors];
     }
 
     getEntry() {
@@ -1844,7 +1836,7 @@ var L20n = (function () {
       }
     }
 
-    getSection(comment = null) {
+    getSection() {
       this._index += 1;
       if (this._source[this._index] !== '[') {
         throw this.error('Expected "[[" to open a section');
@@ -1853,9 +1845,7 @@ var L20n = (function () {
       this._index += 1;
 
       this.getLineWS();
-
-      const id = this.getIdentifier();
-
+      this.getKeyword();
       this.getLineWS();
 
       if (this._source[this._index] !== ']' ||
@@ -1865,18 +1855,14 @@ var L20n = (function () {
 
       this._index += 2;
 
-      this._section = id;
-
-      return {
-        type: 'section',
-        id,
-      };
+      // sections are ignored in the runtime ast
+      return undefined;
     }
 
-    getEntity(comment = null) {
-      let id = this.getIdentifier('/');
+    getEntity() {
+      const id = this.getIdentifier();
 
-      let members = [];
+      let traits = null;
       let value = null;
 
       this.getLineWS();
@@ -1902,16 +1888,17 @@ var L20n = (function () {
 
       if ((ch === '[' && this._source[this._index + 1] !== '[') ||
           ch === '*') {
-        members = this.getMembers();
+        traits = this.getMembers();
       } else if (value === null) {
         throw this.error(
-    `Expected a value (like: " = value") or a trait (like: "[key] value")`);
+          `Expected a value (like: " = value") or a trait (like: "[key] value")`
+        );
       }
 
       return {
         id,
         value,
-        traits: members
+        traits
       };
     }
 
@@ -1931,19 +1918,8 @@ var L20n = (function () {
       }
     }
 
-    getIdentifier(nsSep=null) {
-      let namespace = null;
-      let id = '';
-
-      if (nsSep) {
-        namespace = this.getIdentifier().name;
-        if (this._source[this._index] === nsSep) {
-          this._index++;
-        } else if (namespace) {
-          id = namespace;
-          namespace = null; 
-        }
-      }
+    getIdentifier() {
+      let name = '';
 
       const start = this._index;
       let cc = this._source.charCodeAt(this._index);
@@ -1952,7 +1928,7 @@ var L20n = (function () {
           (cc >= 65 && cc <= 90) ||  // A-Z
           cc === 95) {               // _
         cc = this._source.charCodeAt(++this._index);
-      } else if (id.length === 0) {
+      } else if (name.length === 0) {
         throw this.error('Expected an identifier (starting with [a-zA-Z_])');
       }
 
@@ -1963,26 +1939,20 @@ var L20n = (function () {
         cc = this._source.charCodeAt(++this._index);
       }
 
-      id += this._source.slice(start, this._index);
+      name += this._source.slice(start, this._index);
 
-      return {
-        namespace,
-        name: id
-      };
+      return name;
     }
 
-    getIdentifierWithSpace(nsSep=null) {
-      let namespace = null;
-      let id = '';
+    getKeyword() {
+      let name = '';
+      let namespace = this.getIdentifier();
 
-      if (nsSep) {
-        namespace = this.getIdentifier().name;
-        if (this._source[this._index] === nsSep) {
-          this._index++;
-        } else if (namespace) {
-          id = namespace;
-          namespace = null;
-        }
+      if (this._source[this._index] === '/') {
+        this._index++;
+      } else if (namespace) {
+        name = namespace;
+        namespace = null;
       }
 
       const start = this._index;
@@ -1992,7 +1962,7 @@ var L20n = (function () {
           (cc >= 65 && cc <= 90) ||  // A-Z
           cc === 95 || cc === 32) {  //  _
         cc = this._source.charCodeAt(++this._index);
-      } else if (id.length === 0) {
+      } else if (name.length === 0) {
         throw this.error('Expected an identifier (starting with [a-zA-Z_])');
       }
 
@@ -2003,16 +1973,15 @@ var L20n = (function () {
         cc = this._source.charCodeAt(++this._index);
       }
 
-      id += this._source.slice(start, this._index);
+      name += this._source.slice(start, this._index).trimRight();
 
-      return {
-        namespace,
-        name: id
-      };
+      return namespace ?
+        { type: 'kw', ns: namespace, name } :
+        { type: 'kw', name };
     }
 
     getPattern() {
-      let start = this._index;
+      const start = this._index;
       if (this._source[start] === '"') {
         return this.getComplexPattern();
       }
@@ -2022,7 +1991,7 @@ var L20n = (function () {
         eol = this._length;
       }
 
-      let line = this._source.slice(start, eol);
+      const line = this._source.slice(start, eol);
 
       if (line.indexOf('{') !== -1) {
         return this.getComplexPattern();
@@ -2042,8 +2011,7 @@ var L20n = (function () {
 
     getComplexPattern() {
       let buffer = '';
-      let source = '';
-      let content = [];
+      const content = [];
       let quoteDelimited = null;
       let firstLine = true;
 
@@ -2087,7 +2055,7 @@ var L20n = (function () {
           ch = this._source[this._index];
           continue;
         } else if (ch === '\\') {
-          let ch2 = this._source[this._index + 1];
+          const ch2 = this._source[this._index + 1];
           if ((quoteDelimited && ch2 === '"') ||
               ch2 === '{') {
             ch = ch2;
@@ -2101,11 +2069,8 @@ var L20n = (function () {
           if (buffer.length) {
             content.push(buffer);
           }
-          source += buffer;
           buffer = ''
-          let start = this._index;
           content.push(this.getPlaceable());
-          source += this._source.substring(start, this._index);
           ch = this._source[this._index];
           continue;
         }
@@ -2122,13 +2087,12 @@ var L20n = (function () {
       }
 
       if (buffer.length) {
-        source += buffer;
         content.push(buffer);
       }
 
       if (content.length === 0) {
         if (quoteDelimited !== null) {
-          content.push(source);
+          return '';
         } else {
           return null;
         }
@@ -2136,7 +2100,7 @@ var L20n = (function () {
 
       if (content.length === 1 &&
           typeof content[0] === 'string') {
-        return source;
+        return content[0];
       }
 
       return content;
@@ -2145,12 +2109,12 @@ var L20n = (function () {
     getPlaceable() {
       this._index++;
 
-      let expressions = [];
+      const expressions = [];
 
       this.getLineWS();
 
       while (this._index < this._length) {
-        let start = this._index;
+        const start = this._index;
         try {
           expressions.push(this.getPlaceableExpression());
         } catch (e) {
@@ -2172,7 +2136,7 @@ var L20n = (function () {
     }
 
     getPlaceableExpression() {
-      let selector = this.getCallExpression();
+      const selector = this.getCallExpression();
       let members = null;
 
       this.getWS();
@@ -2211,7 +2175,7 @@ var L20n = (function () {
     }
 
     getCallExpression() {
-      let exp = this.getMemberExpression();
+      const exp = this.getMemberExpression();
 
       if (this._source[this._index] !== '(') {
         return exp;
@@ -2219,7 +2183,7 @@ var L20n = (function () {
 
       this._index++;
 
-      let args = this.getCallArgs();
+      const args = this.getCallArgs();
 
       this._index++;
 
@@ -2235,7 +2199,7 @@ var L20n = (function () {
     }
 
     getCallArgs() {
-      let args = [];
+      const args = [];
 
       if (this._source[this._index] === ')') {
         return args;
@@ -2244,7 +2208,7 @@ var L20n = (function () {
       while (this._index < this._length) {
         this.getLineWS();
 
-        let exp = this.getCallExpression();
+        const exp = this.getCallExpression();
 
         if (exp.type !== 'ref' ||
            exp.namespace !== undefined) {
@@ -2256,7 +2220,7 @@ var L20n = (function () {
             this._index++;
             this.getLineWS();
 
-            let val = this.getCallExpression();
+            const val = this.getCallExpression();
 
             if (val.type === 'ref' ||
                 val.type === 'member') {
@@ -2330,7 +2294,7 @@ var L20n = (function () {
       let exp = this.getLiteral();
 
       while (this._source[this._index] === '[') {
-        let keyword = this.getKeyword();
+        const keyword = this.getMemberKey();
         exp = {
           type: 'mem',
           key: keyword,
@@ -2360,13 +2324,13 @@ var L20n = (function () {
           throw this.error('Expected "["');
         }
 
-        let key = this.getKeyword();
+        const key = this.getMemberKey();
 
         this.getLineWS();
 
-        let value = this.getPattern();
+        const value = this.getPattern();
 
-        let member = {
+        const member = {
           key,
           val: value
         };
@@ -2381,23 +2345,16 @@ var L20n = (function () {
       return members;
     }
 
-    getKeyword() {
+    getMemberKey() {
       this._index++;
 
-      let cc = this._source.charCodeAt(this._index);
+      const cc = this._source.charCodeAt(this._index);
       let literal;
 
       if ((cc >= 48 && cc <= 57) || cc === 45) {
         literal = this.getNumber();
       } else {
-        let id = this.getIdentifierWithSpace('/');
-        literal = {
-          type: 'id',
-          name: id.name
-        };
-        if (id.namespace) {
-          literal.ns = id.namespace;
-        }
+        literal = this.getKeyword();
       }
 
       if (this._source[this._index] !== ']') {
@@ -2409,59 +2366,36 @@ var L20n = (function () {
     }
 
     getLiteral() {
-      let cc = this._source.charCodeAt(this._index);
+      const cc = this._source.charCodeAt(this._index);
       if ((cc >= 48 && cc <= 57) || cc === 45) {
         return this.getNumber();
       } else if (cc === 34) { // "
         return this.getPattern();
       } else if (cc === 36) { // $
         this._index++;
-        let id = this.getIdentifier();
         return {
           type: 'ext',
-          name: id.name
+          name: this.getIdentifier()
         };
       }
 
-      let id = this.getIdentifier('/');
-      
-      let name = id.name;
-      if (id.namespace) {
-        name = `${id.namespace}/${name}`;
-      }
-      let ent = {
+      return {
         type: 'ref',
-        name: name
+        name: this.getIdentifier()
       };
-      return ent;
     }
 
     getComment() {
-      this._index++;
-      if (this._source[this._index] === ' ') {
-        this._index++;
-      }
-
-      let content = '';
-
       let eol = this._source.indexOf('\n', this._index);
-
-      content += this._source.substring(this._index, eol);
 
       while (eol !== -1 && this._source[eol + 1] === '#') {
         this._index = eol + 2;
-
-        if (this._source[this._index] === ' ') {
-          this._index++;
-        }
 
         eol = this._source.indexOf('\n', this._index);
 
         if (eol === -1) {
           break;
         }
-
-        content += '\n' + this._source.substring(this._index, eol);
       }
 
       if (eol === -1) {
@@ -2469,13 +2403,9 @@ var L20n = (function () {
       } else {
         this._index = eol + 1;
       }
-
-      return content;
     }
 
     error(message, start=null) {
-      let colors = require('colors/safe');
-
       const pos = this._index;
 
       if (start === null) {
@@ -2483,14 +2413,14 @@ var L20n = (function () {
       }
       start = this._findEntityStart(start);
 
-      let context = this._source.slice(start, pos + 10);
+      const context = this._source.slice(start, pos + 10);
 
       const msg = '\n\n  ' + message +
         '\nat pos ' + pos + ':\n------\n…' + context + '\n------';
       const err = new L10nError(msg);
 
-      let row = this._source.slice(0, pos).split('\n').length;
-      let col = pos - this._source.lastIndexOf('\n', pos - 1);
+      const row = this._source.slice(0, pos).split('\n').length;
+      const col = pos - this._source.lastIndexOf('\n', pos - 1);
       err._pos = {start: pos, end: undefined, col: col, row: row};
       err.offset = pos - start;
       err.description = message;
@@ -2525,7 +2455,7 @@ var L20n = (function () {
           start = 0;
           break;
         }
-        let cc = this._source.charCodeAt(start + 1);
+        const cc = this._source.charCodeAt(start + 1);
 
         if ((cc >= 97 && cc <= 122) || // a-z
             (cc >= 65 && cc <= 90) ||  // A-Z
@@ -2544,7 +2474,7 @@ var L20n = (function () {
       while (true) {
         if (start === 0 ||
             this._source[start - 1] === '\n') {
-          let cc = this._source.charCodeAt(start);
+          const cc = this._source.charCodeAt(start);
 
           if ((cc >= 97 && cc <= 122) || // a-z
               (cc >= 65 && cc <= 90) ||  // A-Z
@@ -2776,7 +2706,6 @@ var L20n = (function () {
         return data;
       }
 
-      const emitAndAmend = (type, err) => this.emit(type, amendError(lang, err));
       return parser.parseResource(data);
     }
 
@@ -2804,7 +2733,7 @@ var L20n = (function () {
       const syntax = res.substr(res.lastIndexOf('.') + 1);
 
       const saveEntries = data => {
-        const entries = this._parse(syntax, lang, data);
+        const [entries, errors] = this._parse(syntax, lang, data);
         cache.set(id, this._create(lang, entries));
       };
 
@@ -2825,11 +2754,6 @@ var L20n = (function () {
 
       return resource;
     }
-  }
-
-  function amendError(lang, err) {
-    err.lang = lang;
-    return err;
   }
 
   function prioritizeLocales(def, availableLangs, requested) {
@@ -2955,10 +2879,11 @@ var L20n = (function () {
   }
 
   class Resource extends Node {
-    constructor() {
+    constructor(body = [], comment = null) {
       super();
       this.type = 'Resource';
-      this.body = [];
+      this.body = body;
+      this.comment = comment;
     }
   }
 
@@ -2970,19 +2895,19 @@ var L20n = (function () {
   }
 
   class Identifier extends Node {
-    constructor(name, namespace = null) {
+    constructor(name) {
       super();
       this.type = 'Identifier';
       this.name = name;
-      this.namespace = namespace;
     }
   }
 
   class Section extends Node {
-    constructor(name, comment = null) {
+    constructor(key, body = [], comment = null) {
       super();
       this.type = 'Section';
-      this.name = name;
+      this.key = key;
+      this.body = body;
       this.comment = comment;
     }
   }
@@ -3070,28 +2995,23 @@ var L20n = (function () {
   }
 
   class EntityReference$1 extends Identifier {
-    constructor(name, namespace) {
-      super();
+    constructor(name) {
+      super(name);
       this.type = 'EntityReference';
-      this.name = name;
-      this.namespace = namespace;
     }
   }
 
   class BuiltinReference$1 extends Identifier {
-    constructor(name, namespace) {
-      super();
+    constructor(name) {
+      super(name);
       this.type = 'BuiltinReference';
-      this.name = name;
-      this.namespace = namespace;
     }
   }
 
   class Keyword extends Identifier {
     constructor(name, namespace=null) {
-      super();
+      super(name);
       this.type = 'Keyword';
-      this.name = name;
       this.namespace = namespace;
     }
   }
@@ -3158,21 +3078,42 @@ var L20n = (function () {
       this._length = string.length;
 
       this._lastGoodEntryEnd = 0;
+      this._currentBlock = null;
+    }
+
+    _isIdentifierStart(cc) {
+      return ((cc >= 97 && cc <= 122) || // a-z
+              (cc >= 65 && cc <= 90) ||  // A-Z
+               cc === 95);               // _
     }
 
     getResource() {
       const resource = new AST.Resource();
-      resource._errors = [];
+      const errors = [];
+      let comment = null;
+
+      this._currentBlock = resource.body;
+
+      if (this._source[this._index] === '#') {
+        comment = this.getComment();
+
+        const cc = this._source.charCodeAt(this._index);
+        if (!this._isIdentifierStart(cc)) {
+          resource.comment = comment;
+          comment = null;
+        }
+      }
 
       this.getWS();
       while (this._index < this._length) {
         try {
-          resource.body.push(this.getEntry());
+          this._currentBlock.push(this.getEntry(comment));
           this._lastGoodEntryEnd = this._index;
+          comment = null;
         } catch (e) {
           if (e instanceof L10nError) {
-            resource._errors.push(e);
-            resource.body.push(this.getJunkEntry());
+            errors.push(e);
+            this._currentBlock.push(this.getJunkEntry());
           } else {
             throw e;
           }
@@ -3180,18 +3121,16 @@ var L20n = (function () {
         this.getWS();
       }
 
-      return resource;
+      return [resource, errors];
     }
 
-    getEntry() {
+    getEntry(comment = null) {
       if (this._index !== 0 &&
           this._source[this._index - 1] !== '\n') {
         throw this.error('Expected new line and a new entry');
       }
 
-      let comment;
-
-      if (this._source[this._index] === '#') {
+      if (comment === null && this._source[this._index] === '#') {
         comment = this.getComment();
       }
 
@@ -3218,7 +3157,7 @@ var L20n = (function () {
 
       this.getLineWS();
 
-      const id = this.getIdentifier();
+      const key = this.getKeyword();
 
       this.getLineWS();
 
@@ -3229,11 +3168,13 @@ var L20n = (function () {
 
       this._index += 2;
 
-      return new AST.Section(id, comment);
+      const section = new AST.Section(key, [], comment);
+      this._currentBlock = section.body;
+      return section;
     }
 
     getEntity(comment = null) {
-      let id = this.getIdentifier('/');
+      const id = this.getIdentifier();
 
       let members = [];
       let value = null;
@@ -3286,28 +3227,15 @@ var L20n = (function () {
       }
     }
 
-    getIdentifier(nsSep=null) {
-      let namespace = null;
-      let id = '';
-
-      if (nsSep) {
-        namespace = this.getIdentifier().name;
-        if (this._source[this._index] === nsSep) {
-          this._index++;
-        } else if (namespace) {
-          id = namespace;
-          namespace = null; 
-        }
-      }
+    getIdentifier() {
+      let name = '';
 
       const start = this._index;
       let cc = this._source.charCodeAt(this._index);
 
-      if ((cc >= 97 && cc <= 122) || // a-z
-          (cc >= 65 && cc <= 90) ||  // A-Z
-          cc === 95) {               // _
+      if (this._isIdentifierStart(cc)) {
         cc = this._source.charCodeAt(++this._index);
-      } else if (id.length === 0) {
+      } else if (name.length === 0) {
         throw this.error('Expected an identifier (starting with [a-zA-Z_])');
       }
 
@@ -3318,33 +3246,28 @@ var L20n = (function () {
         cc = this._source.charCodeAt(++this._index);
       }
 
-      id += this._source.slice(start, this._index);
+      name += this._source.slice(start, this._index);
 
-      return new AST.Identifier(id, namespace);
+      return new AST.Identifier(name);
     }
 
-    getIdentifierWithSpace(nsSep=null) {
-      let namespace = null;
-      let id = '';
+    getKeyword() {
+      let name = '';
+      let namespace = this.getIdentifier().name;
 
-      if (nsSep) {
-        namespace = this.getIdentifier().name;
-        if (this._source[this._index] === nsSep) {
-          this._index++;
-        } else if (namespace) {
-          id = namespace;
-          namespace = null;
-        }
+      if (this._source[this._index] === '/') {
+        this._index++;
+      } else if (namespace) {
+        name = namespace;
+        namespace = null;
       }
 
       const start = this._index;
       let cc = this._source.charCodeAt(this._index);
 
-      if ((cc >= 97 && cc <= 122) || // a-z
-          (cc >= 65 && cc <= 90) ||  // A-Z
-          cc === 95 || cc === 32) {  //  _
+      if (this._isIdentifierStart(cc)) {
         cc = this._source.charCodeAt(++this._index);
-      } else if (id.length === 0) {
+      } else if (name.length === 0) {
         throw this.error('Expected an identifier (starting with [a-zA-Z_])');
       }
 
@@ -3355,15 +3278,15 @@ var L20n = (function () {
         cc = this._source.charCodeAt(++this._index);
       }
 
-      id += this._source.slice(start, this._index);
+      name += this._source.slice(start, this._index).trimRight();
 
-      return new AST.Identifier(id, namespace);
+      return new AST.Keyword(name, namespace);
     }
 
     getPattern() {
       let buffer = '';
       let source = '';
-      let content = [];
+      const content = [];
       let quoteDelimited = null;
       let firstLine = true;
 
@@ -3407,7 +3330,7 @@ var L20n = (function () {
           ch = this._source[this._index];
           continue;
         } else if (ch === '\\') {
-          let ch2 = this._source[this._index + 1];
+          const ch2 = this._source[this._index + 1];
           if ((quoteDelimited && ch2 === '"') ||
               ch2 === '{') {
             ch = ch2;
@@ -3423,7 +3346,7 @@ var L20n = (function () {
           }
           source += buffer;
           buffer = ''
-          let start = this._index;
+          const start = this._index;
           content.push(this.getPlaceable());
           source += this._source.substring(start, this._index);
           ch = this._source[this._index];
@@ -3454,7 +3377,7 @@ var L20n = (function () {
         }
       }
 
-      let pattern = new AST.Pattern(source, content);
+      const pattern = new AST.Pattern(source, content);
       pattern._quoteDelim = quoteDelimited !== null;
       return pattern;
     }
@@ -3462,12 +3385,12 @@ var L20n = (function () {
     getPlaceable() {
       this._index++;
 
-      let expressions = [];
+      const expressions = [];
 
       this.getLineWS();
 
       while (this._index < this._length) {
-        let start = this._index;
+        const start = this._index;
         try {
           expressions.push(this.getPlaceableExpression());
         } catch (e) {
@@ -3489,7 +3412,7 @@ var L20n = (function () {
     }
 
     getPlaceableExpression() {
-      let selector = this.getCallExpression();
+      const selector = this.getCallExpression();
       let members = null;
 
       this.getWS();
@@ -3532,19 +3455,19 @@ var L20n = (function () {
 
       this._index++;
 
-      let args = this.getCallArgs();
+      const args = this.getCallArgs();
 
       this._index++;
 
       if (exp instanceof AST.EntityReference) {
-        exp = new AST.BuiltinReference(exp.name, exp.namespace);
+        exp = new AST.BuiltinReference(exp.name);
       }
 
       return new AST.CallExpression(exp, args);
     }
 
     getCallArgs() {
-      let args = [];
+      const args = [];
 
       if (this._source[this._index] === ')') {
         return args;
@@ -3553,10 +3476,9 @@ var L20n = (function () {
       while (this._index < this._length) {
         this.getLineWS();
 
-        let exp = this.getCallExpression();
+        const exp = this.getCallExpression();
 
-        if (!(exp instanceof AST.EntityReference) ||
-           exp.namespace !== null) {
+        if (!(exp instanceof AST.EntityReference)) {
           args.push(exp);
         } else {
           this.getLineWS();
@@ -3565,7 +3487,7 @@ var L20n = (function () {
             this._index++;
             this.getLineWS();
 
-            let val = this.getCallExpression();
+            const val = this.getCallExpression();
 
             if (val instanceof AST.EntityReference ||
                 val instanceof AST.MemberExpression) {
@@ -3632,7 +3554,7 @@ var L20n = (function () {
       let exp = this.getLiteral();
 
       while (this._source[this._index] === '[') {
-        let keyword = this.getKeyword();
+        const keyword = this.getMemberKey();
         exp = new AST.MemberExpression(exp, keyword);
       }
 
@@ -3658,13 +3580,13 @@ var L20n = (function () {
           throw this.error('Expected "["');
         }
 
-        let key = this.getKeyword();
+        const key = this.getMemberKey();
 
         this.getLineWS();
 
-        let value = this.getPattern();
+        const value = this.getPattern();
 
-        let member = new AST.Member(key, value, def);
+        const member = new AST.Member(key, value, def);
 
         members.push(member);
 
@@ -3674,16 +3596,16 @@ var L20n = (function () {
       return members;
     }
 
-    getKeyword() {
+    getMemberKey() {
       this._index++;
 
-      let cc = this._source.charCodeAt(this._index);
+      const cc = this._source.charCodeAt(this._index);
       let literal;
 
       if ((cc >= 48 && cc <= 57) || cc === 45) {
         literal = this.getNumber();
       } else {
-        literal = this.getIdentifierWithSpace('/');
+        literal = this.getKeyword();
       }
 
       if (this._source[this._index] !== ']') {
@@ -3695,19 +3617,19 @@ var L20n = (function () {
     }
 
     getLiteral() {
-      let cc = this._source.charCodeAt(this._index);
+      const cc = this._source.charCodeAt(this._index);
       if ((cc >= 48 && cc <= 57) || cc === 45) {
         return this.getNumber();
       } else if (cc === 34) { // "
         return this.getPattern();
       } else if (cc === 36) { // $
         this._index++;
-        let id = this.getIdentifier();
-        return new AST.ExternalArgument(id.name);
+        const name = this.getIdentifier().name;
+        return new AST.ExternalArgument(name);
       }
 
-      let id = this.getIdentifier('/');
-      return new AST.EntityReference(id.name, id.namespace);
+      const name = this.getIdentifier().name;
+      return new AST.EntityReference(name);
     }
 
     getComment() {
@@ -3748,8 +3670,6 @@ var L20n = (function () {
     }
 
     error(message, start=null) {
-      let colors = require('colors/safe');
-
       const pos = this._index;
 
       if (start === null) {
@@ -3757,14 +3677,14 @@ var L20n = (function () {
       }
       start = this._findEntityStart(start);
 
-      let context = this._source.slice(start, pos + 10);
+      const context = this._source.slice(start, pos + 10);
 
       const msg = '\n\n  ' + message +
         '\nat pos ' + pos + ':\n------\n…' + context + '\n------';
       const err = new L10nError(msg);
 
-      let row = this._source.slice(0, pos).split('\n').length;
-      let col = pos - this._source.lastIndexOf('\n', pos - 1);
+      const row = this._source.slice(0, pos).split('\n').length;
+      const col = pos - this._source.lastIndexOf('\n', pos - 1);
       err._pos = {start: pos, end: undefined, col: col, row: row};
       err.offset = pos - start;
       err.description = message;
@@ -3803,11 +3723,9 @@ var L20n = (function () {
           start = 0;
           break;
         }
-        let cc = this._source.charCodeAt(start + 1);
+        const cc = this._source.charCodeAt(start + 1);
 
-        if ((cc >= 97 && cc <= 122) || // a-z
-            (cc >= 65 && cc <= 90) ||  // A-Z
-             cc === 95) {              // _
+        if (this._isIdentifierStart(cc)) {
           start++;
           break;
         }
@@ -3822,11 +3740,9 @@ var L20n = (function () {
       while (true) {
         if (start === 0 ||
             this._source[start - 1] === '\n') {
-          let cc = this._source.charCodeAt(start);
+          const cc = this._source.charCodeAt(start);
 
-          if ((cc >= 97 && cc <= 122) || // a-z
-              (cc >= 65 && cc <= 90) ||  // A-Z
-               cc === 95 || cc === 35 || cc === 91) {  // _#[
+          if (this._isIdentifierStart(cc) || cc === 35 || cc === 91) {
             break;
           }
         }
@@ -3850,23 +3766,6 @@ var L20n = (function () {
     },
   };
 
-  function toEntries([entries, curSection], entry) {
-    if (entry.type === 'Section') {
-      return [entries, entry.name.name];
-    }
-
-    if (curSection && !entry.id.namespace) {
-      entry.id.namespace = curSection;
-    }
-
-    return [
-      Object.assign(entries, {
-        [stringifyIdentifier(entry.id)]: transformEntity(entry)
-      }),
-      curSection
-    ];
-  }
-
   function transformEntity(entity) {
     if (entity.traits.length === 0) {
       return transformPattern(entity.value);
@@ -3876,74 +3775,71 @@ var L20n = (function () {
       traits: entity.traits.map(transformMember),
     };
 
-    if (entity.value !== null) {
-      ret.val = transformPattern(entity.value);
-    }
-
-    return ret;
+    return entity.value !== null ?
+      Object.assign(ret, { val: transformPattern(entity.value) }) :
+      ret;
   }
 
   function transformExpression(exp) {
-    if (exp instanceof AST.EntityReference) {
-      return {
-        type: 'ref',
-        name: stringifyIdentifier(exp)
-      };
-    }
-    if (exp instanceof AST.BuiltinReference) {
-      return {
-        type: 'blt',
-        name: stringifyIdentifier(exp)
-      };
-    }
-    if (exp instanceof AST.ExternalArgument) {
-      return {
-        type: 'ext',
-        name: exp.name
-      };
-    }
-    if (exp instanceof AST.Pattern) {
-      return transformPattern(exp);
-    }
-    if (exp instanceof AST.Identifier) {
-      return transformIdentifier(exp);
-    }
-    if (exp instanceof AST.Number) {
-      return {
-        type: 'num',
-        val: exp.value
-      };
-    }
-    if (exp instanceof AST.KeyValueArg) {
-      return {
-        type: 'kv',
-        name: exp.name,
-        val: transformExpression(exp.value)
-      };
-    }
+    switch (exp.type) {
+      case 'EntityReference':
+        return {
+          type: 'ref',
+          name: exp.name
+        };
+      case 'BuiltinReference':
+        return {
+          type: 'blt',
+          name: exp.name
+        };
+      case 'ExternalArgument':
+        return {
+          type: 'ext',
+          name: exp.name
+        };
+      case 'Pattern':
+        return transformPattern(exp);
+      case 'Number':
+        return {
+          type: 'num',
+          val: exp.value
+        };
+      case 'Keyword':
+        const kw = {
+          type: 'kw',
+          name: exp.name
+        };
 
-    if (exp instanceof AST.SelectExpression) {
-      return {
-        type: 'sel',
-        exp: transformExpression(exp.expression),
-        vars: exp.variants.map(transformMember)
-      };
+        return exp.namespace ?
+          Object.assign(kw, { ns: exp.namespace }) :
+          kw;
+      case 'KeyValueArg':
+        return {
+          type: 'kv',
+          name: exp.name,
+          val: transformExpression(exp.value)
+        };
+      case 'SelectExpression':
+        return {
+          type: 'sel',
+          exp: transformExpression(exp.expression),
+          vars: exp.variants.map(transformMember)
+        };
+      case 'MemberExpression':
+        return {
+          type: 'mem',
+          obj: transformExpression(exp.object),
+          key: transformExpression(exp.keyword)
+        };
+      case 'CallExpression':
+        return {
+          type: 'call',
+          name: transformExpression(exp.callee),
+          args: exp.args.map(transformExpression)
+        };
+      default:
+        return exp;
     }
-    if (exp instanceof AST.MemberExpression) {
-      return {
-        type: 'mem',
-        obj: transformExpression(exp.object),
-        key: transformExpression(exp.keyword)
-      };
-    }
-    if (exp instanceof AST.CallExpression) {
-      return {
-        type: 'call',
-        name: transformExpression(exp.callee),
-        args: exp.args.map(transformExpression)
-      };
-    }
-    return exp;
   }
 
   function transformPattern(pattern) {
@@ -3952,15 +3848,15 @@ var L20n = (function () {
     }
 
     if (pattern.elements.length === 1 &&
-        pattern.elements[0] instanceof AST.TextElement) {
+        pattern.elements[0].type === 'TextElement') {
       return pattern.source;
     }
 
     return pattern.elements.map(chunk => {
-      if (chunk instanceof AST.TextElement) {
+      if (chunk.type === 'TextElement') {
         return chunk.value;
       }
-      if (chunk instanceof AST.Placeable) {
+      if (chunk.type === 'Placeable') {
         return chunk.expressions.map(transformExpression);
       }
       return chunk;
@@ -3968,7 +3864,6 @@ var L20n = (function () {
   }
 
   function transformMember(member) {
-    const type = member.key.type;
     const ret = {
       key: transformExpression(member.key),
       val: transformPattern(member.value),
@@ -3981,31 +3876,21 @@ var L20n = (function () {
     return ret;
   }
 
-  function transformIdentifier(id) {
-    const ret = {
-      type: 'id',
-      name: id.name
-    };
-
-    if (id.namespace) {
-      ret.ns = id.namespace;
-    }
-
-    return ret;
+  function getEntitiesFromBody(body) {
+    const entities = {};
+    body.forEach(entry => {
+      if (entry.type === 'Entity') {
+        entities[entry.id.name] = transformEntity(entry);
+      } else if (entry.type === 'Section') {
+        Object.assign(entities, getEntitiesFromBody(entry.body));
+      }
+    });
+    return entities;
   }
 
-  function stringifyIdentifier(id) {
-    if (id.namespace) {
-      return `${id.namespace}/${id.name}`;
-    }
-    return id.name;
-  }
-
-  function createEntriesFromAST({body, _errors}) {
-    const [entries] = body
-      .filter(entry => entry.type === 'Entity' || entry.type === 'Section')
-      .reduce(toEntries, [{}, null]);
-    return {entries, _errors};
+  function createEntriesFromAST([resource, errors]) {
+    const entities = getEntitiesFromBody(resource.body);
+    return [entities, errors];
   }
 
   const lang = {
