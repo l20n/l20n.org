@@ -32,7 +32,7 @@ $(function() {
 
     for (let id in entries) {
       try {
-        var [errs, val] = L20n.format(ctx, L20n.lang, args, entries[id]);
+        var [val, errs] = L20n.format(ctx, L20n.lang, args, entries[id]);
         output.append(
           `<div>
             <dt><code>${id}</code></dt>

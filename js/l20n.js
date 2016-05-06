@@ -1190,135 +1190,104 @@ var L20n = (function () {
     }
   }
 
-  class FTLNone {
+  class FTLBase {
     constructor(value, opts) {
       this.value = value;
       this.opts = opts;
     }
-    format() {
-      return this.value || '???';
-    }
-    match() {
-      return false;
+    valueOf() {
+      return this.value;
     }
   }
 
-  class FTLText extends FTLNone {
-    format() {
-      return this.value.toString();
-    }
-    match(res, {value}) {
-      return this.value === value;
-    }
-  }
-
-  class FTLNumber extends FTLText {
+  class FTLNumber extends FTLBase {
     constructor(value, opts) {
-      super(parseFloat(value));
-      this.opts = opts;
+      super(parseFloat(value), opts);
     }
-    format(res) {
-      const nf = res.ctx._memoizeIntlObject(
-        L20nIntl.NumberFormat, res.lang, this.opts
+    toString(rc) {
+      const nf = rc.ctx._memoizeIntlObject(
+        L20nIntl.NumberFormat, rc.lang, this.opts
       );
       return nf.format(this.value);
     }
-    match(res, {value}) {
-      switch (typeof value) {
-        case 'number': return this.value === value;
-        case 'string':
-          const pr = res.ctx._memoizeIntlObject(
-            L20nIntl.PluralRules, res.lang, this.opts
-          );
-          return pr.select(this.value) === value;
-      }
-    }
   }
 
-  class FTLDateTime extends FTLText {
+  class FTLDateTime extends FTLBase {
     constructor(value, opts) {
-      super(new Date(value));
-      this.opts = opts;
+      super(new Date(value), opts);
     }
-    format(res) {
-      const dtf = res.ctx._memoizeIntlObject(
-        L20nIntl.DateTimeFormat, res.lang, this.opts
+    toString(rc) {
+      const dtf = rc.ctx._memoizeIntlObject(
+        L20nIntl.DateTimeFormat, rc.lang, this.opts
       );
       return dtf.format(this.value);
     }
-    match() {
-      return false;
-    }
   }
 
-  class FTLCategory extends FTLNumber {
-    format(res) {
-      const pr = res.ctx._memoizeIntlObject(
-        L20nIntl.PluralRules, res.lang
-      );
-      return pr.select(this.value);
+  class FTLKeyword extends FTLBase {
+    toString() {
+      const { name, namespace } = this.value;
+      return namespace ? `${namespace}:${name}` : name;
     }
-    match(res, {value}) {
-      switch (typeof value) {
-        case 'number': return this.value === value;
-        case 'string': return this.format(res) === value;
+    match(rc, other) {
+      const { name, namespace } = this.value;
+      if (other instanceof FTLKeyword) {
+        return name === other.value.name && namespace === other.value.namespace;
+      } else if (namespace) {
+        return false;
+      } else if (typeof other === 'string') {
+        return name === other;
+      } else if (other instanceof FTLNumber) {
+        const pr = rc.ctx._memoizeIntlObject(
+          L20nIntl.PluralRules, rc.lang, other.opts
+        );
+        return name === pr.select(other.valueOf());
       }
     }
   }
 
-  class FTLKeyword extends FTLText {
-    constructor(value, namespace) {
-      super(value);
-      this.namespace = namespace;
+  class FTLList extends Array {
+    constructor(arr = [], opts) {
+      super(arr.length);
+      this.opts = opts;
+      for (let [index, elem] of arr.entries()) {
+        this[index] = elem;
+      }
     }
-    format() {
-      return this.namespace ?
-        `${this.namespace}:${this.value}` :
-        this.value;
-    }
-    match(res, {namespace, value}) {
-      return this.namespace === namespace && this.value === value;
-    }
-  }
-
-  class FTLKeyValueArg extends FTLText {
-    constructor(value, id) {
-      super(value);
-      this.id = id;
-    }
-  }
-
-  class FTLList extends FTLText {
-    format(res) {
-      const lf = res.ctx._memoizeIntlObject(
-        L20nIntl.ListFormat, res.lang, this.opts
+    toString(rc) {
+      const lf = rc.ctx._memoizeIntlObject(
+        L20nIntl.ListFormat, rc.lang, this.opts
       );
-      const elems = this.value.map(
-        elem => elem.format(res)
+      const elems = this.map(
+        elem => elem.toString(rc)
       );
       return lf.format(elems);
     }
-    match() {
-      return false;
+    concat(elem) {
+      return new FTLList([...this, elem]);
     }
   }
 
+  // each builtin takes two arguments:
+  //  - args = an array of positional args
+  //  - opts  = an object of key-value args
+
   var builtins = {
-    'NUMBER': ([arg], opts) => new FTLNumber(arg.value, values(opts)),
-    'DATETIME': ([arg], opts) => new FTLDateTime(arg.value, values(opts)),
-    'PLURAL': ([arg], opts) => new FTLCategory(arg.value, values(opts)),
-    'LIST': (...args) => new FTLList(...args),
-    'LEN': ([arg], opts) => new FTLNumber(arg.value.length, values(opts)),
+    'NUMBER': ([arg], opts) => new FTLNumber(arg.valueOf(), valuesOf(opts)),
+    'PLURAL': ([arg], opts) => new FTLNumber(arg.valueOf(), valuesOf(opts)),
+    'DATETIME': ([arg], opts) => new FTLDateTime(arg.valueOf(), valuesOf(opts)),
+    'LIST': (args) => new FTLList(args),
+    'LEN': ([arg], opts) => new FTLNumber(arg.valueOf().length, valuesOf(opts)),
     'TAKE': ([num, arg], opts) =>
-      new FTLList(arg.value.slice(0, num.value), values(opts)),
+      new FTLList(arg.value.slice(0, num.value), valuesOf(opts)),
     'DROP': ([num, arg], opts) =>
-      new FTLList(arg.value.slice(num.value), values(opts)),
+      new FTLList(arg.value.slice(num.value), valuesOf(opts)),
   };
 
-  function values(opts) {
+  function valuesOf(opts) {
     return Object.keys(opts).reduce(
       (seq, cur) => Object.assign({}, seq, {
-        [cur]: opts[cur].value
+        [cur]: opts[cur].valueOf()
       }), {});
   }
 
@@ -1326,37 +1295,27 @@ var L20n = (function () {
   const FSI = '\u2068';
   const PDI = '\u2069';
 
-  function mapValues(res, arr) {
+  const MAX_PLACEABLE_LENGTH = 2500;
+
+  function mapValues(rc, arr) {
     return arr.reduce(
-      ([errSeq, valSeq], cur) => {
-        const [errs, value] = Value(res, cur);
-        return [
-          [...errSeq, ...errs],
-          new FTLList([...valSeq.value, value]),
-        ];
-      },
-      [[], new FTLList([])]
+      ([valseq, errseq], cur) => {
+        const [value, errs] = Value(rc, cur);
+        return [valseq.concat(value), errseq.concat(errs)];
+      }, [new FTLList(), []]
     );
   }
 
-
-    // XXX add this back later
-    // const MAX_PLACEABLE_LENGTH = 2500;
-    // if (value.length >= MAX_PLACEABLE_LENGTH) {
-    //   throw new L10nError(
-    //     'Too many characters in placeable (' + value.length +
-    //       ', max allowed is ' + MAX_PLACEABLE_LENGTH + ')'
-    //   );
-    // }
-
   function unit(val) {
-    return [[], val];
+    return [val, []];
   }
 
-  function fail(prevErrs, [errs, value]) {
-    return [
-      [...prevErrs, ...errs], value
-    ];
+  function fail(val, err) {
+    return [val, [err]];
+  }
+
+  function flat([val, errs2], errs1) {
+    return [val, [...errs1, ...errs2]];
   }
 
 
@@ -1369,86 +1328,84 @@ var L20n = (function () {
       }
     }
 
-    return fail(
-      [new L10nError('No default')],
-      unit(new FTLNone())
-    );
+    return fail('???', new L10nError('No default'));
   }
 
 
   // Half-resolved expressions
 
-  function Expression(res, expr) {
+  function Expression(rc, expr) {
     switch (expr.type) {
       case 'ref':
-        return EntityReference(res, expr);
+        return EntityReference(rc, expr);
       case 'blt':
-        return BuiltinReference(res, expr);
+        return BuiltinReference(rc, expr);
       case 'mem':
-        return MemberExpression(res, expr);
+        return MemberExpression(rc, expr);
       case 'sel':
-        return SelectExpression(res, expr);
+        return SelectExpression(rc, expr);
       default:
         return unit(expr);
     }
   }
 
-  function EntityReference(res, expr) {
-    const entity = res.ctx._getEntity(res.lang, expr.name);
+  function EntityReference(rc, expr) {
+    const entity = rc.ctx._getEntity(rc.lang, expr.name);
 
     if (!entity) {
-      return fail(
-        [new L10nError('Unknown entity: ' + expr.name)],
-        unit(new FTLText(expr.name))
-      );
+      return fail(expr.name, new L10nError('Unknown entity: ' + expr.name));
     }
 
     return unit(entity);
   }
 
-  function BuiltinReference(res, expr) {
+  function BuiltinReference(rc, expr) {
     const builtin = builtins[expr.name];
 
     if (!builtin) {
       return fail(
-        [new L10nError('Unknown built-in: ' + expr.name + '()')],
-        unit(new FTLText(expr.name + '()'))
+        expr.name + '()', new L10nError('Unknown built-in: ' + expr.name + '()')
       );
     }
 
     return unit(builtin);
   }
 
-  function MemberExpression(res, expr) {
-    const [errs1, entity] = Expression(res, expr.obj);
-    if (errs1.length) {
-      return fail(errs1, Value(res, entity));
+  function MemberExpression(rc, expr) {
+    const [entity, errs] = Expression(rc, expr.obj);
+    if (errs.length) {
+      return [entity, errs];
     }
 
-    const [, key] = Value(res, expr.key);
+    const [key] = Value(rc, expr.key);
 
     for (let member of entity.traits) {
-      const [, memberKey] = Value(res, member.key);
-      if (key.match(res, memberKey)) {
+      const [memberKey] = Value(rc, member.key);
+      if (key.match(rc, memberKey)) {
         return unit(member);
       }
     }
 
-    return fail(
-      [new L10nError('Unknown trait: ' + key.format(res))],
-      Value(res, entity)
-    );
+    return fail(entity, new L10nError('Unknown trait: ' + key.toString(rc)));
   }
 
-  function SelectExpression(res, expr) {
-    const [selErrs, selector] = Value(res, expr.exp);
-    if (selErrs.length) {
-      return fail(selErrs, DefaultMember(expr.vars));
+  function SelectExpression(rc, expr) {
+    const [selector, errs] = Value(rc, expr.exp);
+    if (errs.length) {
+      return flat(DefaultMember(expr.vars), errs);
     }
 
     for (let variant of expr.vars) {
-      const [, key] = Value(res, variant.key);
-      if (selector.match(res, key)) {
+      const [key] = Value(rc, variant.key);
+
+      if (key instanceof FTLNumber &&
+          selector instanceof FTLNumber &&
+          key.valueOf() === selector.valueOf()) {
+        return unit(variant);
+      }
+
+      if (key instanceof FTLKeyword &&
+          key.match(rc, selector)) {
         return unit(variant);
       }
     }
@@ -1459,170 +1416,144 @@ var L20n = (function () {
 
   // Fully-resolved expressions
 
-  function Value(res, expr) {
-    if (typeof expr === 'string') {
-      return unit(new FTLText(expr));
-    }
-
-    if (Array.isArray(expr)) {
-      return Pattern(res, expr);
-    }
-
-    if (expr instanceof FTLNone) {
+  function Value(rc, expr) {
+    if (typeof expr === 'string' || expr === null) {
       return unit(expr);
     }
 
-    const [errs, node] = Expression(res, expr);
+    if (Array.isArray(expr)) {
+      return Pattern(rc, expr);
+    }
+
+    const [node, errs] = Expression(rc, expr);
     if (errs.length) {
-      return fail(errs, Value(res, node));
+      // Expression short-circuited into a simple string or a fallback
+      return flat(Value(rc, node), errs);
     }
 
     switch (node.type) {
       case 'kw':
-        return unit(new FTLKeyword(node.name, node.ns));
+        return [new FTLKeyword(node), errs];
       case 'num':
-        return unit(new FTLNumber(node.val));
+        return [new FTLNumber(node.val), errs];
       case 'ext':
-        return ExternalArgument(res, node);
-      case 'kv':
-        return KeyValueArg(res, expr);
+        return flat(ExternalArgument(rc, node), errs);
       case 'call':
-        return CallExpression(res, expr);
+        return flat(CallExpression(rc, expr), errs);
       default:
-        if (node.key) {
-          // if it's a Member
-          return Value(res, node.val);
-        }
-        return Entity(res, node);
+        return node.key ? // is it a Member?
+          flat(Value(rc, node.val), errs) :
+          flat(Entity(rc, node), errs);
     }
   }
 
-  function ExternalArgument(res, expr) {
+  function ExternalArgument(rc, expr) {
     const name = expr.name;
-    const args = res.args;
+    const args = rc.args;
 
     if (!args || !args.hasOwnProperty(name)) {
-      return [
-        [new L10nError('Unknown external: ' + name)],
-        new FTLNone(name)
-      ];
+      return fail(name, new L10nError('Unknown external: ' + name));
     }
 
     const arg = args[name];
 
     switch (typeof arg) {
+      case 'string':
+        return unit(arg);
       case 'number':
         return unit(new FTLNumber(arg));
-      case 'string':
-        return unit(new FTLText(arg));
       case 'object':
         if (Array.isArray(arg)) {
-          return mapValues(res, arg);
+          return mapValues(rc, arg);
         }
-
         if (arg instanceof Date) {
           return unit(new FTLDateTime(arg));
         }
       default:
-        return [
-          [new L10nError(
-            'Unsupported external type: ' + name + ', ' + typeof arg
-          )],
-          new FTLNone(name)
-        ];
+        return fail(name, new L10nError(
+          'Unsupported external type: ' + name + ', ' + typeof arg
+        ));
     }
   }
 
-  function KeyValueArg(res, expr) {
-    const [errs, value] = Value(res, expr.val);
-    return [
-      errs,
-      new FTLKeyValueArg(value, expr.name)
-    ];
-  }
-
-  function CallExpression(res, expr) {
-    const [errs1, callee] = Expression(res, expr.name);
+  function CallExpression(rc, expr) {
+    const [callee, errs1] = Expression(rc, expr.name);
     if (errs1.length) {
-      return fail(errs1, unit(callee));
+      return [callee, errs1];
     }
 
-
-    const [errs2, args] = mapValues(res, expr.args);
-    const [pargs, kargs] = args.value.reduce(
-      ([pargs, kargs], arg) => arg instanceof FTLKeyValueArg ?
-        [pargs, Object.assign({}, kargs, {
-          [arg.id]: arg.value
-        })] :
-        [[...pargs, arg], kargs],
-      [[], {}]);
-    return [errs2, callee(pargs, kargs)];
+    const [pargs, kargs, errs2] = expr.args.reduce(
+      ([pargseq, kargseq, errseq], arg) => {
+        if (arg.type === 'kv') {
+          const [val, errs] = Value(rc, arg.val);
+          kargseq[arg.name] = val;
+          return [pargseq, kargseq, [...errseq, ...errs]];
+        } else {
+          const [val, errs] = Value(rc, arg);
+          return [[...pargseq, val], kargseq, [...errseq, ...errs]];
+        }
+      }, [[], {}, []]);
+    return [callee(pargs, kargs), errs2];
   }
 
-  function Pattern(res, ptn) {
-    if (res.dirty.has(ptn)) {
-      return fail(
-        [new L10nError('Cyclic reference')],
-        unit(new FTLNone())
-      );
+  function Pattern(rc, ptn) {
+    if (rc.dirty.has(ptn)) {
+      return fail('???', new L10nError('Cyclic reference'));
     }
 
-    res.dirty.add(ptn);
-    const rv = formatPattern(res, ptn);
-    res.dirty.delete(ptn);
-    return rv;
-  }
+    rc.dirty.add(ptn);
 
-  function Entity(res, entity) {
-    if (!entity.traits) {
-      return Value(res, entity);
-    }
-
-    if (entity.val !== undefined) {
-      return Value(res, entity.val);
-    }
-
-    const [errs, def] = DefaultMember(entity.traits);
-
-    if (errs.length) {
-      return fail(
-        [...errs, new L10nError('No value')],
-        unit(new FTLNone())
-      );
-    }
-
-    return Value(res, def.val);
-  }
-
-
-  // formatPattern collects errors and returns them as the first element of 
-  // the return tuple: [errors, value]
-
-  function formatPattern(res, ptn) {
-    return ptn.reduce(([errSeq, valSeq], elem) => {
+    const rv = ptn.reduce(([valseq, errseq], elem) => {
       if (typeof elem === 'string') {
-        return [errSeq, new FTLText(valSeq.format(res) + elem)];
+        return [valseq + elem, errseq];
       } else {
-        const [errs, value] = mapValues(res, elem);
+        const [value, errs] = elem.length === 1 ?
+          Value(rc, elem[0]) : mapValues(rc, elem);
+        const str = value.toString(rc);
+        if (str.length > MAX_PLACEABLE_LENGTH) {
+          return [
+            valseq + '???',
+            [...errseq, ...errs, new L10nError(
+              'Too many characters in placeable ' +
+              `(${str.length}, max allowed is ${MAX_PLACEABLE_LENGTH})`
+            )]
+          ];
+        }
         return [
-          [...errSeq, ...errs],
-          new FTLText(valSeq.format(res) + FSI + value.format(res) + PDI),
+          valseq + FSI + str + PDI, [...errseq, ...errs],
         ];
       }
 
-    }, [[], new FTLText('')]);
+    }, ['', []]);
+
+    rc.dirty.delete(ptn);
+    return rv;
   }
 
+  function Entity(rc, entity) {
+    if (!entity.traits) {
+      return Value(rc, entity);
+    }
+
+    if (entity.val !== undefined) {
+      return Value(rc, entity.val);
+    }
+
+    const [def, errs] = DefaultMember(entity.traits);
+    return flat(Value(rc, def), errs);
+  }
+
+
   function format(ctx, lang, args, entity) {
-    const res = {
+    // rc is the current resolution context
+    const rc = {
       ctx,
       lang,
       args,
       dirty: new WeakSet()
     };
 
-    const [errs, value] = Entity(res, entity);
-    return [errs, value.format(res)];
+    return Value(rc, entity);
   }
 
   class Context {
@@ -1633,39 +1564,28 @@ var L20n = (function () {
       this.emit = (type, evt) => env.emit(type, evt, this);
     }
 
-    _formatTuple(lang, args, entity, id, key) {
-      try {
-        return format(this, lang, args, entity);
-      } catch (err) {
-        err.id = key ? id + '::' + key : id;
-        err.lang = lang;
-        this.emit('resolveerror', err);
-        return [{ error: err }, err.id];
-      }
-    }
-
-    _formatEntity(lang, args, entity, id) {
-      const [, value] = this._formatTuple(lang, args, entity, id);
+    _formatEntity(lang, args, entity) {
+      const [value] = format(this, lang, args, entity);
 
       const formatted = {
         value,
         attrs: null,
       };
 
-      if (entity.attrs) {
+      if (entity.traits) {
         formatted.attrs = Object.create(null);
-        for (let key in entity.attrs) {
-          const [, attrValue] = this._formatTuple(
-            lang, args, entity.attrs[key], id, key);
-          formatted.attrs[key] = attrValue;
+        for (let trait of entity.traits) {
+          const [attrValue] = format(this, lang, args, trait);
+          formatted.attrs[trait.key.name] = attrValue;
         }
       }
 
       return formatted;
     }
 
-    _formatValue(lang, args, entity, id) {
-      return this._formatTuple(lang, args, entity, id)[1];
+    _formatValue(lang, args, entity) {
+      const [value] = format(this, lang, args, entity);
+      return value;
     }
 
     fetch(langs = this.langs) {
@@ -1697,7 +1617,7 @@ var L20n = (function () {
         const entity = this._getEntity(lang, id);
 
         if (entity) {
-          return formatter.call(this, lang, args, entity, id);
+          return formatter.call(this, lang, args, entity);
         }
 
         this.emit('notfounderror',
@@ -2733,7 +2653,7 @@ var L20n = (function () {
       const syntax = res.substr(res.lastIndexOf('.') + 1);
 
       const saveEntries = data => {
-        const [entries, errors] = this._parse(syntax, lang, data);
+        const [entries] = this._parse(syntax, lang, data);
         cache.set(id, this._create(lang, entries));
       };
 
@@ -2985,7 +2905,7 @@ var L20n = (function () {
     }
   }
 
-  class KeyValueArg$1 extends Node {
+  class KeyValueArg extends Node {
     constructor(name, value) {
       super();
       this.type = 'KeyValueArg';
@@ -3061,7 +2981,7 @@ var L20n = (function () {
     MemberExpression: MemberExpression$1,
     CallExpression: CallExpression$1,
     ExternalArgument: ExternalArgument$1,
-    KeyValueArg: KeyValueArg$1,
+    KeyValueArg,
     Number,
     EntityReference: EntityReference$1,
     BuiltinReference: BuiltinReference$1,

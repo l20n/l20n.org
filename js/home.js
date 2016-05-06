@@ -10,9 +10,9 @@ $(function() {
       const l10nId = nodes[i].getAttribute('data-l10n-id');
       const l10nArgs = nodes[i].getAttribute('data-l10n-args');
 
-      const val = L20n.format(ctx, L20n.lang, l10nArgs, entries[l10nId]);
+      const [val] = L20n.format(ctx, L20n.lang, l10nArgs, entries[l10nId]);
 
-      nodes[i].textContent = val[1];
+      nodes[i].textContent = val;
     }
   }
 
