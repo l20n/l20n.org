@@ -264,7 +264,6 @@ main > .content > .implementation > div {
     margin-bottom: 4em;
 }
 main > .content > .implementation > div ol {
-    list-style: none;
     padding: 0;
 }
 

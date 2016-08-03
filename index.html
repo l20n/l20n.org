@@ -74,17 +74,17 @@ title: Home
                         <code>&lt;p data-l10n-id="about"&gt;&lt;/p&gt;</code>
                     </li><li>
                         <p data-l10n-id="step2"></p>
-                        <code>&lt;script src="l20n.js"&gt;&lt;/script&gt;</code>
-                    </li><li>
-                        <p data-l10n-id="step3a"></p>
                         <code>&lt;meta name="defaultLanguage"
                           content="en-US"><br/>
 &lt;meta name="availableLanguages" content="en-US, fr"></code>
                     </li><li>
-                        <p data-l10n-id="step3b"></p>
+                        <p data-l10n-id="step3"></p>
                         <code>&lt;link rel="localization"
                           href="./example.{locale}.ftl"&gt;</code>
-                    </li><li data-l10n-id="step4"></li>
+                    </li><li>
+                        <p data-l10n-id="step4"></p>
+                        <code>&lt;script src="l20n.js"&gt;&lt;/script&gt;</code>
+                    </li><li data-l10n-id="step5"></li>
                 </ol>
                 <a class="developer-docs" href="https://github.com/l20n/l20n.js/blob/master/docs/html.md" data-l10n-id="learnImplement"></a>
             </div>
@@ -98,15 +98,7 @@ welcome = { name } by Mozilla
 lead =
   | A developer-friendly framework
   | that places language in the localizer's hands.
-
-step4 = { $position ->
- *[default]
-    | 5. Start localizing a resource file
-    | as you see below.
-  [right]
-    | 5. Start localizing a resource file
-    | as you see on the right.
-}</div>
+</div>
                 {% endraw %}
                 <h3 class="status">
                     <input id="inspect" name="inspect" type="checkbox">
