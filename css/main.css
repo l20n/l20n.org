@@ -362,6 +362,9 @@ body > footer {
 
 .learn header nav a {
     border-color: #068599;
+    line-height: 1.5em;
+    margin: 0 1em;
+    padding: 0.8em 0;
 }
 
 .learn h3 {
@@ -682,9 +685,6 @@ main .window h3.status {
     .learn > header nav li a {
         border-bottom: 1px solid #068599;
         display: block;
-        line-height: 0;
-        margin: 0 1em;
-        padding: 1.6em 0;
         float: none;
     }
 
