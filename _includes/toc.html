@@ -1,6 +1,0 @@
-<li><a {% if page.title == "0. Introduction" %}class="active" {% endif %}href="{{ site.url }}learn">0. Introduction</a></li>
-{% for post in site.posts reversed %}
-    <li>
-        <a {% if page.title == post.title %}class="active" {% endif %}href="{{ post.url }}">{{ forloop.index }}. {{ post.title }}</a>
-    </li>
-{% endfor %}

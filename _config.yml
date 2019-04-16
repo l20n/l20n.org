@@ -1,4 +1,0 @@
-auto: false
-server: true
-permalink: /:categories/:title
-url: http://l20n.org/

@@ -1,10 +1,6 @@
-l20n.org
-========
+# L20n.org (Archive)
 
-The official L20n website.
+This repo contains the placeholder with the information about the depreaction
+of L20n, available at http://l20n.org.
 
-
-Build
-========
-
-$ jekyll serve
+For the archived version of the old l20n.org website, see the `archived` tag.
